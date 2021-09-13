@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.validation.Valid;
-import javax.validation.Validated;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
@@ -78,7 +77,7 @@ public class CategoryController {
 	}
 	
 	@PostMapping
-    public ResponseEntity<?> saveCategory(@Validated @RequestBody Category category) {
+    public ResponseEntity<?> saveCategory(@RequestBody Category category) {
         log.info("Handling save category: " + category);
         Category addedCategory = categoryService.saveCategory(category);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
