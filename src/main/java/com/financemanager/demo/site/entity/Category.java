@@ -25,7 +25,6 @@ public class Category implements Comparable<Category>{
 	@Column(name="category_id")
 	private int id;
 	@Column(name="category_name")
-	@NotEmpty(message = "Name must not be empty")
 	private String name;
 	@Override
 	public int compareTo(Category category) {
