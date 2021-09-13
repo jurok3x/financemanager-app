@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Group manager</title>
+</head>
+
+<body>
+<form action="#">
+    <input id="group_name" placeholder="Name">
+    <br><button onclick="createGroup()">Create group</button>
+</form>
+
+<script>
+	function createGroup() {
+        var groupName = document.getElementById("group_name").value;
+        var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
+        xmlhttp.open("POST", "http://localhost:8083/group/save");
+        xmlhttp.setRequestHeader("Content-Type", "application/json");
+        xmlhttp.send(JSON.stringify({name: groupName}));
+    }
+</script>
+</body>
+</html>
