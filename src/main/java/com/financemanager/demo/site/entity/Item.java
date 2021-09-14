@@ -35,8 +35,6 @@ public class Item {
 	@NotEmpty(message = "Name must not be empty")
 	private String name;
 	@Column(name="price")
-	@NotEmpty(message = "Price must not be empty")
-	@Min(value = 0, message = "Price must be greater than or equal to 0")
 	private double price;
 	@JoinColumn(name="\"category_id\"")
 	@OneToOne
