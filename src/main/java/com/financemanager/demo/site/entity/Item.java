@@ -40,14 +40,11 @@ public class Item {
 	private double price;
 	@JoinColumn(name="\"category_id\"")
 	@OneToOne
-	@NotEmpty(message = "Category must not be empty")
 	private Category category;
 	@JoinColumn(name="\"user_id\"")
 	@OneToOne
-	@NotEmpty(message = "User must not be empty")
 	private User user;
 	@Column(name="date")
-	@NotEmpty(message = "Date must not be empty")
 	private Date date;
 	
 }
