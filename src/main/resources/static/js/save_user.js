@@ -3,6 +3,7 @@ function createUser() {
         let userLogin = document.getElementById("login").value;
         let userPassword = document.getElementById("password").value;
         let userEmail = document.getElementById("email").value;
+        alert("User SAVED");
         const  response = await fetch("https://myapp-12344.herokuapp.com/api/users", {
 			method:
 				"POST",
