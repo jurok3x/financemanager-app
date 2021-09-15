@@ -65,7 +65,7 @@ function siteNavigator(){
 });
 	
 	(async() => {
-		let response = await fetch("http://localhost:8083/api/items/years", {
+		let response = await fetch("https://myapp-12344.herokuapp.com/api/items/years", {
 		method: "GET"})
 		let years = await response.json();
 		let html = '<option value="">Весь час</option>';
@@ -111,7 +111,7 @@ function siteNavigator(){
 }
 
 async function deleteItem(itemId) {
-	const response = await fetch("http://localhost:8083/api/items/" + itemId, {
+	const response = await fetch("https://myapp-12344.herokuapp.com/api/items/" + itemId, {
 		method: "DELETE"	 	  	
     });
 	displayItems();
@@ -151,7 +151,7 @@ async function addItem() {
 		return false;
 	}
 	let itemCategory = await getCategoryById(document.getElementById("categories").value);
-	const  response = await fetch("http://localhost:8083/api/items/", {
+	const  response = await fetch("https://myapp-12344.herokuapp.com/api/items/", {
 		method: "POST",
 		body: JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }),
 		headers: {
@@ -164,7 +164,7 @@ async function addItem() {
 }
 
 async function mostPopularItems(catId){	
-	let url = "http://localhost:8083/api/items/popular" + ((catId) ? ('?categoryId=' + catId) : '');
+	let url = "https://myapp-12344.herokuapp.com/api/items/popular" + ((catId) ? ('?categoryId=' + catId) : '');
 	const response = await fetch(url , {
 		method: "GET"});
 	let items = await response.json();
@@ -182,7 +182,7 @@ async function mostPopularItems(catId){
 
 async function displayItems(){
 	//display all items for current date
-	const itemsUrl = "http://localhost:8083/api/items" + "?year=" + siteCore.getYear() +
+	const itemsUrl = "https://myapp-12344.herokuapp.com/api/items" + "?year=" + siteCore.getYear() +
 			 "&month=" + (siteCore.getMonth() + 1);
 	const itemResponse = await fetch(itemsUrl, {
 		method: "GET"});
@@ -204,7 +204,7 @@ async function displayItems(){
 			items.reduce((value, item) => value + item.price, 0).toFixed(2) + "грн";
 	}
 	//display category count
-	const categoryUrl = "http://localhost:8083/api/categories/count" + "?year=" + siteCore.getYear() +
+	const categoryUrl = "https://myapp-12344.herokuapp.com/api/categories/count" + "?year=" + siteCore.getYear() +
 			 "&month=" + (siteCore.getMonth() + 1);
 	const categoriesResponce = await fetch(categoryUrl, {
 		method: "GET"});
@@ -231,16 +231,16 @@ async function displayItems(){
 }
 
 async function getCategoryById(catId){
-	let response = await fetch("http://localhost:8083/api/categories/" + catId, {
+	let response = await fetch("https://myapp-12344.herokuapp.com/api/categories/" + catId, {
 		method: "GET"});
 	return await response.json();
 }
 
 async function drawCategoryDoughnut(){
 	let year = document.getElementById("yearsList").value;
-	let url = "http://localhost:8083/api/categories/cost?year=" + year;
+	let url = "https://myapp-12344.herokuapp.com/api/categories/cost?year=" + year;
 	if(!year){
-		url = "http://localhost:8083/api/categories/cost";
+		url = "https://myapp-12344.herokuapp.com/api/categories/cost";
 	}
 	const data = await getData(url);
 	const categoryDoughnut = siteCore.getCategoryDoughnut();
@@ -251,7 +251,7 @@ async function drawCategoryDoughnut(){
 
 async function drawMonthChart(){
 	const year = document.getElementById("yearsList").value;
-	let url = "http://localhost:8083/api/items/statistics";
+	let url = "https://myapp-12344.herokuapp.com/api/items/statistics";
 	if(year){
 		url += '?year=' + year;
 	}
@@ -267,7 +267,7 @@ async function drawMonthChart(){
 async function drawCategoryBar(){
 	const year = document.getElementById("yearsList").value;
 	const catId = document.getElementById("categoryYearList").value;
-	let url = "http://localhost:8083/api/items/statistics";
+	let url = "https://myapp-12344.herokuapp.com/api/items/statistics";
 	if(year){
 		url += '?year=' + year;
 	}

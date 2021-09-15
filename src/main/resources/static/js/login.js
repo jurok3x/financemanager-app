@@ -38,7 +38,7 @@ function createUser() {
         var userEmail = document.getElementById("email").value;
         var userGroup = {"id":1, "name": "Admin"};
         var xmlhttp = new XMLHttpRequest();   // new HttpRequest instance
-        xmlhttp.open("POST", "http://localhost:8083/users/save");
+        xmlhttp.open("POST", "https://myapp-12344.herokuapp.com/users/save");
         xmlhttp.setRequestHeader("Content-Type", "application/json");
         xmlhttp.send(JSON.stringify({name: userName, login: userLogin, password: userPassword, email:userEmail, group: userGroup}));
     }
