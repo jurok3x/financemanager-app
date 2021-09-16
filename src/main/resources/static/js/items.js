@@ -151,18 +151,15 @@ async function addItem() {
 		return false;
 	}
 	let itemCategory = await getCategoryById(document.getElementById("categories").value);
-	let myHeaders = new Headers();
-	myHeaders.append('Content-Type', 'application/json');
 	const  response = await fetch("https://myapp-12344.herokuapp.com/api/items/", {
 		method: "POST",
 		body: JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }),
-		mode: 'cors',
-   		cache: 'default',
-		headers: myHeaders  	  	
+		headers: {'Content-Type': 'application/json'}  	  	
     });
+    const content = await response.json();
+	console.log(content);
 	document.getElementById('decor').style.display = 'none';
 	displayItems();
-	return await response.json();
 }
 
 async function mostPopularItems(catId){	
