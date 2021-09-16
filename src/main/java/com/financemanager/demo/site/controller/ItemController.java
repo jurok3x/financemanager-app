@@ -125,7 +125,7 @@ public class ItemController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<?> saveItem(@Validated(BasicValidation.class) @ModelAttribute("item") @RequestBody Item item) {
+	public ResponseEntity<?> saveItem(@Valid @ModelAttribute("item") @RequestBody Item item) {
 		log.info("Handling save item: " + item);
 		Item addedItem =  itemService.saveItem(item);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest()

@@ -32,32 +32,31 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@GroupSequence(value = {BasicValidation.class, AdvancedValidation.class})
 public class Item {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="item_id")
 	private int id;
 	@Column(name="item_name")
-	@NotBlank(message = "Name must not be empty", groups = BasicValidation.class)
+	@NotBlank(message = "Name must not be empty")
 	private String name;
 	@Column(name="price")
-	@NotNull(message = "Price must not be null", groups = BasicValidation.class)
+	@NotNull(message = "Price must not be null")
 	@Min(value = 0, message = "Price be greater then zero")
 	private double price;
 	@JoinColumn(name="\"category_id\"")
 	@OneToOne
 	@Valid
-	@NotNull(message = "Category must not be null", groups = BasicValidation.class)
+	@NotNull(message = "Category must not be null")
 	private Category category;
 	@JoinColumn(name="\"user_id\"")
 	@OneToOne
 	@Valid
-	@NotNull(message = "User must not be null", groups = AdvancedValidation.class)
+	@NotNull(message = "User must not be null")
 	private User user;
 	@Column(name="date")
 	@Valid
-	@NotNull(message = "Date must not be null", groups = BasicValidation.class)
+	@NotNull(message = "Date must not be null")
 	private Date date;
 }
 
