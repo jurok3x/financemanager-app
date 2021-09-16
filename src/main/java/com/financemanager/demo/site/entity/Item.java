@@ -51,8 +51,6 @@ public class Item {
 	private Category category;
 	@JoinColumn(name="\"user_id\"")
 	@OneToOne
-	@Valid
-	@NotNull(message = "User must not be null")
 	private User user;
 	@Column(name="date")
 	@Valid
