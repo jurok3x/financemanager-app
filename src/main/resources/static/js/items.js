@@ -158,8 +158,7 @@ async function addItem() {
 		body: JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }),
 		mode: 'cors',
    		cache: 'default',
-		headers: myHeaders
-  	  	}  	  	
+		headers: myHeaders  	  	
     });
 	document.getElementById('decor').style.display = 'none';
 	displayItems();
