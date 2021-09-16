@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
 
 import lombok.Data;
 import lombok.Getter;
@@ -25,6 +25,7 @@ public class Category implements Comparable<Category>{
 	@Column(name="category_id")
 	private int id;
 	@Column(name="category_name")
+	@NotBlank(message = "Name must not be empty")
 	private String name;
 	@Override
 	public int compareTo(Category category) {

@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,6 +28,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.financemanager.demo.site.entity.Item;
 import com.financemanager.demo.site.entity.projects.DatePartAndCost;
 import com.financemanager.demo.site.entity.projects.ProjectNameAndCountAndCost;
+import com.financemanager.demo.site.entity.validation.BasicValidation;
 import com.financemanager.demo.site.exception.ResourceNotFoundException;
 import com.financemanager.demo.site.model.ItemModel;
 import com.financemanager.demo.site.service.ItemModelAssembler;
@@ -123,7 +125,7 @@ public class ItemController {
 	}
 	
 	@PostMapping
-	public ResponseEntity<?> saveItem(@Valid @RequestBody Item item) {
+	public ResponseEntity<?> saveItem(@Validated(BasicValidation.class) @ModelAttribute("item") @RequestBody Item item) {
 		log.info("Handling save item: " + item);
 		Item addedItem =  itemService.saveItem(item);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest()

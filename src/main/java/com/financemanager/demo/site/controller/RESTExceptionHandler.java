@@ -11,6 +11,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -135,6 +136,19 @@ public class RESTExceptionHandler extends ResponseEntityExceptionHandler {
 		return ResponseEntityBuilder.build(apiException);
 
 	}
+	
+	@ExceptionHandler({ AccessDeniedException.class })
+    public ResponseEntity<Object> handleAccessDeniedException(
+      Exception ex, HttpHeaders headers,
+		HttpStatus status, WebRequest request) {
+		List<String> details = new ArrayList<String>();
+		details.add("You dont' have rights to acces this resource");
+		
+		APIException apiException = new APIException("Method Not Found", HttpStatus.FORBIDDEN,
+				LocalDateTime.now(), details);
+
+		return ResponseEntityBuilder.build(apiException);
+    }
 
 	@ExceptionHandler({ Exception.class })
 	public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {

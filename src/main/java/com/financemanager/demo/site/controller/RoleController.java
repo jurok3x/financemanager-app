@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -58,7 +59,7 @@ public class RoleController {
 	}
 	
 	@PostMapping
-    public ResponseEntity<?> saveRole(@Valid @RequestBody Role role) {
+    public ResponseEntity<?> saveRole(@Valid @ModelAttribute("role") @RequestBody Role role) {
         log.info("Handling save role: " + role);
         Role addedRole = roleService.saveRole(role);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -71,7 +72,7 @@ public class RoleController {
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateCategory(@PathVariable
 			@Min(value = 1, message = "Id should be greater than 1") Integer id,
-			@Valid @RequestBody Role updatedRole){
+			@Valid @ModelAttribute("updatedRole") @RequestBody Role updatedRole){
 		log.info("Handling update role with id = " + id);	
 		return roleService.findById(id)
 				.map(role->{
