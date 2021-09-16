@@ -154,7 +154,8 @@ async function addItem() {
 	const  response = await fetch("https://myapp-12344.herokuapp.com/api/items/", {
 		method: "POST",
 		body: JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }),
-		headers: {'Content-Type': 'application/json'}  	  	
+		headers: {'Content-Type': 'application/json',
+		'Accept': 'application/json'}  	  	
     });
     const content = await response.json();
 	console.log(content);
