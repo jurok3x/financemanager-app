@@ -34,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	@Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                
+                .httpBasic().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 .and()
                 	.authorizeRequests()
