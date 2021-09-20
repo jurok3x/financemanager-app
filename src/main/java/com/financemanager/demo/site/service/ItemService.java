@@ -11,7 +11,7 @@ import com.financemanager.demo.site.entity.projects.ProjectNameAndCountAndCost;
 
 @Component
 public interface ItemService {
-	Item saveItem(Item item);
+	Item saveItem(Item item, String userToken);
 	
 	List<Item> saveAllItems(List<Item> items);
 	
@@ -19,16 +19,16 @@ public interface ItemService {
 
     void deleteItem(Integer id);
 
-    List<Item> findAll(Optional<String> year, Optional<String> month, Optional<Integer> limit, Optional<Integer> offset);
+    List<Item> findAll(String userToken, Optional<String> year, Optional<String> month, Optional<Integer> limit, Optional<Integer> offset);
     
-    List<Item> findByCategory(int categoryId, Optional<String> year, Optional<String> month, Optional<Integer> limit, Optional<Integer> offset);
+    List<Item> findByCategory(String userToken, int categoryId, Optional<String> year, Optional<String> month, Optional<Integer> limit, Optional<Integer> offset);
     
-    Integer countItemsByCategory(int cetegoryId, Optional<String> year, Optional<String> month);
+    Integer countItemsByCategory(String userToken, int cetegoryId, Optional<String> year, Optional<String> month);
     
-    List<ProjectNameAndCountAndCost>getMostFrequentItems(Optional<Integer> categoryId, 
+    List<ProjectNameAndCountAndCost>getMostFrequentItems(String userToken, Optional<Integer> categoryId, 
     		Optional<String> year, Optional<String> month, Optional<Integer> limit, Optional<Integer> offset);
     
-    List<Integer> getAllYears();
+    List<Integer> getAllYears(String userToken);
     
-    List<DatePartAndCost> getStatisticsByMonth(Optional<Integer> categoryId, Optional<String> year);
+    List<DatePartAndCost> getStatisticsByMonth(String userToken, Optional<Integer> categoryId, Optional<String> year);
 }

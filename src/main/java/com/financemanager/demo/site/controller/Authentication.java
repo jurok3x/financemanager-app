@@ -1,12 +1,9 @@
 package com.financemanager.demo.site.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,6 +33,7 @@ public class Authentication {
 		try {
 		User user = userService.findByLogin(request.getLogin()).get();
 		String token = jwtProvider.generateToken(user.getLogin());
+		log.info("Authenticate user " + request.getLogin());
 		return ResponseEntity.ok()
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
 				.body(userAssembler.toModel(user));

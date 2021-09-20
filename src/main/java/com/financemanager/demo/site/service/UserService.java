@@ -23,5 +23,5 @@ public interface UserService {
     
     List<User> findByRoleId(Integer id);
     
-    User getContextUser();
+    User getUserFromToken(String userToken);
 }

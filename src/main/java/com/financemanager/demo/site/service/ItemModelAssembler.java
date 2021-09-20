@@ -49,19 +49,19 @@ public class ItemModelAssembler extends RepresentationModelAssemblerSupport<Item
 		CollectionModel<ItemModel> itemsModel = super.toCollectionModel(entities);
 		itemsModel.add(linkTo(
 				methodOn(ItemController.class)
-				.findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()))
+				.findAll(null, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()))
 				.withSelfRel());
 		itemsModel.add(linkTo(
 				methodOn(ItemController.class)
-				.getAllYears())
+				.getAllYears(null))
 				.withRel("years"));
 		itemsModel.add(linkTo(
 				methodOn(ItemController.class)
-				.getMostFrequentItems(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()))
+				.getMostFrequentItems(null, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()))
 				.withRel("popular"));
 		itemsModel.add(linkTo(
 				methodOn(ItemController.class)
-				.getStatisticsByMonth(Optional.empty(), Optional.empty()))
+				.getStatisticsByMonth(null, Optional.empty(), Optional.empty()))
 				.withRel("all-month-statistic"));
 		return itemsModel;
 	}

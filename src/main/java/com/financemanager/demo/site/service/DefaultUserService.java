@@ -4,11 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.financemanager.demo.site.config.jwt.JwtProvider;
 import com.financemanager.demo.site.entity.Role;
 import com.financemanager.demo.site.entity.User;
 import com.financemanager.demo.site.exception.ResourceNotFoundException;
@@ -22,6 +21,7 @@ public class DefaultUserService implements UserService{
 
 	private final UserRepository userRepository;
 	private final RoleService roleService;
+	private final JwtProvider jwtProvider;
 	
 	@Autowired
 	private PasswordEncoder passwordEncoder;
@@ -69,18 +69,12 @@ public class DefaultUserService implements UserService{
         }
 		return Optional.empty();
 	}
-	
-	@Override
-	public User getContextUser() {
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		String username;
-		if (principal instanceof UserDetails) {
-			username = ((UserDetails) principal).getUsername();
-		} else {
-			username = principal.toString();
-		}
-		return userRepository.findByLogin(username).orElseThrow(
-				()->new ResourceNotFoundException("User with Name :" + username +" Not Found!"));
-	}
 
+	@Override
+	public User getUserFromToken(String userToken) {
+		return findByLogin(jwtProvider.getLoginFromToken(userToken)).orElseThrow(
+				()->new ResourceNotFoundException("User not Found!")
+			);
+	}
+	
 }

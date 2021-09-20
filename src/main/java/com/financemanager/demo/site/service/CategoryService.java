@@ -19,7 +19,7 @@ public interface CategoryService {
     
     Optional<Category> findById(Integer catId);
     
-    List<ProjectCategoryAndCost> getCategoriesAndCost(Optional<String> year, Optional<String> month);
+    List<ProjectCategoryAndCost> getCategoriesAndCost(String userToken, Optional<String> year, Optional<String> month);
     
-    List<ProjectCategoryAndCount> getCategoriesAndCount(Optional<String> year, Optional<String> month);
+    List<ProjectCategoryAndCount> getCategoriesAndCount(String userToken, Optional<String> year, Optional<String> month);
 }

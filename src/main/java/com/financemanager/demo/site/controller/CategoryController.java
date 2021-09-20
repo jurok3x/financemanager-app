@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -63,18 +64,20 @@ public class CategoryController {
 	
 	@GetMapping("/cost")
 	public List<ProjectCategoryAndCost> getCategoriesAndCost(
+			@RequestHeader("Authorization") String userToken,
 			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}[0-9]{3}", message = "Incorect year") String> year,
 			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}|1[0-2]{1}", message = "Incorect month") String> month) {
 		log.info("Handling find caegories with their cost");
-		return categoryService.getCategoriesAndCost(year, month);
+		return categoryService.getCategoriesAndCost(userToken, year, month);
 	}
 	
 	@GetMapping("/count")
 	public List<ProjectCategoryAndCount> getCategoriesAndCount(
+			@RequestHeader("Authorization") String userToken,
 			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}[0-9]{3}", message = "Incorect year") String> year,
 			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}|1[0-2]{1}", message = "Incorect month") String> month) {
 		log.info("Handling find caegories with their count");
-		return categoryService.getCategoriesAndCount(year, month);
+		return categoryService.getCategoriesAndCount(userToken, year, month);
 	}
 	
 	@PostMapping

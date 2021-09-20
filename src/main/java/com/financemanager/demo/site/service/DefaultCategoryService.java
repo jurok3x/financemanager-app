@@ -42,7 +42,7 @@ public Optional<Category> findById(Integer id) {
 }
 
 @Override
-public List<ProjectCategoryAndCost> getCategoriesAndCost(Optional<String> year, Optional<String> month) {
+public List<ProjectCategoryAndCost> getCategoriesAndCost(String userToken, Optional<String> year, Optional<String> month) {
 	String dateString = "%" + year.orElse("") + "-" +
 			month.map(monthString->{
 				if(monthString.length() == 1) {
@@ -50,11 +50,11 @@ public List<ProjectCategoryAndCost> getCategoriesAndCost(Optional<String> year, 
 				}
 				return monthString;
 			}).orElse("") + "%";
-	return categoryRepository.getCategoriesAndCostByDate(userService.getContextUser().getId(), dateString);
+	return categoryRepository.getCategoriesAndCostByDate(userService.getUserFromToken(userToken).getId(), dateString);
 }
 
 @Override
-public List<ProjectCategoryAndCount> getCategoriesAndCount(Optional<String> year, Optional<String> month) {
+public List<ProjectCategoryAndCount> getCategoriesAndCount(String userToken, Optional<String> year, Optional<String> month) {
 	String dateString = "%" + year.orElse("") + "-" +
 			month.map(monthString->{
 				if(monthString.length() == 1) {
@@ -62,6 +62,6 @@ public List<ProjectCategoryAndCount> getCategoriesAndCount(Optional<String> year
 				}
 				return monthString;
 			}).orElse("") + "%";
-	return categoryRepository.getCategoriesAndCountByDate(userService.getContextUser().getId(), dateString);
+	return categoryRepository.getCategoriesAndCountByDate(userService.getUserFromToken(userToken).getId(), dateString);
 }
 }

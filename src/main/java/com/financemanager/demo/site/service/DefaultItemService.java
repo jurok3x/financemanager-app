@@ -17,10 +17,10 @@ import lombok.AllArgsConstructor;
 public class DefaultItemService implements ItemService {
 	private final ItemRepository itemRepository;
 	private final UserService userService;
-
+	
 	@Override
-	public Item saveItem(Item item) {
-		item.setUser(userService.getContextUser());
+	public Item saveItem(Item item, String userToken) {
+		item.setUser(userService.getUserFromToken(userToken));
 		System.out.print("Saving item " + item);
 		Item savedItem = itemRepository.save(item);
 		System.out.print("Saved item " + savedItem);
@@ -39,7 +39,7 @@ public class DefaultItemService implements ItemService {
 	}
 
 	@Override
-	public List<Item> findAll(Optional<String> year, Optional<String> month,
+	public List<Item> findAll(String userToken, Optional<String> year, Optional<String> month,
 		Optional<Integer> limit, Optional<Integer> offset) {	
 		String dateString = "%" + year.orElse("") + "-" +
 		month.map(monthString->{
@@ -50,14 +50,14 @@ public class DefaultItemService implements ItemService {
 		}).orElse("") + "%";
 		if(limit.isPresent() || offset.isPresent()) {
 			return itemRepository
-					.findByUserIdAndDate(userService.getContextUser().getId(), dateString,
+					.findByUserIdAndDate(userService.getUserFromToken(userToken).getId(), dateString,
 							limit.orElse(10), offset.orElse(0));
 		} return itemRepository
-				.findByUserIdAndDateAll(userService.getContextUser().getId(), dateString);
+				.findByUserIdAndDateAll(userService.getUserFromToken(userToken).getId(), dateString);
 	}
 
 	@Override
-	public List<Item> findByCategory(int categoryId, Optional<String> year, Optional<String> month,
+	public List<Item> findByCategory(String userToken, int categoryId, Optional<String> year, Optional<String> month,
 		Optional<Integer> limit, Optional<Integer> offset) {
 		String dateString = "%" + year.orElse("") + "-" +
 				month.map(monthString->{
@@ -66,12 +66,12 @@ public class DefaultItemService implements ItemService {
 					}
 					return monthString;
 				}).orElse("") + "%";
-		return itemRepository.findByUserIdAndCategoryIdAndDate(userService.getContextUser().getId(), categoryId,
+		return itemRepository.findByUserIdAndCategoryIdAndDate(userService.getUserFromToken(userToken).getId(), categoryId,
 				dateString, limit.orElse(10), offset.orElse(0));
 	}
 
 	@Override
-	public Integer countItemsByCategory(int cetegoryId, Optional<String> year, Optional<String> month) {
+	public Integer countItemsByCategory(String userToken, int cetegoryId, Optional<String> year, Optional<String> month) {
 		String dateString = "%" + year.orElse("") + "-" +
 				month.map(monthString->{
 					if(monthString.length() == 1) {
@@ -79,12 +79,12 @@ public class DefaultItemService implements ItemService {
 					}
 					return monthString;
 				}).orElse("") + "%";
-			return itemRepository.countByUserIdAndCategoryIdAndDate(userService.getContextUser().getId(),
+			return itemRepository.countByUserIdAndCategoryIdAndDate(userService.getUserFromToken(userToken).getId(),
 					cetegoryId, dateString);	
 	}
 	
 	@Override
-	public List<ProjectNameAndCountAndCost> getMostFrequentItems(Optional<Integer> categoryId, Optional<String> year, Optional<String> month,
+	public List<ProjectNameAndCountAndCost> getMostFrequentItems(String userToken, Optional<Integer> categoryId, Optional<String> year, Optional<String> month,
 			Optional<Integer> limit, Optional<Integer> offset) {
 		String dateString = "%" + year.orElse("") + "-" +
 				month.map(monthString->{
@@ -94,24 +94,24 @@ public class DefaultItemService implements ItemService {
 					return monthString;
 				}).orElse("") + "%";
 		if(!categoryId.isPresent()) {
-			return itemRepository.getMostFrequentItemsByDate(userService.getContextUser().getId(), dateString, limit.orElse(5), offset.orElse(0));
+			return itemRepository.getMostFrequentItemsByDate(userService.getUserFromToken(userToken).getId(), dateString, limit.orElse(5), offset.orElse(0));
 		}
-		return  itemRepository.getMostFrequentItemsByCategoryAndDate(userService.getContextUser().getId(), categoryId.get(),
+		return  itemRepository.getMostFrequentItemsByCategoryAndDate(userService.getUserFromToken(userToken).getId(), categoryId.get(),
 				dateString, limit.orElse(5), offset.orElse(0));
 	}
 
 	@Override
-	public List<Integer> getAllYears() {
-		return itemRepository.getAllYears(userService.getContextUser().getId());
+	public List<Integer> getAllYears(String userToken) {
+		return itemRepository.getAllYears(userService.getUserFromToken(userToken).getId());
 	}
 
 	@Override
-	public List<DatePartAndCost> getStatisticsByMonth(Optional<Integer> categoryId, Optional<String> year) {
+	public List<DatePartAndCost> getStatisticsByMonth(String userToken, Optional<Integer> categoryId, Optional<String> year) {
 		String dateString = "%" + year.orElse("") + "%";
 		if(!categoryId.isPresent()) {
-			return itemRepository.getMonthStatistics(userService.getContextUser().getId(), dateString);
+			return itemRepository.getMonthStatistics(userService.getUserFromToken(userToken).getId(), dateString);
 		}
-		return itemRepository.getMonthStatisticsByCategory(userService.getContextUser().getId(), dateString, categoryId.get());
+		return itemRepository.getMonthStatisticsByCategory(userService.getUserFromToken(userToken).getId(), dateString, categoryId.get());
 	}
 
 

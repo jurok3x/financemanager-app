@@ -34,11 +34,11 @@ public class CategoryModelAssembler extends RepresentationModelAssemblerSupport<
 				.withSelfRel());
 		categoryModel.add(linkTo(
 				methodOn(ItemController.class)
-				.countByCategoryAndDate(entity.getId(), Optional.empty(), Optional.empty()))
+				.countByCategoryAndDate(null, entity.getId(), Optional.empty(), Optional.empty()))
 				.withRel("items-count"));
 		categoryModel.add(linkTo(
 				methodOn(ItemController.class)
-				.findByCategoryId(entity.getId(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()))
+				.findByCategoryId(null, entity.getId(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()))
 				.withRel("items"));
 		
 		return categoryModel;
@@ -52,11 +52,11 @@ public class CategoryModelAssembler extends RepresentationModelAssemblerSupport<
 				.withSelfRel());
 		categoriesModel.add(linkTo(
 				methodOn(CategoryController.class)
-				.getCategoriesAndCost(Optional.empty(), Optional.empty()))
+				.getCategoriesAndCost(null, Optional.empty(), Optional.empty()))
 				.withRel("all-categories-cost"));
 		categoriesModel.add(linkTo(
 				methodOn(CategoryController.class)
-				.getCategoriesAndCount(Optional.empty(), Optional.empty()))
+				.getCategoriesAndCount(null, Optional.empty(), Optional.empty()))
 				.withRel("all-categories-count"));
 		return categoriesModel;
 	}

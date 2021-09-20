@@ -13,8 +13,6 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -22,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +29,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.financemanager.demo.site.entity.Item;
 import com.financemanager.demo.site.entity.projects.DatePartAndCost;
 import com.financemanager.demo.site.entity.projects.ProjectNameAndCountAndCost;
-import com.financemanager.demo.site.entity.validation.BasicValidation;
 import com.financemanager.demo.site.exception.ResourceNotFoundException;
 import com.financemanager.demo.site.model.ItemModel;
 import com.financemanager.demo.site.service.ItemModelAssembler;
@@ -59,12 +57,13 @@ public class ItemController {
 	
 	@GetMapping
 	public ResponseEntity<CollectionModel<ItemModel>> findAll(
+			@RequestHeader("Authorization") String userToken,
 			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}[0-9]{3}", message = "Incorect year") String> year,
 			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}|1[0-2]{1}", message = "Incorect month") String> month,
 			@RequestParam Optional<@Min(value = 1, message = "Minimum 1 item") Integer> limit,
 			@RequestParam Optional<@Min(value = 0, message = "Offset can not be less then 0") Integer> offset) {
 		log.info("Handling find items with year = " + year.orElse("All") + " and month = " + month.orElse("All"));
-		List<Item> items = itemService.findAll(year, month, limit, offset);
+		List<Item> items = itemService.findAll(userToken, year, month, limit, offset);
 		return new ResponseEntity<>(
 				itemAssembler.toCollectionModel(items),
 				HttpStatus.OK);
@@ -72,6 +71,7 @@ public class ItemController {
 	
 	@GetMapping(value = {"/category/{categoryId}"})
 	public ResponseEntity<CollectionModel<ItemModel>> findByCategoryId(
+			@RequestHeader("Authorization") String userToken,
 			@PathVariable @Min(value = 1, message = "CategoryId must be greater than or equal to 1") 
 				@Max(value = 10, message = "CategoryId must be greater than or equal to 10") Integer categoryId,
 			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}[0-9]{3}", message = "Incorect year") String> year,
@@ -79,7 +79,7 @@ public class ItemController {
 			@RequestParam Optional<@Min(value = 1, message = "Minimum 1 item") Integer> limit,
 			@RequestParam Optional<@Min(value = 0, message = "Offset can not be less then 0") Integer> offset) {
 		log.info("Handling find items in category  with id =  " + categoryId + ". With year = " + year.orElse("All") + " and month = " + month.orElse("All"));
-		List<Item> items = itemService.findByCategory(categoryId, year, month, limit, offset);
+		List<Item> items = itemService.findByCategory(userToken, categoryId, year, month, limit, offset);
 		return new ResponseEntity<>(
 				itemAssembler.toCollectionModel(items),
 				HttpStatus.OK);
@@ -87,18 +87,20 @@ public class ItemController {
 
 	@GetMapping("/count/category/{categoryId}")
 	public ResponseEntity<Integer> countByCategoryAndDate(
+			@RequestHeader("Authorization") String userToken,
 			@PathVariable @Min(value = 1, message = "CategoryId must be greater than or equal to 1")
 				@Max(value = 10, message = "CategoryId must be greater than or equal to 10")Integer categoryId,
-				@RequestParam Optional<@Pattern(regexp = "[1-9]{1}[0-9]{3}", message = "Incorect year") String> year,
-				@RequestParam Optional<@Pattern(regexp = "[1-9]{1}|1[0-2]{1}", message = "Incorect month") String> month) {
+			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}[0-9]{3}", message = "Incorect year") String> year,
+			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}|1[0-2]{1}", message = "Incorect month") String> month) {
 		log.info("Handling get items count in category  with id = " + categoryId + ". With year = " + year.orElse("All") + " and month = " + month.orElse("All"));
 		return new ResponseEntity<>(
-				itemService.countItemsByCategory(categoryId, year, month),
+				itemService.countItemsByCategory(userToken, categoryId, year, month),
 				HttpStatus.OK);
 	}
 	
 	@GetMapping("/popular")
 	public List<ProjectNameAndCountAndCost> getMostFrequentItems(
+			@RequestHeader("Authorization") String userToken,
 			@RequestParam Optional<@Min(value = 1, message = "CategoryId must be greater than or equal to 1")
 				@Max(value = 10, message = "CategoryId must be greater than or equal to 10")Integer> categoryId,
 			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}[0-9]{3}", message = "Incorect year") String> year,
@@ -106,29 +108,31 @@ public class ItemController {
 			@RequestParam Optional<@Min(value = 1, message = "Minimum 1 message") Integer> limit,
 			@RequestParam Optional<@Min(value = 0, message = "Offset can not be less then 0") Integer> offset) {
 		log.info("Handling find most popular items. With year = " + year.orElse("All") + " and month = " + month.orElse("All"));
-		return itemService.getMostFrequentItems(categoryId, year, month, limit, offset);
+		return itemService.getMostFrequentItems(userToken, categoryId, year, month, limit, offset);
 	}
 	
 	@GetMapping("/years")
-	public List<Integer> getAllYears() {
+	public List<Integer> getAllYears(@RequestHeader("Authorization") String userToken) {
 		log.info("Handling find all years.");
-		return itemService.getAllYears();
+		return itemService.getAllYears(userToken);
 	}
 	
 	@GetMapping("/statistics")
 	public List<DatePartAndCost> getStatisticsByMonth(
+			@RequestHeader("Authorization") String userToken,
 			@RequestParam Optional<@Min(value = 1, message = "CategoryId must be greater than or equal to 1")
 				@Max(value = 10, message = "CategoryId must be greater than or equal to 10") Integer> categoryId,
 			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}[0-9]{3}", message = "Incorect year") String> year) {
 		log.info("Handling get month statistics. With year = " + year.orElse("All") + " and categoryId = "
 			+ ((categoryId.isPresent()) ? categoryId.get() : "All"));
-		return itemService.getStatisticsByMonth(categoryId, year);
+		return itemService.getStatisticsByMonth(userToken, categoryId, year);
 	}
 	
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> saveItem(@Valid @ModelAttribute("item") @RequestBody Item item) {
+	public ResponseEntity<?> saveItem(@Valid @ModelAttribute("item") @RequestBody Item item,
+			@RequestHeader("Authorization") String userToken) {
 		log.info("Handling save item: " + item);
-		Item addedItem =  itemService.saveItem(item);
+		Item addedItem =  itemService.saveItem(item, userToken);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}")
 				.buildAndExpand(addedItem.getId())
@@ -139,13 +143,16 @@ public class ItemController {
 	@PostMapping("/all")
 	public ResponseEntity<?> saveAllItems(@RequestBody List<Item> items) {
 		log.info("Handling save items");
-		List<Item> addedItems =  itemService.saveAllItems(items);
+		itemService.saveAllItems(items);
 		return ResponseEntity.ok().build();
 	}
 	
+	//fix that
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateCategory(@PathVariable
-			@Min(value = 1, message = "Id should be greater than 1") Integer id,
+	public ResponseEntity<?> updateCategory(
+			@RequestHeader("Authorization") String userToken,
+			@PathVariable
+				@Min(value = 1, message = "Id should be greater than 1") Integer id,
 			@Valid @RequestBody Item updatedItem){
 		log.info("Handling update item with id = " + id);	
 		return itemService.findById(id)
@@ -156,12 +163,12 @@ public class ItemController {
 					item.setDate(updatedItem.getDate());
 					item.setCategory(updatedItem.getCategory());
 					item.setUser(updatedItem.getUser());
-					itemService.saveItem(item);
+					itemService.saveItem(item, userToken);
 			        return ResponseEntity.ok().build(); 
 				})
 				.orElseGet(() -> {
 						updatedItem.setId(id);
-						Item addedItem =  itemService.saveItem(updatedItem);
+						Item addedItem =  itemService.saveItem(updatedItem, userToken);
 						URI location = ServletUriComponentsBuilder.fromCurrentRequest()
 				                .path("/{id}")
 				                .buildAndExpand(addedItem.getId())
