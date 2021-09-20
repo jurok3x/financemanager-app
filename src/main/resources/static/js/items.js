@@ -151,7 +151,7 @@ async function addItem() {
 		return false;
 	}
 	let itemCategory = await getCategoryById(document.getElementById("categories").value);
-	 const xmlhttp = new XMLHttpRequest();   
+	 	 const xmlhttp = new XMLHttpRequest();   
         xmlhttp.open("POST", "https://myapp-12344.herokuapp.com/api/items");
         xmlhttp.setRequestHeader("Content-Type", "application/json");
         xmlhttp.send(JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }));
@@ -160,8 +160,8 @@ async function addItem() {
         if (this.readyState == 4 && this.status == 200) {
             document.getElementById('decor').style.display = 'none';
 			displayItems();
-       };
-	
+       };	
+	};
 }
 
 async function mostPopularItems(catId){	
