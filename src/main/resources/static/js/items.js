@@ -156,7 +156,7 @@ async function addItem() {
         xmlhttp.setRequestHeader("Content-Type", "application/json");
         xmlhttp.send(JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }));
 	
-	xhttp.onreadystatechange = function() {
+	xmlhttp.onreadystatechange = function() {
         if (this.readyState == 4 && this.status == 200) {
             document.getElementById('decor').style.display = 'none';
 			displayItems();
