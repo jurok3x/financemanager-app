@@ -40,7 +40,6 @@ import lombok.extern.java.Log;
 
 @RestController
 @RequestMapping("/api/items")
-@Validated
 @AllArgsConstructor
 @Log
 public class ItemController {
@@ -126,7 +125,6 @@ public class ItemController {
 	}
 	
 	@PostMapping
-	@CrossOrigin
 	public ResponseEntity<?> saveItem(@Valid @ModelAttribute("item") @RequestBody Item item) {
 		log.info("Handling save item: " + item);
 		Item addedItem =  itemService.saveItem(item);
