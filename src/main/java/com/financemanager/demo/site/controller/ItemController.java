@@ -63,7 +63,7 @@ public class ItemController {
 			@RequestParam Optional<@Min(value = 1, message = "Minimum 1 item") Integer> limit,
 			@RequestParam Optional<@Min(value = 0, message = "Offset can not be less then 0") Integer> offset) {
 		log.info("Handling find items with year = " + year.orElse("All") + " and month = " + month.orElse("All"));
-		List<Item> items = itemService.findAll(userToken, year, month, limit, offset);
+		List<Item> items = itemService.findAll(userToken.substring(7), year, month, limit, offset);
 		return new ResponseEntity<>(
 				itemAssembler.toCollectionModel(items),
 				HttpStatus.OK);
@@ -79,7 +79,7 @@ public class ItemController {
 			@RequestParam Optional<@Min(value = 1, message = "Minimum 1 item") Integer> limit,
 			@RequestParam Optional<@Min(value = 0, message = "Offset can not be less then 0") Integer> offset) {
 		log.info("Handling find items in category  with id =  " + categoryId + ". With year = " + year.orElse("All") + " and month = " + month.orElse("All"));
-		List<Item> items = itemService.findByCategory(userToken, categoryId, year, month, limit, offset);
+		List<Item> items = itemService.findByCategory(userToken.substring(7), categoryId, year, month, limit, offset);
 		return new ResponseEntity<>(
 				itemAssembler.toCollectionModel(items),
 				HttpStatus.OK);
@@ -94,7 +94,7 @@ public class ItemController {
 			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}|1[0-2]{1}", message = "Incorect month") String> month) {
 		log.info("Handling get items count in category  with id = " + categoryId + ". With year = " + year.orElse("All") + " and month = " + month.orElse("All"));
 		return new ResponseEntity<>(
-				itemService.countItemsByCategory(userToken, categoryId, year, month),
+				itemService.countItemsByCategory(userToken.substring(7), categoryId, year, month),
 				HttpStatus.OK);
 	}
 	
@@ -108,13 +108,13 @@ public class ItemController {
 			@RequestParam Optional<@Min(value = 1, message = "Minimum 1 message") Integer> limit,
 			@RequestParam Optional<@Min(value = 0, message = "Offset can not be less then 0") Integer> offset) {
 		log.info("Handling find most popular items. With year = " + year.orElse("All") + " and month = " + month.orElse("All"));
-		return itemService.getMostFrequentItems(userToken, categoryId, year, month, limit, offset);
+		return itemService.getMostFrequentItems(userToken.substring(7), categoryId, year, month, limit, offset);
 	}
 	
 	@GetMapping("/years")
 	public List<Integer> getAllYears(@RequestHeader("Authorization") String userToken) {
 		log.info("Handling find all years.");
-		return itemService.getAllYears(userToken);
+		return itemService.getAllYears(userToken.substring(7));
 	}
 	
 	@GetMapping("/statistics")
@@ -125,14 +125,14 @@ public class ItemController {
 			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}[0-9]{3}", message = "Incorect year") String> year) {
 		log.info("Handling get month statistics. With year = " + year.orElse("All") + " and categoryId = "
 			+ ((categoryId.isPresent()) ? categoryId.get() : "All"));
-		return itemService.getStatisticsByMonth(userToken, categoryId, year);
+		return itemService.getStatisticsByMonth(userToken.substring(7), categoryId, year);
 	}
 	
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> saveItem(@Valid @ModelAttribute("item") @RequestBody Item item,
 			@RequestHeader("Authorization") String userToken) {
 		log.info("Handling save item: " + item);
-		Item addedItem =  itemService.saveItem(item, userToken);
+		Item addedItem =  itemService.saveItem(item, userToken.substring(7));
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}")
 				.buildAndExpand(addedItem.getId())
@@ -163,12 +163,12 @@ public class ItemController {
 					item.setDate(updatedItem.getDate());
 					item.setCategory(updatedItem.getCategory());
 					item.setUser(updatedItem.getUser());
-					itemService.saveItem(item, userToken);
+					itemService.saveItem(item, userToken.substring(7));
 			        return ResponseEntity.ok().build(); 
 				})
 				.orElseGet(() -> {
 						updatedItem.setId(id);
-						Item addedItem =  itemService.saveItem(updatedItem, userToken);
+						Item addedItem =  itemService.saveItem(updatedItem, userToken.substring(7));
 						URI location = ServletUriComponentsBuilder.fromCurrentRequest()
 				                .path("/{id}")
 				                .buildAndExpand(addedItem.getId())
