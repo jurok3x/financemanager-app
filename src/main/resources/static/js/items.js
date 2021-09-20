@@ -151,12 +151,13 @@ async function addItem() {
 		return false;
 	}
 	let itemCategory = await getCategoryById(document.getElementById("categories").value);
+	let myHeaders = new Headers();
+	myHeaders.append('Content-Type', 'application/json');
 	const  response = await fetch("https://myapp-12344.herokuapp.com/api/items", {
 		method: "POST",
 		body: JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }),
-		headers: {
-		'Content-Type': 'application/json',
-		'Accept': 'application/json'},
+		headers: myHeaders,
+		cache: 'default',
 		mode: 'cors' 	  	
     });
     const content = await response.json();
