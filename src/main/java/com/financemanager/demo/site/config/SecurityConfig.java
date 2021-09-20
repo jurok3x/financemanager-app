@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.financemanager.demo.site.config.jwt.JwtFilter;
 import com.financemanager.demo.site.service.CustomUserDetailsService;
@@ -36,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
         http
                 .httpBasic().disable()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 	.authorizeRequests()
                 	.antMatchers("/api/auth", "/users/fail").not().fullyAuthenticated()
@@ -52,7 +53,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .and()
                 	.logout()
                 	.permitAll()
-                	.logoutSuccessUrl("/");
+                	.logoutSuccessUrl("/")
+        		.and()
+        			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         
     }
 	
