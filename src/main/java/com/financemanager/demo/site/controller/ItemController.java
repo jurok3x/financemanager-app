@@ -11,6 +11,7 @@ import javax.validation.constraints.Pattern;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -124,7 +125,7 @@ public class ItemController {
 		return itemService.getStatisticsByMonth(categoryId, year);
 	}
 	
-	@PostMapping
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> saveItem(@Valid @ModelAttribute("item") @RequestBody Item item) {
 		log.info("Handling save item: " + item);
 		Item addedItem =  itemService.saveItem(item);
