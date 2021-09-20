@@ -128,7 +128,7 @@ function daysList() {
 	document.getElementById("days").innerHTML = html;
 };
 
-async function addItem() {
+function addItem() {
 	// fetch all entries from the form and check for null
 	let itemName = document.getElementById("item_name").value;
 	if (!itemName) {
@@ -150,7 +150,7 @@ async function addItem() {
 		alert("Виберіть категорію!");
 		return false;
 	}
-	let itemCategory = await getCategoryById(document.getElementById("categories").value);
+	let itemCategory = {"category_id": 6, "category_name":"Проживання"};
 	 	 const xmlhttp = new XMLHttpRequest();   
         xmlhttp.open("POST", "https://myapp-12344.herokuapp.com/api/items");
         xmlhttp.setRequestHeader("Content-Type", "application/json");
