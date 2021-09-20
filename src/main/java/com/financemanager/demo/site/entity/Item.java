@@ -21,6 +21,7 @@ import javax.validation.constraints.NotNull;
 import com.financemanager.demo.site.entity.validation.AdvancedValidation;
 import com.financemanager.demo.site.entity.validation.BasicValidation;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,7 @@ import lombok.Setter;
 @Table(name = "\"item_table\"")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class Item {
