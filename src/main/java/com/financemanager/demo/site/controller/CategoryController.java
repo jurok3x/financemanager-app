@@ -68,7 +68,7 @@ public class CategoryController {
 			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}[0-9]{3}", message = "Incorect year") String> year,
 			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}|1[0-2]{1}", message = "Incorect month") String> month) {
 		log.info("Handling find caegories with their cost");
-		return categoryService.getCategoriesAndCost(userToken, year, month);
+		return categoryService.getCategoriesAndCost(userToken.substring(7), year, month);
 	}
 	
 	@GetMapping("/count")
@@ -77,7 +77,7 @@ public class CategoryController {
 			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}[0-9]{3}", message = "Incorect year") String> year,
 			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}|1[0-2]{1}", message = "Incorect month") String> month) {
 		log.info("Handling find caegories with their count");
-		return categoryService.getCategoriesAndCount(userToken, year, month);
+		return categoryService.getCategoriesAndCount(userToken.substring(7), year, month);
 	}
 	
 	@PostMapping
