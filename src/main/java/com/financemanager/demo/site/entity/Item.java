@@ -12,14 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.GroupSequence;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-
-import com.financemanager.demo.site.entity.validation.AdvancedValidation;
-import com.financemanager.demo.site.entity.validation.BasicValidation;
 
 import lombok.Data;
 import lombok.Getter;
@@ -42,7 +38,7 @@ public class Item {
 	private String name;
 	@Column(name="price")
 	@NotNull(message = "Price must not be null")
-	@Min(value = 0, message = "Price be greater then zero")
+	@Min(value = 0, message = "Price should be be greater then zero")
 	private double price;
 	@JoinColumn(name="\"category_id\"")
 	@OneToOne

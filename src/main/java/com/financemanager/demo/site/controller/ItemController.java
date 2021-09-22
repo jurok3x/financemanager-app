@@ -15,7 +15,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -129,7 +128,7 @@ public class ItemController {
 	}
 	
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> saveItem(@Valid @ModelAttribute("item") @RequestBody Item item,
+	public ResponseEntity<?> saveItem(@Valid @RequestBody Item item,
 			@RequestHeader("Authorization") String userToken) {
 		log.info("Handling save item: " + item);
 		Item addedItem =  itemService.saveItem(item, userToken.substring(7));

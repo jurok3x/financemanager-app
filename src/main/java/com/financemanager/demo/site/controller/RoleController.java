@@ -59,7 +59,7 @@ public class RoleController {
 	}
 	
 	@PostMapping
-    public ResponseEntity<?> saveRole(@Valid @ModelAttribute("role") @RequestBody Role role) {
+    public ResponseEntity<?> saveRole(@Valid @RequestBody Role role) {
         log.info("Handling save role: " + role);
         Role addedRole = roleService.saveRole(role);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
