@@ -151,17 +151,16 @@ async function addItem() {
 		return false;
 	}
 	let itemCategory = await getCategoryById(document.getElementById("categories").value);
-	 	 const xmlhttp = new XMLHttpRequest();   
-        xmlhttp.open("POST", "https://myapp-12344.herokuapp.com/api/items");
-        xmlhttp.setRequestHeader("Content-Type", "application/json");
-        xmlhttp.send(JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }));
-	
-	xmlhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            document.getElementById('decor').style.display = 'none';
-			displayItems();
-       };	
-	};
+	const  response = await fetch("https://myapp-12344.herokuapp.com/api/items/", {
+		method: "POST",
+		body: JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }),
+		headers: {
+ 	     'Content-Type': 'application/json'
+  	  	}  	  	
+    });
+	document.getElementById('decor').style.display = 'none';
+	displayItems();
+	return await response.json();
 }
 
 async function mostPopularItems(catId){	
