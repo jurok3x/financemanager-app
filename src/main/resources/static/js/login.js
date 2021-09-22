@@ -1,4 +1,4 @@
-function logIn(){
+async function logIn(){
 	const userLogin = document.getElementById('login').value;
 	const userPassword = document.getElementById('password').value;
 	alert(userLogin + userPassword);
