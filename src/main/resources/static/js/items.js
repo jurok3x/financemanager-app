@@ -12,6 +12,7 @@ function siteNavigator(){
 	let d = new Date();
 	let month = d.getMonth();
 	let year = d.getFullYear();
+	let siteHedders = new Headers();
 	const doughnutCtx = document.getElementById('categoryStatistic').getContext('2d');
 	const categoryDoughnut = new Chart(doughnutCtx, {
 	    type: 'doughnut',
@@ -75,6 +76,8 @@ function siteNavigator(){
 			document.getElementById("yearsList").innerHTML = html;
 	})();
 	return {
+		appendHeader: (key, value) => {siteHedders.append(key, value)},
+		getHeaders: () => siteHedders,
 		getMonth: () => month,
 		getYear: () => year,
 		getCategoryDoughnut: () => categoryDoughnut,
@@ -112,7 +115,8 @@ function siteNavigator(){
 
 async function deleteItem(itemId) {
 	const response = await fetch("https://myapp-12344.herokuapp.com/api/items/" + itemId, {
-		method: "DELETE"	 	  	
+		method: "DELETE",
+		headers: siteCore.GetHeaders()	 	  	
     });
 	displayItems();
 }
@@ -306,7 +310,7 @@ async function logIn(){
 	  	  	}  	  	
 	    });
 	    let responseHeader = await response.headers.get('Authorization');
-		//myHeaders.append('Authorization', responseHeader);
+		siteCore.appendHeader('Authorization', responseHeader);
 		return  response.json();
 }
 
