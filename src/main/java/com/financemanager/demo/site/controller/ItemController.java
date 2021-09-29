@@ -10,6 +10,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -139,13 +141,6 @@ public class ItemController {
 		return ResponseEntity.created(location).build();
 	}
 	
-	@PostMapping("/all")
-	public ResponseEntity<?> saveAllItems(@RequestBody List<Item> items) {
-		log.info("Handling save items");
-		itemService.saveAllItems(items);
-		return ResponseEntity.ok().build();
-	}
-	
 	//fix that
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateCategory(
@@ -185,4 +180,32 @@ public class ItemController {
 		itemService.deleteItem(deletedItem.getId());
 		return ResponseEntity.noContent().build();
 	}
+	
+	@RequestMapping(value = "/" , method = RequestMethod.OPTIONS)
+	ResponseEntity<?> collectionOptions() 
+    {
+         return ResponseEntity
+                 .ok()
+                 .allow(HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS)
+                 .build();
+    }
+	
+	@RequestMapping(value = "/{id}" , method = RequestMethod.OPTIONS)
+	ResponseEntity<?> singularOptions() 
+    {
+         return ResponseEntity
+                 .ok()
+                 .allow(HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE , HttpMethod.OPTIONS)
+                 .build();
+    }
+	
+	@RequestMapping(value = "/statistics, /years, /popular, /count/category/{categoryId}, /category/{categoryId}" , method = RequestMethod.OPTIONS)
+	ResponseEntity<?> specialOptions() 
+    {
+         return ResponseEntity
+                 .ok()
+                 .allow(HttpMethod.GET, HttpMethod.OPTIONS)
+                 .build();
+    }
+		
 }

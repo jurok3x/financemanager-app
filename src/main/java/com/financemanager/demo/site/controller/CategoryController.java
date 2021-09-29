@@ -9,6 +9,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -121,5 +123,32 @@ public class CategoryController {
         		.orElseThrow(()->new ResourceNotFoundException("Category with ID :" + id + " Not Found!"));
         categoryService.deleteCategory(category.getId());
         return ResponseEntity.noContent().build();
+    }
+	
+	@RequestMapping(value = "/" , method = RequestMethod.OPTIONS)
+	ResponseEntity<?> collectionOptions() 
+    {
+         return ResponseEntity
+                 .ok()
+                 .allow(HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS)
+                 .build();
+    }
+	
+	@RequestMapping(value = "/{id}" , method = RequestMethod.OPTIONS)
+	ResponseEntity<?> singularOptions() 
+    {
+         return ResponseEntity
+                 .ok()
+                 .allow(HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE , HttpMethod.OPTIONS)
+                 .build();
+    }
+	
+	@RequestMapping(value = "/cost, /count" , method = RequestMethod.OPTIONS)
+	ResponseEntity<?> specialOptions() 
+    {
+         return ResponseEntity
+                 .ok()
+                 .allow(HttpMethod.GET, HttpMethod.OPTIONS)
+                 .build();
     }
 }
