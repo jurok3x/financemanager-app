@@ -272,3 +272,7 @@
 	margin-top: 1px;
     border: 2px solid #F79361;
 }
+
+#login-text{
+	cursor: pointer;
+}

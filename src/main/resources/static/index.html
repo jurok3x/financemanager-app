@@ -16,9 +16,14 @@
 <body>
 <div class="container-fluid">
 	<div class="row">
-		<button class="move" style="vertical-align:middle" onclick="siteCore.monthBack()"><span>Назад </span></button>
-		<h1 id="current_date"></h1>
-		<button id="forward" style="vertical-align:middle" class="disabled" onclick="siteCore.monthForward()"><span>Вперед </span></button>
+		<div class="col-6">
+			<button class="move" style="vertical-align:middle" onclick="siteCore.monthBack()"><span>Назад </span></button>
+			<h1 id="current_date"></h1>
+			<button id="forward" style="vertical-align:middle" class="disabled" onclick="siteCore.monthForward()"><span>Вперед </span></button>
+		</div>
+		<div class="col-6">
+			<span id="login-text">Login</span>
+		</div>
 	</div>
 	<div class="row">
 		<div class="col-6">
