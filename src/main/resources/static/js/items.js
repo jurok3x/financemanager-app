@@ -60,17 +60,6 @@ function siteNavigator(){
         }
     }
 });
-	
-	(async() => {
-		let response = await fetch("https://myapp-12344.herokuapp.com/api/items/years", {
-		method: "GET"})
-		let years = await response.json();
-		let html = '<option value="">Весь час</option>';
-		years.forEach(year =>{
-			html += '<option value="' + year + '">' + year + '</option>'
-		})
-			document.getElementById("yearsList").innerHTML = html;
-	})();
 	return {
 		appendHeader: (key, value) => {siteHedders.append(key, value)},
 		getHeaders: () => siteHedders,
@@ -112,7 +101,7 @@ function siteNavigator(){
 async function deleteItem(itemId) {
 	const response = await fetch("https://myapp-12344.herokuapp.com/api/items/" + itemId, {
 		method: "DELETE",
-		headers: siteCore.GetHeaders()	 	  	
+		headers: siteCore.getHeaders()	 	  	
     });
 	displayItems();
 }
@@ -127,6 +116,19 @@ function daysList() {
 	}
 	document.getElementById("days").innerHTML = html;
 };
+
+async function getUserYearsList() {
+		const response = await fetch("https://myapp-12344.herokuapp.com/api/items/years", {
+		method: "GET",
+		headers: siteCore.getHeaders()
+		})
+		const years = await response.json();
+		let html = '<option value="">Весь час</option>';
+		years.forEach(year =>{
+			html += '<option value="' + year + '">' + year + '</option>'
+		})
+			document.getElementById("yearsList").innerHTML = html;
+	};
 
 async function addItem() {
 	// fetch all entries from the form and check for null
@@ -167,7 +169,7 @@ async function mostPopularItems(catId){
 	let url = "https://myapp-12344.herokuapp.com/api/items/popular" + ((catId) ? ('?categoryId=' + catId) : '');
 	const response = await fetch(url , {
 		method: "GET",
-		headers: siteCore.GetHeaders()});
+		headers: siteCore.getHeaders()});
 	let items = await response.json();
 	let html = '';
 	for(let i = 0; i < items.length; i++){
@@ -187,7 +189,7 @@ async function displayItems(){
 			 "&month=" + (siteCore.getMonth() + 1);
 	const itemResponse = await fetch(itemsUrl, {
 		method: "GET",
-		headers: siteCore.GetHeaders()});
+		headers: siteCore.getHeaders()});
 	const responseJson = await itemResponse.json();
 	let itemHtml ='';
 	let totalPrice = "Витрат немає.";
@@ -210,7 +212,7 @@ async function displayItems(){
 			 "&month=" + (siteCore.getMonth() + 1);
 	const categoriesResponce = await fetch(categoryUrl, {
 		method: "GET",
-		headers: siteCore.GetHeaders()});
+		headers: siteCore.getHeaders()});
 	const categoryAndCount = await categoriesResponce.json();
 	let categoryTable = '';
 	categoryAndCount.forEach(entry => {
@@ -236,7 +238,7 @@ async function displayItems(){
 async function getCategoryById(catId){
 	let response = await fetch("https://myapp-12344.herokuapp.com/api/categories/" + catId, {
 		method: "GET",
-		headers: siteCore.GetHeaders()});
+		headers: siteCore.getHeaders()});
 	return await response.json();
 }
 
@@ -287,7 +289,7 @@ async function drawCategoryBar(){
 async function getData(url){
 	const response = await fetch(url, {
 		method: "GET",
-		headers: siteCore.GetHeaders()});
+		headers: siteCore.getHeaders()});
 	let chartData = await response.json();
 	let xLabels = [];
 	let yLabels = [];
@@ -317,7 +319,8 @@ async function logIn(){
 		mostPopularItems(0);
 		drawCategoryDoughnut();
 		drawMonthChart();
-		document.getElementById('login').style.display = 'none';
+		getUserYearsList();
+		document.getElementById('login-form').style.display = 'none';
 }
 
 
