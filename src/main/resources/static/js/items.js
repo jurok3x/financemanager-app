@@ -2,11 +2,7 @@ const monthNames = ["Січень", "Лютий", "Березень", "Квіт�
 	"Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"];
 //initialize the site: fetch categories, display items for current month, and define all the years in a list
 let siteCore = siteNavigator(); //site
-daysList();
-displayItems();
-mostPopularItems(0);
-drawCategoryDoughnut();
-drawMonthChart();
+
 
 function siteNavigator(){
 	let d = new Date();
@@ -159,7 +155,7 @@ async function addItem() {
 		method: "POST",
 		body: JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }),
 		headers: {
- 	     'Content-Type': 'application/json'
+			'Content-Type':'application/json'
   	  	}  	  	
     });
 	document.getElementById('decor').style.display = 'none';
@@ -170,7 +166,8 @@ async function addItem() {
 async function mostPopularItems(catId){	
 	let url = "https://myapp-12344.herokuapp.com/api/items/popular" + ((catId) ? ('?categoryId=' + catId) : '');
 	const response = await fetch(url , {
-		method: "GET"});
+		method: "GET",
+		headers: siteCore.GetHeaders()});
 	let items = await response.json();
 	let html = '';
 	for(let i = 0; i < items.length; i++){
@@ -189,7 +186,8 @@ async function displayItems(){
 	const itemsUrl = "https://myapp-12344.herokuapp.com/api/items" + "?year=" + siteCore.getYear() +
 			 "&month=" + (siteCore.getMonth() + 1);
 	const itemResponse = await fetch(itemsUrl, {
-		method: "GET"});
+		method: "GET",
+		headers: siteCore.GetHeaders()});
 	const responseJson = await itemResponse.json();
 	let itemHtml ='';
 	let totalPrice = "Витрат немає.";
@@ -211,7 +209,8 @@ async function displayItems(){
 	const categoryUrl = "https://myapp-12344.herokuapp.com/api/categories/count" + "?year=" + siteCore.getYear() +
 			 "&month=" + (siteCore.getMonth() + 1);
 	const categoriesResponce = await fetch(categoryUrl, {
-		method: "GET"});
+		method: "GET",
+		headers: siteCore.GetHeaders()});
 	const categoryAndCount = await categoriesResponce.json();
 	let categoryTable = '';
 	categoryAndCount.forEach(entry => {
@@ -236,7 +235,8 @@ async function displayItems(){
 
 async function getCategoryById(catId){
 	let response = await fetch("https://myapp-12344.herokuapp.com/api/categories/" + catId, {
-		method: "GET"});
+		method: "GET",
+		headers: siteCore.GetHeaders()});
 	return await response.json();
 }
 
@@ -286,7 +286,8 @@ async function drawCategoryBar(){
 
 async function getData(url){
 	const response = await fetch(url, {
-		method: "GET"});
+		method: "GET",
+		headers: siteCore.GetHeaders()});
 	let chartData = await response.json();
 	let xLabels = [];
 	let yLabels = [];
@@ -309,9 +310,14 @@ async function logIn(){
 	 	     'Content-Type': 'application/json'
 	  	  	}  	  	
 	    });
-	    let responseHeader = await response.headers.get('Authorization');
+	 let responseHeader = response.headers.get('Authorization');
 		siteCore.appendHeader('Authorization', responseHeader);
-		return  response.json();
+		daysList();
+		displayItems();
+		mostPopularItems(0);
+		drawCategoryDoughnut();
+		drawMonthChart();
+		document.getElementById('login').style.display = 'none';
 }
 
 
