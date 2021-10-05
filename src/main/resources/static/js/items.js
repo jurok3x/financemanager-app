@@ -304,7 +304,7 @@ async function getData(url){
 async function logIn(){
 	const userLogin = document.getElementById('login').value;
 	const userPassword = document.getElementById('password').value;
-	alert(userLogin + userPassword);
+	
 	const  response = await fetch("https://myapp-12344.herokuapp.com/api/auth", {
 			method: "POST",
 			body: JSON.stringify({ login: userLogin, password: userPassword }),
@@ -313,6 +313,7 @@ async function logIn(){
 	  	  	}  	  	
 	    });
 	 let responseHeader = response.headers.get('Authorization');
+	 alert(responseHeader);
 		siteCore.appendHeader('Authorization', responseHeader);
 		daysList();
 		displayItems();
