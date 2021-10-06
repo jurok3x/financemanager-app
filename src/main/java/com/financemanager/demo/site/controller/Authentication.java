@@ -32,7 +32,7 @@ public class Authentication {
 	private final UserModelAssembler userAssembler;
 	private final UserService userService;
 	
-	@PostMapping("/")
+	@PostMapping
 	public ResponseEntity<UserModel> login(@RequestBody AuthRequest request){
 		try {
 		User user = userService.findByLogin(request.getLogin()).get();
