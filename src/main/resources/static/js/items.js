@@ -163,7 +163,8 @@ async function addItem() {
 	document.getElementById('decor').style.display = 'none';
 	displayItems();
 	siteCore.deleteHeader('Content-Type');
-	return await response.json();
+	console.log(response.json()
+	return response.json();
 }
 
 async function mostPopularItems(catId){	
