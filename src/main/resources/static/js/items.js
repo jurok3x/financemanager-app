@@ -154,6 +154,7 @@ async function addItem() {
 	}
 	let itemCategory = await getCategoryById(document.getElementById("categories").value);
 	const postHeaders = siteCore.getHeaders().append('Content-Type','application/json');
+	alert(postHeaders);
 	const  response = await fetch("https://myapp-12344.herokuapp.com/api/items/", {
 		method: "POST",
 		body: JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }),
@@ -320,6 +321,7 @@ async function logIn(){
 		drawMonthChart();
 		getUserYearsList();
 		document.getElementById('login-form').style.display = 'none';
+		document.getElementById('login-text').style.display = 'none';
 }
 
 
