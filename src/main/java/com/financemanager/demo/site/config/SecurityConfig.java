@@ -11,6 +11,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.financemanager.demo.site.config.jwt.JwtFilter;
 import com.financemanager.demo.site.service.CustomUserDetailsService;
@@ -56,6 +58,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 	 @Autowired
 	 private JwtFilter jwtFilter;
+	 
+	 @Bean
+		public WebMvcConfigurer corsConfigurer() {
+			return new WebMvcConfigurer() {
+				@Override
+				public void addCorsMappings(CorsRegistry registry) {
+					registry.addMapping("/**").allowedOrigins("*");
+				}
+			};
+		}
 	 
 	 
 }

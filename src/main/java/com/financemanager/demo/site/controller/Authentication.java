@@ -5,7 +5,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +24,6 @@ import lombok.extern.java.Log;
 @RequestMapping("/api/auth")
 @AllArgsConstructor
 @Log
-@CrossOrigin
 public class Authentication {
 	
 	private final JwtProvider jwtProvider;
