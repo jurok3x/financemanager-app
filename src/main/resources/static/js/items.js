@@ -155,7 +155,7 @@ async function addItem() {
 	}
 	let itemCategory = await getCategoryById(document.getElementById("categories").value);
 	siteCore.appendHeader('Content-Type', 'application/json');
-	const  response = await fetch("https://myapp-12344.herokuapp.com/api/items", {
+	let  response = await fetch("https://myapp-12344.herokuapp.com/api/items", {
 		method: "POST",
 		body: JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }),
 		headers: siteCore.getHeaders() 	  	
