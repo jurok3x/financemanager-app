@@ -153,9 +153,9 @@ async function addItem() {
 		return false;
 	}
 	let itemCategory = await getCategoryById(document.getElementById("categories").value);
-	const postHeaders = siteCore.getHeaders().append('Content-Type','application/json');
+	const postHeaders = siteCore.getHeaders();
 	alert(postHeaders);
-	const  response = await fetch("https://myapp-12344.herokuapp.com/api/items/", {
+	const  response = await fetch("https://myapp-12344.herokuapp.com/api/items", {
 		method: "POST",
 		body: JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }),
 		headers: postHeaders 	  	
@@ -312,8 +312,12 @@ async function logIn(){
 	 	     'Content-Type': 'application/json'
 	  	  	}  	  	
 	    });
-	 let responseHeader = response.headers.get('Authorization');
-		siteCore.appendHeader('Authorization', responseHeader);
+	    for(var key of  response.headers.keys()) {
+   console.log(key);
+}
+	 let responseHeader = response.headers.get('authorization');
+		siteCore.appendHeader('authorization', responseHeader);
+		
 		daysList();
 		displayItems();
 		mostPopularItems(0);
