@@ -40,6 +40,7 @@ public class Authentication {
 		log.info("Authenticate user " + request.getLogin());
 		return ResponseEntity.ok()
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+				.header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*")
 				.body(userAssembler.toModel(user));
 		} catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
