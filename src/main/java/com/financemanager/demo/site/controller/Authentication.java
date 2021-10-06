@@ -1,14 +1,15 @@
 package com.financemanager.demo.site.controller;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.financemanager.demo.site.config.jwt.JwtProvider;
@@ -21,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 
 @RestController
+@RequestMapping("/api/auth")
 @AllArgsConstructor
 @Log
 @CrossOrigin
@@ -30,7 +32,7 @@ public class Authentication {
 	private final UserModelAssembler userAssembler;
 	private final UserService userService;
 	
-	@PostMapping("/api/auth")
+	@PostMapping("/")
 	public ResponseEntity<UserModel> login(@RequestBody AuthRequest request){
 		try {
 		User user = userService.findByLogin(request.getLogin()).get();
@@ -44,9 +46,13 @@ public class Authentication {
         }
 	}
 	
-	@GetMapping("/api/auth")
-	public String test(@RequestHeader("Content-Type") String token) {
-		return token;
-	}
+	@RequestMapping(value = "/" , method = RequestMethod.OPTIONS)
+	ResponseEntity<?> singularOptions() 
+    {
+         return ResponseEntity
+                 .ok()
+                 .allow(HttpMethod.POST, HttpMethod.OPTIONS)
+                 .build();
+    }
 
 }
