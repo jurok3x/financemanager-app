@@ -158,7 +158,7 @@ async function addItem() {
 	const  response = await fetch("https://myapp-12344.herokuapp.com/api/items", {
 		method: "POST",
 		body: JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }),
-		headers: postHeaders 	  	
+		headers: siteCore.getHeaders() 	  	
     });
 	document.getElementById('decor').style.display = 'none';
 	displayItems();
