@@ -163,7 +163,7 @@ async function addItem() {
 	document.getElementById('decor').style.display = 'none';
 	displayItems();
 	siteCore.deleteHeader('Content-Type');
-	console.log(response.json()
+	console.log(response.json());
 	return response.json();
 }
 
