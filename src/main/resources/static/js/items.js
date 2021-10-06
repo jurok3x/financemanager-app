@@ -153,7 +153,7 @@ async function addItem() {
 		return false;
 	}
 	let itemCategory = await getCategoryById(document.getElementById("categories").value);
-	const postHeaders = siteCore.getHeaders();
+	const postHeaders = siteCore.getHeaders().append('Content-Type', 'application/json');
 	alert(postHeaders);
 	const  response = await fetch("https://myapp-12344.herokuapp.com/api/items", {
 		method: "POST",
