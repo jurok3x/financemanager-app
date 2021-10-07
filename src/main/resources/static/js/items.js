@@ -148,7 +148,7 @@ async function addItem() {
 		return false;
 	}
 	let itemDate = siteCore.getYear() + '-' + siteCore.getMonth() + '-' +
-	document.getElementById("days").value);
+	document.getElementById("days").value;
 	if(!document.getElementById("categories").value){
 		alert("Виберіть категорію!");
 		return false;
