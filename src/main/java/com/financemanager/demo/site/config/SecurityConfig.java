@@ -59,6 +59,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	 @Autowired
 	 private JwtFilter jwtFilter;
 	 
+	 //fdf
 	 @Bean
 		public WebMvcConfigurer corsConfigurer() {
 			return new WebMvcConfigurer() {
