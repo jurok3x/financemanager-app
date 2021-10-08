@@ -22,7 +22,7 @@
 			<button id="forward" style="vertical-align:middle" class="disabled" onclick="siteCore.monthForward()"><span>Вперед </span></button>
 		</div>
 		<div class="col-6">
-			<span id="login-text" onclick="document.getElementById('login-form').style.display = 'block'">Login</span>
+			<button class="btn btn-primary" id="login-text" onclick="document.getElementById('login-form').style.display = 'block'">Login</button>
 		</div>
 	</div>
 	<div class="row">
@@ -103,6 +103,7 @@
 		<input type="text" id="item_name" placeholder="Назва товару/послуги" required>
 		<input type="text" id="price" placeholder="Ціна" required>
 		<select id="categories" required>
+			<option value="">Виберііть категорію:</option>
 			<option value="1">Комунікації</option>
 			<option value="2">Їжа</option>
 			<option value="3">Благодійність</option>

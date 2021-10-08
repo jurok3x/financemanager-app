@@ -138,7 +138,7 @@ async function addItem() {
   	    alert("Введіть назву");
 	    return false;
  	 }
-	let itemPrice = document.getElementById("price").value;
+	const itemPrice = document.getElementById("price").value;
 	if(isNaN(itemPrice) || !itemPrice){
 		alert("Не коректна ціна!");
 		return false;
@@ -147,13 +147,13 @@ async function addItem() {
 		alert("Введіть день!");
 		return false;
 	}
-	let itemDate = siteCore.getYear() + '-' + siteCore.getMonth() + '-' +
-	document.getElementById("days").value;
+	const itemDate = new Date(Date.UTC(siteCore.getYear(), siteCore.getMonth(),
+	document.getElementById("days").value));
 	if(!document.getElementById("categories").value){
 		alert("Виберіть категорію!");
 		return false;
 	}
-	let itemCategory = await getCategoryById(document.getElementById("categories").value);
+	const itemCategory = await getCategoryById(document.getElementById("categories").value);
 	siteCore.appendHeader('Content-Type', 'application/json');
 	let  response = await fetch("https://myapp-12344.herokuapp.com/api/items", {
 		method: "POST",
@@ -163,7 +163,6 @@ async function addItem() {
 	document.getElementById('decor').style.display = 'none';
 	displayItems();
 	siteCore.deleteHeader('Content-Type');
-	console.log(response.json());
 }
 
 async function mostPopularItems(catId){	
@@ -251,8 +250,8 @@ async function drawCategoryDoughnut(){
 	}
 	const data = await getData(url);
 	const categoryDoughnut = siteCore.getCategoryDoughnut();
-	categoryDoughnut.data.labels = data.xLabels;
-	categoryDoughnut.data.datasets[0].data = data.yLabels;
+	categoryDoughnut.data.labels = data.yLabels;
+	categoryDoughnut.data.datasets[0].data = data.xLabels.map(entry => entry.toFixed(2));
 	categoryDoughnut.update();
 }
 
@@ -267,7 +266,7 @@ async function drawMonthChart(){
 	monthChart.data.labels = data.yLabels.map(entry =>{
 		return monthNames[entry - 1].substr(0, 3) + '.';
 	});
-	monthChart.data.datasets[1].data = data.xLabels;
+	monthChart.data.datasets[1].data = data.xLabels.map(entry => entry.toFixed(2));
 	monthChart.update();
 }
 
@@ -283,7 +282,7 @@ async function drawCategoryBar(){
 	}
 	const data = await getData(url);
 	const monthChart = siteCore.getMonthChart();
-	monthChart.data.datasets[0].data = data.xLabels;
+	monthChart.data.datasets[0].data = data.xLabels.map(entry => entry.toFixed(2));
 	monthChart.update();
 }
 
@@ -313,9 +312,6 @@ async function logIn(){
 	 	     'Content-Type': 'application/json'
 	  	  	}  	  	
 	    });
-	    for(var key of  response.headers.keys()) {
-   console.log(key);
-}
 	 let responseHeader = response.headers.get('authorization');
 		siteCore.appendHeader('authorization', responseHeader);
 		
