@@ -67,7 +67,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 					registry.addMapping("/**")
 					.allowedOrigins("*")
 					.allowedHeaders("*")
-					.exposedHeaders("*");
+					.exposedHeaders("*")
+					.allowedMethods("*");
 				}
 			};
 		}
