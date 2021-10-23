@@ -107,6 +107,7 @@ async function getUserYearsList() {
 			html += '<option value="' + year + '">' + year + '</option>'
 		})
 		document.getElementById("yearsList").innerHTML = html;
+		document.getElementById("year").innerHTML = html;
 	};
 
 async function addItem() {
@@ -160,7 +161,7 @@ async function mostPopularItems(catId){
 		'        <td>' + item.total.toFixed(2) + '</td></tr>\n' +
 		'    </tr>';
 	}	
-	document.getElementById("mostPopular").getElementsByTagName("tbody")[0].innerHTML = html;
+	document.getElementById("mostPopular").getElementsByTagName("tbody")[0].innerHTML = html;	
 }
 
 async function displayItems(){
@@ -204,14 +205,15 @@ async function displayItems(){
 		}
 	);	
 	
-	//sort items	
-	let resort = true;
-    $("#itemsList").trigger("update", [resort]);
 	
 	// add html
 	document.getElementById("total_price").innerHTML = totalPrice;
-	document.getElementById("itemList").getElementsByTagName("tbody")[0].innerHTML = itemHtml;
-	document.getElementById("categoryList").getElementsByTagName("tbody")[0].innerHTML = categoryTable;			
+	document.getElementById("item-list").getElementsByTagName("tbody")[0].innerHTML = itemHtml;
+	document.getElementById("categoryList").getElementsByTagName("tbody")[0].innerHTML = categoryTable;	
+	
+	//sort items	
+    $("#item-list").trigger("update");
+    $("#item-list").tablesorter()
 }
 
 async function getCategoryById(catId){
@@ -285,6 +287,23 @@ async function getData(url){
 	return {xLabels, yLabels}
 }
 
+function redirect(){
+	let date = new Date();
+	let mainUrl = new URL(document.location.href);
+	if(!mainUrl.search){
+		date.setMonth(date.getMonth() - 1);
+		mainUrl.searchParams.append('month', date.getMonth() + 1 );
+		mainUrl.searchParams.append('year', date.getFullYear());
+		location.replace(mainUrl.href);
+		return false;
+	}
+	console.log(mainUrl.searchParams);
+	mainUrl.searchParams = {'month': mainUrl.searchParams.get('month') == 1 ? mainUrl.searchParams.get('month') - 1 : 12,
+	 "year": mainUrl.searchParams.get('month') == 1 ? mainUrl.searchParams.get('year') - 1 : mainUrl.searchParams.get('year')}
+	console.log(mainUrl.searchParams);
+	location.replace(mainUrl.href);
+}
+
 async function logIn(){
 	const userLogin = document.getElementById('login').value;
 	const userPassword = document.getElementById('password').value;
@@ -301,6 +320,3 @@ async function logIn(){
 	 init();
 }
 
-$(function() {
-  $("#itemsList").tablesorter();
-});

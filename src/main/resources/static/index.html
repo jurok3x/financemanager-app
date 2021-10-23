@@ -1,28 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Items page</title>
+  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
+  <title>Голована сторінка</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/css/theme.bootstrap_4.min.css" integrity="" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="css/items.css">
-  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-  <script type="text/javascript" src="/js/jquery.js"></script>
-  <script type="text/javascript" src="/js/jquery.tablesorter.min.js"></script>
+ <script
+  src="https://code.jquery.com/jquery-3.6.0.js"
+  integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+  crossorigin="anonymous"></script>
+  <script  src="/js/jquery.tablesorter.min.js"></script>
+  <script  src="/js/jquery.tablesorter.js"></script>
+  <script  src="/js/jquery.tablesorter.pager.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js" integrity="sha512-qzgd5cYSZcosqpzpn7zF2ZId8f/8CHmFKZ8j7mU4OUXTNRd5g+ZHBPsgKEwoqxCtdQvExE5LprwwPAgoicguNg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.0/chart.js"></script>
+	<script type="text/javascript">
+		$(function() {
+  $("#item-list")
+  .tablesorter({
+    theme : "bootstrap",
+  	sortList: [[0, 0]],
+  	headers: {
+  		0:{
+  			sorter: false
+  		},
+  		5:{
+  			sorter: false
+  		}
+  	},
+  	widthFixed: true
+  })
+  .tablesorterPager({
+  	size: 10,
+  	container: $("#my-pager"),
+  	cssGoto  : ".pagenum",
+  	removeRows: false,
+  	output: '{startRow} - {endRow} / {filteredRows} ({totalRows})'
+  });
+});
+	</script>
 </head>
 <body>
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-6">
-				<select class="form-select form-select-lg" id="year" onchange="displayItems()" aria-label=".form-select-lg example">
-				  <option value="2018">2018</option>
-				  <option value="2019">2019</option>
-				  <option value="2020">2020</option>
-				  <option value="2021" selected>2021</option>
-				  <option value="2022">2022</option>>
-				</select>
+				<select class="form-select form-select-lg" id="year" onchange="displayItems()" aria-label=".form-select-lg example"></select>
 				<select class="form-select form-select-lg" id="month" onchange="displayItems()" aria-label=".form-select-sm example">
+				  <option value="">Весь час</option>
 				  <option value="1">Січень</option>
 				  <option value="2">Лютий</option>
 				  <option value="3">Березень</option>
@@ -36,6 +61,8 @@
 				  <option value="11">Листопад</option>
 				  <option value="12">Грудень</option>
 				</select>
+				<button class="btn btn-primary" id="back">Назад</button>
+				<button class="btn btn-primary" id="fwd">Вперед</button>
 		</div>
 		<div class="col-6">
 			<button class="btn btn-primary" id="login-text" onclick="document.getElementById('login-form').style.display = 'block'">Login</button>
@@ -43,69 +70,125 @@
 	</div>
 	<div class="row">
 		<div class="col-6">
-			<table class="table table-striped" id="itemList">
-				<caption id="table_head">
-					<h1 id="total_price"></h1>
-					<button id="add" onclick="document.getElementById('itemForm').style.display = 'block'">&#10010</a>
-				 </caption>
-					 <thead class="thead-dark">
-					 	<tr>
-						 	<th scope="col">№</th>
-						    <th scope="col">Назва</th> 
-							<th scope="col">Ціна</th>
-							<th scope="col">Категорія</th>
-							<th scope="col">День</th>
-							<th scope="col">Редагувати</th>
-						</tr>
-					</thead>
-					<tbody></tbody>
-				</table>
-		</div>
-		<div class="col-6">
-			<div class="row">
-				<div class="col-6">
-				<table class="table table-striped" id="mostPopular">
-					<caption>Найбільш популярні</caption>
-						<thead class="thead-dark">
-							<tr>
-						        <th scope="col">№</th>
-						        <th scope="col">Назва</th>
-						      	<th scope="col">Кількість</th>
-						     	<th scope="col">Сума</th>
-					   		</tr>
-					    </thead>
-					    <tbody></tbody>
-				</table>
-				</div>
-				<div class="col-6">
-					<table class="table table-striped" id="categoryList">
-				<caption>По категоріям</caption>
-						<thead class="thead-dark">
-							<tr>
+			<div class="table-responsive">
+				<table class="table table-bordered table-striped" id="item-list">
+					<caption id="table_head">
+						<h1 id="total_price"></h1>
+						<button id="add" onclick="document.getElementById('itemForm').style.display = 'block'">&#10010</a>
+					 </caption>
+						 <thead class="thead-dark">
+						 	<tr>
+							 	<th scope="col">№</th>
+							    <th scope="col">Назва</th> 
+								<th scope="col">Ціна</th>
 								<th scope="col">Категорія</th>
-							    <th scope="col">Кількість</th>
+								<th scope="col">День</th>
+								<th scope="col">Редагувати</th>
 							</tr>
 						</thead>
 						<tbody></tbody>
+						<tfoot>
+						    <tr>
+						      <th colspan="6" class="ts-pager" id="my-pager">
+						        <div class="form-inline">
+						          <div class="btn-group btn-group-sm mx-1" role="group">
+						            <button type="button" class="btn btn-secondary first" title="first">⇤</button>
+						            <button type="button" class="btn btn-secondary prev" title="previous">←</button>
+						          </div>
+						          <span class="pagedisplay"></span>
+						          <div class="btn-group btn-group-sm mx-1" role="group">
+						            <button type="button" class="btn btn-secondary next" title="next">→</button>
+						            <button type="button" class="btn btn-secondary last" title="last">⇥</button>
+						          </div>
+						          <div>
+						          <select class="form-control-sm  px-1 pagesize" title="Виберіть розмір сторінку">
+						            <option selected="selected" value="10">10</option>
+						            <option value="20">20</option>
+						            <option value="30">50</option>
+						            <option value="all">Всі рядки</option>
+						          </select>
+						          <select class="form-control-sm  px-4 mx-1 pagenum" title="Виберіть сторінку"></select>
+						          </div>
+						        </div>
+						      </th>
+						    </tr>
+						  </tfoot>
 					</table>
+				
+				
+				
+				
+			</div>	
+		</div>
+		<div class="col-6">
+			
+				
+			
+			
+			
+			<div class="tabs">
+				<input type="radio" name="tab-btn" id="tab-btn-1" value="" checked>
+				<label for="tab-btn-1">Популярні</label>
+				<input type="radio" name="tab-btn" id="tab-btn-2" value="">
+				<label for="tab-btn-2">Графік</label>
+				<input type="radio" name="tab-btn" id="tab-btn-3" value="">
+				<label for="tab-btn-3">Статистика</label>
+				
+				<div id="content-1">
+					<div class="row">
+						<div class="col-6">
+							<div class="table-responsive">
+								<table class="table table-striped" id="mostPopular">
+									<caption>Найбільш популярні</caption>
+										<thead class="thead-dark">
+											<tr>
+										        <th scope="col">№</th>
+										        <th scope="col">Назва</th>
+										      	<th scope="col">Кількість</th>
+										     	<th scope="col">Сума</th>
+									   		</tr>
+									    </thead>
+									    <tbody></tbody>
+								</table>
+							</div>
+						</div>
+					<div class="col-6">
+						<div class="table-responsive">
+						<table class="table table-striped" id="categoryList">
+						<caption>По категоріям</caption>
+							<thead class="thead-dark">
+								<tr>
+									<th scope="col">Категорія</th>
+								    <th scope="col">Кількість</th>
+								</tr>
+							</thead>
+							<tbody></tbody>
+						</table>
+						</div>
+					</div>
 				</div>
-			</div>
-			<select id="categoryYearList" onchange="drawCategoryBar()">
-				<option value="">Всі витрати</option>
-				<option value="1">Комунікації</option>
-				<option value="2">Їжа</option>
-				<option value="3">Благодійність</option>
-				<option value="4">Транспорт</option>
-				<option value="5">Побут</option>
-				<option value="6">Проживання</option>
-				<option value="7">Ліки</option>
-				<option value="8">Дозвілля</option>
-				<option value="9">Послуги</option>
-				<option value="10">Інше</option>
-			</select>
+				</div>
+				<div id="content-2">
+				  <select id="categoryYearList" onchange="drawCategoryBar()">
+						<option value="">Всі витрати</option>
+						<option value="1">Комунікації</option>
+						<option value="2">Їжа</option>
+						<option value="3">Благодійність</option>
+						<option value="4">Транспорт</option>
+						<option value="5">Побут</option>
+						<option value="6">Проживання</option>
+						<option value="7">Ліки</option>
+						<option value="8">Дозвілля</option>
+						<option value="9">Послуги</option>
+						<option value="10">Інше</option>
+					</select>
 			<select id="yearsList" onchange="drawCategoryDoughnut(), drawMonthChart(), drawCategoryBar()"></select>
 			<canvas id="monthStatistic" width="400" height="400"></canvas>
-			<canvas id="categoryStatistic" width="500" height="500" ></canvas>
+				</div>
+				<div id="content-3">
+				  <canvas id="categoryStatistic" width="500" height="500" ></canvas>
+				</div>
+			</div>
 			
 		</div>
 	</div>
