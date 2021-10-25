@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
-  <title>Голована сторінка</title>
+  <title>Головна сторінка</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/css/theme.bootstrap_4.min.css" integrity="" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="css/items.css">
@@ -45,8 +45,8 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-6">
-				<select class="form-select form-select-lg" id="year" onchange="displayItems()" aria-label=".form-select-lg example"></select>
-				<select class="form-select form-select-lg" id="month" onchange="displayItems()" aria-label=".form-select-sm example">
+				<select class="form-select form-select-lg" id="year" onchange="displayItems(), drawCategoryDoughnut()" aria-label=".form-select-lg example"></select>
+				<select class="form-select form-select-lg" id="month" onchange="displayItems(), drawCategoryDoughnut()" aria-label=".form-select-sm example">
 				  <option value="">Весь час</option>
 				  <option value="1">Січень</option>
 				  <option value="2">Лютий</option>
@@ -57,12 +57,10 @@
 				  <option value="7">Липень</option>
 				  <option value="8">Серпень</option>
 				  <option value="9">Вересень</option>
-				  <option value="10" selected>Жовтень</option>
+				  <option value="10">Жовтень</option>
 				  <option value="11">Листопад</option>
 				  <option value="12">Грудень</option>
 				</select>
-				<button class="btn btn-primary" id="back">Назад</button>
-				<button class="btn btn-primary" id="fwd">Вперед</button>
 		</div>
 		<div class="col-6">
 			<button class="btn btn-primary" id="login-text" onclick="document.getElementById('login-form').style.display = 'block'">Login</button>
@@ -70,12 +68,9 @@
 	</div>
 	<div class="row">
 		<div class="col-6">
+			<p id="total-price"></p>
 			<div class="table-responsive">
 				<table class="table table-bordered table-striped" id="item-list">
-					<caption id="table_head">
-						<h1 id="total_price"></h1>
-						<button id="add" onclick="document.getElementById('itemForm').style.display = 'block'">&#10010</a>
-					 </caption>
 						 <thead class="thead-dark">
 						 	<tr>
 							 	<th scope="col">№</th>
@@ -108,6 +103,7 @@
 						            <option value="all">Всі рядки</option>
 						          </select>
 						          <select class="form-control-sm  px-4 mx-1 pagenum" title="Виберіть сторінку"></select>
+						          <button id="add" onclick="document.getElementById('itemForm').style.display = 'block'">&#10010</button>
 						          </div>
 						        </div>
 						      </th>
@@ -144,7 +140,7 @@
 											<tr>
 										        <th scope="col">№</th>
 										        <th scope="col">Назва</th>
-										      	<th scope="col">Кількість</th>
+										      	<th scope="col">Всього</th>
 										     	<th scope="col">Сума</th>
 									   		</tr>
 									    </thead>
@@ -154,7 +150,7 @@
 						</div>
 					<div class="col-6">
 						<div class="table-responsive">
-						<table class="table table-striped" id="categoryList">
+						<table class="table table-striped" id="category-count">
 						<caption>По категоріям</caption>
 							<thead class="thead-dark">
 								<tr>
@@ -169,8 +165,8 @@
 				</div>
 				</div>
 				<div id="content-2">
-				  <select id="categoryYearList" onchange="drawCategoryBar()">
-						<option value="">Всі витрати</option>
+				  <select id="category-bar-select" onchange="drawCategoryBar()">
+						<option value="">Виберіть категорію: </option>
 						<option value="1">Комунікації</option>
 						<option value="2">Їжа</option>
 						<option value="3">Благодійність</option>
@@ -182,11 +178,11 @@
 						<option value="9">Послуги</option>
 						<option value="10">Інше</option>
 					</select>
-			<select id="yearsList" onchange="drawCategoryDoughnut(), drawMonthChart(), drawCategoryBar()"></select>
-			<canvas id="monthStatistic" width="400" height="400"></canvas>
+			<select id="year-chart-select" onchange="drawMonthChart(), drawCategoryBar()"></select>
+			<canvas id="statistics-month" width="400" height="400"></canvas>
 				</div>
 				<div id="content-3">
-				  <canvas id="categoryStatistic" width="500" height="500" ></canvas>
+				  <canvas id="statistic-category" width="500" height="500" ></canvas>
 				</div>
 			</div>
 			

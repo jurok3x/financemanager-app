@@ -3,15 +3,18 @@ const monthNames = ["Січень", "Лютий", "Березень", "Квіт�
 //initialize the site: fetch categories, display items for current month, and define all the years in a list
 let siteCore = siteNavigator(); //site
 
-function init (){
-	daysList();
-	displayItems();
-	mostPopularItems(0);
-	drawCategoryDoughnut();
-	drawMonthChart();
-	getUserYearsList();
+async function init (){
 	document.getElementById('login-form').style.display = 'none';
 	document.getElementById('login-text').style.display = 'none';
+	//initialize the date
+	await getUserYearsList();
+	daysList();
+	//display all items, draw the bars
+	await displayItems();
+	await mostPopularItems(0);
+	await drawCategoryDoughnut();
+	drawMonthChart();
+	
 }
 
 if(localStorage.getItem('SavedToken')){
@@ -20,9 +23,16 @@ if(localStorage.getItem('SavedToken')){
 
 function siteNavigator(){
 	let siteHedders = new Headers();
-	const doughnutCtx = document.getElementById('categoryStatistic').getContext('2d');
+	const doughnutCtx = document.getElementById('statistic-category').getContext('2d');
 	const categoryDoughnut = new Chart(doughnutCtx, {
 	    type: 'doughnut',
+	    options: {
+	     	plugins: {
+	     		legend:{
+	     			position: 'right'
+	     		}
+	     	}
+	     },
 	    data: {
 	        datasets: [{
 	            label: 'Витрати',
@@ -42,7 +52,7 @@ function siteNavigator(){
 	        }]
 	    },
 	});
-	const monthCtx = document.getElementById('monthStatistic').getContext('2d');
+	const monthCtx = document.getElementById('statistics-month').getContext('2d');
 	const monthChart = new Chart(monthCtx, {
     data: {
         datasets: [{
@@ -106,8 +116,11 @@ async function getUserYearsList() {
 		years.forEach(year =>{
 			html += '<option value="' + year + '">' + year + '</option>'
 		})
-		document.getElementById("yearsList").innerHTML = html;
+		document.getElementById("year-chart-select").innerHTML = html;
 		document.getElementById("year").innerHTML = html;
+		const dateNow = new Date();
+		document.getElementById('month').value = dateNow.getMonth() + 1;
+		document.getElementById("year").value = dateNow.getFullYear();
 	};
 
 async function addItem() {
@@ -143,12 +156,17 @@ async function addItem() {
 }
 
 async function mostPopularItems(catId){	
-	let itemsUrl = new URL('https://myapp-12344.herokuapp.com/api/items/popular');
-	if(catId){
-		const searchParams = new  URLSearchParams([["categoryId", catId]]);
-		itemsUrl.search = searchParams;
+	let url = new URL('https://myapp-12344.herokuapp.com/api/items/popular');
+	if(document.getElementById('year').value){
+		url.searchParams.append('year', document.getElementById('year').value);
 	}
-	const response = await fetch(itemsUrl.href , {
+	if(document.getElementById('month').value){
+		url.searchParams.append('month', document.getElementById('month').value);
+	}
+	if(catId){
+		url.searchParams.append('categoryId', catId);
+	}
+	const response = await fetch(url.href , {
 		method: "GET",
 		headers: { 'authorization' : localStorage.getItem('SavedToken') }});
 	let items = await response.json();
@@ -167,9 +185,12 @@ async function mostPopularItems(catId){
 async function displayItems(){
 	//display all items for current date
 	let itemsUrl = new URL('https://myapp-12344.herokuapp.com/api/items');
-	const searchParams = new  URLSearchParams([["month", document.getElementById("month").value],
-	 ["year", document.getElementById("year").value]]);
-	itemsUrl.search = searchParams;
+	if(document.getElementById('year').value){
+		itemsUrl.searchParams.append('year', document.getElementById('year').value);
+	}
+	if(document.getElementById('month').value){
+		itemsUrl.searchParams.append('month', document.getElementById('month').value);
+	}
 	const itemResponse = await fetch(itemsUrl.href, {
 		method: "GET",
 		headers: { 'authorization' : localStorage.getItem('SavedToken') }});
@@ -177,22 +198,22 @@ async function displayItems(){
 	let itemHtml ='';
 	let totalPrice = "Витрат немає.";
 	if(Object.keys(responseJson)[0] == "_embedded"){
-		let items = responseJson._embedded.itemModelList;
+		const items = responseJson._embedded.itemModelList;
 		items.forEach((item, index) => {
-			console.log(item);
 			itemHtml += '<tr><th scope="row">' + (index + 1) + '</th>\n' +
 			'        <td>' + item.name + '</td>\n' +
 			'        <td>' + item.price + '</td>\n' +
 			'        <td>' + item.category.name + '</td>' +
-			'        <td>' + new Date(item.date).getDate() + '</td>' +
+			'        <td>' + item.date.slice(0, 10) + '</td>' +
 			'        <td><button onclick="deleteItem(' + item.id + ')">Видалити</button></td></tr>';
 			});
-		totalPrice = "Загальні витрати за місяць: " + 
-			items.reduce((value, item) => value + item.price, 0).toFixed(2) + "грн";
+			
+		totalPrice = '<strong>Загальні витрати за період: ' + 
+			items.reduce((value, item) => value + item.price, 0).toFixed(2) + 'грн</strong>';
 	}
 	//display category count
 	let categoryUrl =  new URL('https://myapp-12344.herokuapp.com/api/categories/count');
-	categoryUrl.search = searchParams;
+	categoryUrl.searchParams = itemsUrl.searchParams;
 	const categoriesResponce = await fetch(categoryUrl, {
 		method: "GET",
 		headers: { 'authorization' : localStorage.getItem('SavedToken') }});
@@ -207,9 +228,9 @@ async function displayItems(){
 	
 	
 	// add html
-	document.getElementById("total_price").innerHTML = totalPrice;
+	document.getElementById("total-price").innerHTML = totalPrice;
 	document.getElementById("item-list").getElementsByTagName("tbody")[0].innerHTML = itemHtml;
-	document.getElementById("categoryList").getElementsByTagName("tbody")[0].innerHTML = categoryTable;	
+	document.getElementById("category-count").getElementsByTagName("tbody")[0].innerHTML = categoryTable;	
 	
 	//sort items	
     $("#item-list").trigger("update");
@@ -227,11 +248,14 @@ async function getCategoryById(catId){
 }
 
 async function drawCategoryDoughnut(){
-	let year = document.getElementById("yearsList").value;
+	const year = document.getElementById("year").value;
+	const month = document.getElementById("month").value;
 	let url = new URL('https://myapp-12344.herokuapp.com/api/categories/cost');
 	if(year){
-		const searchParams = new  URLSearchParams([["year", year]]);
-		url.search = searchParams;
+		url.searchParams.append('year', year);
+	}
+	if(month){
+		url.searchParams.append('month', month);
 	}
 	const data = await getData(url.href);
 	const categoryDoughnut = siteCore.getCategoryDoughnut();
@@ -241,11 +265,10 @@ async function drawCategoryDoughnut(){
 }
 
 async function drawMonthChart(){
-	const year = document.getElementById("yearsList").value;
+	const year = document.getElementById("year-chart-select").value;
 	let url = new URL('https://myapp-12344.herokuapp.com/api/items/statistics');
 	if(year){
-		const searchParams = new  URLSearchParams([["year", year]]);
-		url.search = searchParams;
+		url.searchParams.append('year', year);
 	}
 	const data = await getData(url.href);
 	const monthChart = siteCore.getMonthChart();
@@ -257,8 +280,8 @@ async function drawMonthChart(){
 }
 
 async function drawCategoryBar(){
-	const year = document.getElementById("yearsList").value;
-	const catId = document.getElementById("categoryYearList").value;
+	const year = document.getElementById("year-chart-select").value;
+	const catId = document.getElementById("category-bar-select").value;
 	let url = new URL('https://myapp-12344.herokuapp.com/api/items/statistics');
 	if(year){
 		url.searchParams.append('year', year);
@@ -285,23 +308,6 @@ async function getData(url){
 		yLabels.push(entry[objKeys[1]]);
 	})	
 	return {xLabels, yLabels}
-}
-
-function redirect(){
-	let date = new Date();
-	let mainUrl = new URL(document.location.href);
-	if(!mainUrl.search){
-		date.setMonth(date.getMonth() - 1);
-		mainUrl.searchParams.append('month', date.getMonth() + 1 );
-		mainUrl.searchParams.append('year', date.getFullYear());
-		location.replace(mainUrl.href);
-		return false;
-	}
-	console.log(mainUrl.searchParams);
-	mainUrl.searchParams = {'month': mainUrl.searchParams.get('month') == 1 ? mainUrl.searchParams.get('month') - 1 : 12,
-	 "year": mainUrl.searchParams.get('month') == 1 ? mainUrl.searchParams.get('year') - 1 : mainUrl.searchParams.get('year')}
-	console.log(mainUrl.searchParams);
-	location.replace(mainUrl.href);
 }
 
 async function logIn(){
