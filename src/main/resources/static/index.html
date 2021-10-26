@@ -45,8 +45,8 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-6">
-				<select class="form-select form-select-lg" id="year" onchange="displayItems(), drawCategoryDoughnut()" aria-label=".form-select-lg example"></select>
-				<select class="form-select form-select-lg" id="month" onchange="displayItems(), drawCategoryDoughnut()" aria-label=".form-select-sm example">
+				<select class="form-select form-select-lg" id="year" onchange="displayItems(), mostPopularItems(), drawCategoryDoughnut()" aria-label=".form-select-lg example"></select>
+				<select class="form-select form-select-lg" id="month" onchange="displayItems(), mostPopularItems(), drawCategoryDoughnut()" aria-label=".form-select-sm example">
 				  <option value="">Весь рік</option>
 				  <option value="1">Січень</option>
 				  <option value="2">Лютий</option>
@@ -61,7 +61,7 @@
 				  <option value="11">Листопад</option>
 				  <option value="12">Грудень</option>
 				</select>
-				<select id="category" onchange="displayItems()">
+				<select id="category" onchange="displayItems(), mostPopularItems()">
 						<option value="">Всі категорії</option>
 						<option value="1">Комунікації</option>
 						<option value="2">Їжа</option>
@@ -100,27 +100,28 @@
 						      <th colspan="6" class="ts-pager" id="my-pager">
 						        <div class="form-inline">
 						          <div class="btn-group btn-group-sm mx-1" role="group">
-						            <button type="button" class="btn btn-secondary first" title="first">⇤</button>
-						            <button type="button" class="btn btn-secondary prev" title="previous">←</button>
+						            <button type="button" class="btn btn-secondary first" title="перша">⇤</button>
+						            <button type="button" class="btn btn-secondary prev" title="попередня">←</button>
 						          </div>
 						          <span class="pagedisplay"></span>
 						          <div class="btn-group btn-group-sm mx-1" role="group">
-						            <button type="button" class="btn btn-secondary next" title="next">→</button>
-						            <button type="button" class="btn btn-secondary last" title="last">⇥</button>
+						            <button type="button" class="btn btn-secondary next" title="наступна">→</button>
+						            <button type="button" class="btn btn-secondary last" title="остання">⇥</button>
 						          </div>
 						          <div>
-						          <select class="form-control-sm  px-1 pagesize" title="Виберіть розмір сторінку">
+						          <select class="form-control-sm  px-1 pagesize" title="Виберіть розмір сторінки">
 						            <option selected="selected" value="10">10</option>
 						            <option value="20">20</option>
 						            <option value="30">50</option>
 						            <option value="all">Всі рядки</option>
 						          </select>
 						          <select class="form-control-sm  px-4 mx-1 pagenum" title="Виберіть сторінку"></select>
-						          <button id="add" onclick="document.getElementById('itemForm').style.display = 'block'">&#10010</button>
+						          <button id="add" onclick="openItemForm()" title="Додати">&#10010</button>
 						          </div>
 						        </div>
 						      </th>
 						    </tr>
+						    
 						  </tfoot>
 					</table>
 				
@@ -204,20 +205,24 @@
 	</div>
 </div>
 
-<div id="itemForm" class="my-form">
-	<form name="itemForm" action="#" class="form-inner">
+<div id="add-item" class="add-item-form">
+	<form name="add-item" action="#" >
 	<div class="row">
-		<h3>Додати елемент</h3>
-		<button onclick="document.getElementById('itemForm').style.display = 'none'">
-		<b>&#10006;</b></button><br>
+		<div class="col-12">
+			<h3>Додати елемент</h3>
+			<a class="btn btn-primary" onclick="document.getElementById('add-item').style.display = 'none'" role="button">Link</a>
+		</div>
 	</div>
 	<div class="row">
-		<div class="form-group">
-			<input type="text" id="item-name" placeholder="Назва товару/послуги" required>
+		<div class="col-6">
+			<div class="form-group">
+				<input type="text" id="item-name" placeholder="Назва товару/послуги" required>
+			</div>
+			<div class="form-group">
+				<input type="text" id="price" placeholder="Ціна" required>
+			</div>
 		</div>
-		<div class="form-group">
-			<input type="text" id="price" placeholder="Ціна" required>
-		</div>
+		<div class="col-6">
 		<div class="form-group">
 			<select id="item-category" required>
 				<option value="">Виберііть категорію:</option>
@@ -237,12 +242,13 @@
 			<select id="item-day" required></select>
 		</div>
 		</div>
+		</div>
 		<input type="submit" class="btn btn-primary" onclick="addItem()" value="Додати">
 	</form>
 </div>
 
 <div id="login-form" class="my-form">
-	<form name="loginForm" action="#">
+	<form name="login-form" action="#">
      <div class="form-group">
     	 <label for="login">Логін</label>
     	 <input type="text" class="form-control" id="login" placeholder="Введіть логін">

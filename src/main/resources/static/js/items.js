@@ -152,11 +152,11 @@ async function addItem() {
 		body: JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }),
 		headers: { 'Content-Type' : 'application/json', 'authorization' : localStorage.getItem('SavedToken') } 	  	
     });
-	document.getElementById('itemForm').style.display = 'none';
+	document.getElementById('add-item').style.display = 'none';
 	displayItems();
 }
 
-async function mostPopularItems(catId){	
+async function mostPopularItems(){	
 	let url = new URL('https://myapp-12344.herokuapp.com/api/items/popular');
 	if(document.getElementById('year').value){
 		url.searchParams.append('year', document.getElementById('year').value);
@@ -164,8 +164,8 @@ async function mostPopularItems(catId){
 	if(document.getElementById('month').value){
 		url.searchParams.append('month', document.getElementById('month').value);
 	}
-	if(catId){
-		url.searchParams.append('categoryId', catId);
+	if(document.getElementById('category').value){
+		url.searchParams.append('categoryId', document.getElementById('category').value);
 	}
 	const response = await fetch(url.href , {
 		method: "GET",
@@ -209,7 +209,8 @@ async function displayItems(){
 			'        <td>' + item.price + '</td>\n' +
 			'        <td>' + item.category.name + '</td>' +
 			'        <td>' + item.date.slice(0, 10) + '</td>' +
-			'        <td><button onclick="deleteItem(' + item.id + ')">Видалити</button></td></tr>';
+			'        <td><button type="button" class="btn btn-warning btn-sm" onclick="" title="Редагувати"> &#9998;</button>' + 
+			'<button type="button" class="btn btn-danger btn-sm" onclick="deleteItem(' + item.id + ')" title="Видалити">&#10006;</button></td></tr>';
 			});
 			
 		totalPrice = '<strong>Загальні витрати за період: ' + 
@@ -217,8 +218,8 @@ async function displayItems(){
 	}
 	//display category count
 	let categoryUrl =  new URL('https://myapp-12344.herokuapp.com/api/categories/count');
-	categoryUrl.searchParams = itemsUrl.searchParams;
-	const categoriesResponce = await fetch(categoryUrl, {
+	categoryUrl.search = itemsUrl.search;
+	const categoriesResponce = await fetch(categoryUrl.href, {
 		method: "GET",
 		headers: { 'authorization' : localStorage.getItem('SavedToken') }});
 	const categoryAndCount = await categoriesResponce.json();
@@ -250,6 +251,12 @@ async function getCategoryById(catId){
 		headers: { 'authorization' : localStorage.getItem('SavedToken') }});
 	return await response.json();
 }
+
+function openItemForm(evt){
+    var source =  evt.srcElement || evt.originalTarget;
+    console.log(source.id);
+}
+
 
 async function drawCategoryDoughnut(){
 	const year = document.getElementById("year").value;
