@@ -29,7 +29,6 @@ public class Category implements Comparable<Category>{
 	private String name;
 	@Override
 	public int compareTo(Category category) {
-		// TODO Auto-generated method stub
 		return this.id - category.getId();
 	}
 }

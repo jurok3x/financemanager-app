@@ -103,7 +103,7 @@ function daysList() {
 	for (let i = 1; i <= daysInMonth; i++) {
 		html = html + '<option value="' + i + '">' + i + '</option>';
 	}
-	document.getElementById("days").innerHTML = html;
+	document.getElementById("item-day").innerHTML = html;
 };
 
 async function getUserYearsList() {
@@ -112,7 +112,7 @@ async function getUserYearsList() {
 		headers: { 'authorization' : localStorage.getItem('SavedToken') }
 		})
 		const years = await response.json();
-		let html = '<option value="">Весь час</option>';
+		let html = '<option value="">Весь період</option>';
 		years.forEach(year =>{
 			html += '<option value="' + year + '">' + year + '</option>'
 		})
@@ -124,28 +124,29 @@ async function getUserYearsList() {
 	};
 
 async function addItem() {
+	
 	// fetch all entries from the form and check for null
-	let itemName = document.getElementById("item_name").value;
+	const itemName = document.getElementById("item-name").value;
 	if (!itemName) {
   	    alert("Введіть назву");
 	    return false;
  	 }
-	const itemPrice = document.getElementById("price").value;
+	const itemPrice = document.getElementById("item-price").value;
 	if(isNaN(itemPrice) || !itemPrice){
 		alert("Не коректна ціна!");
 		return false;
 	}	
-	if(!document.getElementById('days').value){
+	if(!document.getElementById('item-day').value){
 		alert("Введіть день!");
 		return false;
 	}
 	const itemDate = new Date(Date.UTC(document.getElementById('year').value, document.getElementById('month').value - 1,
-	document.getElementById('days').value));
-	if(!document.getElementById('categories').value){
+	document.getElementById('item-day').value));
+	if(!document.getElementById('item-category').value){
 		alert("Виберіть категорію!");
 		return false;
 	}
-	const itemCategory = await getCategoryById(document.getElementById("categories").value);
+	const itemCategory = await getCategoryById(document.getElementById("item-category").value);
 	const  response = await fetch('https://myapp-12344.herokuapp.com/api/items', {
 		method: "POST",
 		body: JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }),
@@ -185,6 +186,9 @@ async function mostPopularItems(catId){
 async function displayItems(){
 	//display all items for current date
 	let itemsUrl = new URL('https://myapp-12344.herokuapp.com/api/items');
+	if(document.getElementById('category').value){
+		itemsUrl.href += '/category/' + document.getElementById('category').value;
+	}
 	if(document.getElementById('year').value){
 		itemsUrl.searchParams.append('year', document.getElementById('year').value);
 	}
@@ -250,6 +254,9 @@ async function getCategoryById(catId){
 async function drawCategoryDoughnut(){
 	const year = document.getElementById("year").value;
 	const month = document.getElementById("month").value;
+	const infoText = 'Статистика за ' + ((year) ? year + ' рік' : 'весь період') +
+	((month) ? ' місяць ' + monthNames[month - 1].toLowerCase()  : '') + '.';
+	document.getElementById('info-category-doughnut').innerHTML = infoText;
 	let url = new URL('https://myapp-12344.herokuapp.com/api/categories/cost');
 	if(year){
 		url.searchParams.append('year', year);

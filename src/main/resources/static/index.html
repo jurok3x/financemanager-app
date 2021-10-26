@@ -47,7 +47,7 @@
 		<div class="col-6">
 				<select class="form-select form-select-lg" id="year" onchange="displayItems(), drawCategoryDoughnut()" aria-label=".form-select-lg example"></select>
 				<select class="form-select form-select-lg" id="month" onchange="displayItems(), drawCategoryDoughnut()" aria-label=".form-select-sm example">
-				  <option value="">Весь час</option>
+				  <option value="">Весь рік</option>
 				  <option value="1">Січень</option>
 				  <option value="2">Лютий</option>
 				  <option value="3">Березень</option>
@@ -61,6 +61,19 @@
 				  <option value="11">Листопад</option>
 				  <option value="12">Грудень</option>
 				</select>
+				<select id="category" onchange="displayItems()">
+						<option value="">Всі категорії</option>
+						<option value="1">Комунікації</option>
+						<option value="2">Їжа</option>
+						<option value="3">Благодійність</option>
+						<option value="4">Транспорт</option>
+						<option value="5">Побут</option>
+						<option value="6">Проживання</option>
+						<option value="7">Ліки</option>
+						<option value="8">Дозвілля</option>
+						<option value="9">Послуги</option>
+						<option value="10">Інше</option>
+					</select>
 		</div>
 		<div class="col-6">
 			<button class="btn btn-primary" id="login-text" onclick="document.getElementById('login-form').style.display = 'block'">Login</button>
@@ -182,6 +195,7 @@
 			<canvas id="statistics-month" width="400" height="400"></canvas>
 				</div>
 				<div id="content-3">
+					<h3 id="info-category-doughnut"></h3>
 				  <canvas id="statistic-category" width="500" height="500" ></canvas>
 				</div>
 			</div>
@@ -199,13 +213,13 @@
 	</div>
 	<div class="row">
 		<div class="form-group">
-			<input type="text" id="item_name" placeholder="Назва товару/послуги" required>
+			<input type="text" id="item-name" placeholder="Назва товару/послуги" required>
 		</div>
 		<div class="form-group">
 			<input type="text" id="price" placeholder="Ціна" required>
 		</div>
 		<div class="form-group">
-			<select id="categories" required>
+			<select id="item-category" required>
 				<option value="">Виберііть категорію:</option>
 				<option value="1">Комунікації</option>
 				<option value="2">Їжа</option>
@@ -220,7 +234,7 @@
 			</select>
 		</div>
 		<div class="form-group">
-			<select id="days" required></select>
+			<select id="item-day" required></select>
 		</div>
 		</div>
 		<input type="submit" class="btn btn-primary" onclick="addItem()" value="Додати">

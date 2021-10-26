@@ -64,8 +64,12 @@ public class DefaultItemService implements ItemService {
 					}
 					return monthString;
 				}).orElse("") + "%";
-		return itemRepository.findByUserIdAndCategoryIdAndDate(userService.getUserFromToken(userToken).getId(), categoryId,
-				dateString, limit.orElse(10), offset.orElse(0));
+		if(limit.isPresent() || offset.isPresent()) {
+			return itemRepository.findByUserIdAndCategoryIdAndDate(userService.getUserFromToken(userToken).getId(), categoryId,
+					dateString, limit.orElse(10), offset.orElse(0));
+		}
+		return itemRepository.findByUserIdAndCategoryIdAndDateAll(userService.getUserFromToken(userToken).getId(), categoryId,
+				dateString);
 	}
 
 	@Override
