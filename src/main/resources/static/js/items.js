@@ -8,13 +8,17 @@ async function init (){
 	document.getElementById('login-text').style.display = 'none';
 	//initialize the date
 	await getUserYearsList();
-	daysList();
 	//display all items, draw the bars
 	await displayItems();
+	const buttons = document.getElementById('item-list').getElementsByTagName('button');
+	for (i=0; i< buttons.length; i++){
+		if(buttons[i].className.search('btn-warning') > 0 || buttons[i].id === 'add'){
+			buttons[i].addEventListener('click', )
+		}
+	}
 	await mostPopularItems(0);
 	await drawCategoryDoughnut();
 	drawMonthChart();
-	
 }
 
 if(localStorage.getItem('SavedToken')){
@@ -95,17 +99,6 @@ async function deleteItem(itemId) {
 	displayItems();
 }
 
-function daysList() {
-	let y = document.getElementById("year").value;
-	let m = document.getElementById("month").value;
-	let daysInMonth = /8|3|5|10/.test(--m)?30:m==1?(!(y%4)&&y%100)||!(y%400)?29:28:31;
-	let html = '<option value="">День:</option>';
-	for (let i = 1; i <= daysInMonth; i++) {
-		html = html + '<option value="' + i + '">' + i + '</option>';
-	}
-	document.getElementById("item-day").innerHTML = html;
-};
-
 async function getUserYearsList() {
 		const response = await fetch("https://myapp-12344.herokuapp.com/api/items/years", {
 		method: "GET",
@@ -136,12 +129,11 @@ async function addItem() {
 		alert("Не коректна ціна!");
 		return false;
 	}	
-	if(!document.getElementById('item-day').value){
-		alert("Введіть день!");
+	if(!document.getElementById('item-date').value){
+		alert("Введіть дату!");
 		return false;
 	}
-	const itemDate = new Date(Date.UTC(document.getElementById('year').value, document.getElementById('month').value - 1,
-	document.getElementById('item-day').value));
+	const itemDate = document.getElementById('item-date').value;
 	if(!document.getElementById('item-category').value){
 		alert("Виберіть категорію!");
 		return false;
@@ -183,6 +175,23 @@ async function mostPopularItems(){
 	document.getElementById("mostPopular").getElementsByTagName("tbody")[0].innerHTML = html;	
 }
 
+async function editItem(itemId){
+	document.getElementById('add-item').style.display = 'block';
+	if(!itemId){
+		return false;
+	}
+	const response = await fetch("https://myapp-12344.herokuapp.com/api/items/" + itemId, {
+		method: "GET",
+		headers: { 'authorization' : localStorage.getItem('SavedToken') }});
+	const item =  await response.json();
+	document.getElementById('add-item').getElementsByTagName('h3')[0].innerHTML = 'Змінити елемент';
+	document.getElementById('add-item').getElementsByTagName('input')[0].value = item.name;
+	document.getElementById('add-item').getElementsByTagName('input')[1].value = item.price;
+	document.getElementById('add-item').getElementsByTagName('input')[3].value = 'Змінити';
+	document.getElementById('add-item').getElementsByTagName('select')[0].value = item.category.id;
+	document.getElementById('add-item').getElementsByTagName('input')[2].value = item.date.slice(0, 10);
+}
+
 async function displayItems(){
 	//display all items for current date
 	let itemsUrl = new URL('https://myapp-12344.herokuapp.com/api/items');
@@ -209,8 +218,9 @@ async function displayItems(){
 			'        <td>' + item.price + '</td>\n' +
 			'        <td>' + item.category.name + '</td>' +
 			'        <td>' + item.date.slice(0, 10) + '</td>' +
-			'        <td><button type="button" class="btn btn-warning btn-sm" onclick="" title="Редагувати"> &#9998;</button>' + 
+			'        <td><button type="button" class="btn btn-warning btn-sm" onclick="editItem(' + item.id + ')" title="Редагувати"> &#9998;</button>' + 
 			'<button type="button" class="btn btn-danger btn-sm" onclick="deleteItem(' + item.id + ')" title="Видалити">&#10006;</button></td></tr>';
+			
 			});
 			
 		totalPrice = '<strong>Загальні витрати за період: ' + 
@@ -242,6 +252,10 @@ async function displayItems(){
     $("#item-list").tablesorter()
 }
 
+async function getItemById(itemId){
+	
+}
+
 async function getCategoryById(catId){
 	if(!catId){
 		return false;
@@ -252,10 +266,6 @@ async function getCategoryById(catId){
 	return await response.json();
 }
 
-function openItemForm(evt){
-    var source =  evt.srcElement || evt.originalTarget;
-    console.log(source.id);
-}
 
 
 async function drawCategoryDoughnut(){

@@ -43,9 +43,18 @@
 </head>
 <body>
 <div class="container-fluid">
-	<div class="row">
-		<div class="col-6">
-				<select class="form-select form-select-lg" id="year" onchange="displayItems(), mostPopularItems(), drawCategoryDoughnut()" aria-label=".form-select-lg example"></select>
+	<div class="pos-f-t">
+	  <div class="collapse" id="navbarToggleExternalContent">
+	    <div class="bg-dark p-4">
+	      <h4 class="text-white">Collapsed content</h4>
+	      <span class="text-muted">Toggleable via the navbar brand.</span>
+	    </div>
+	  </div>
+	  <nav class="navbar navbar-dark bg-dark">
+	    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
+	      <span class="navbar-toggler-icon"></span>
+	    </button>
+	    <select class="form-select form-select-lg" id="year" onchange="displayItems(), mostPopularItems(), drawCategoryDoughnut()" aria-label=".form-select-lg example"></select>
 				<select class="form-select form-select-lg" id="month" onchange="displayItems(), mostPopularItems(), drawCategoryDoughnut()" aria-label=".form-select-sm example">
 				  <option value="">Весь рік</option>
 				  <option value="1">Січень</option>
@@ -74,7 +83,9 @@
 						<option value="9">Послуги</option>
 						<option value="10">Інше</option>
 					</select>
-		</div>
+	  </nav>
+	</div>
+	<div class="row">
 		<div class="col-6">
 			<button class="btn btn-primary" id="login-text" onclick="document.getElementById('login-form').style.display = 'block'">Login</button>
 		</div>
@@ -116,7 +127,7 @@
 						            <option value="all">Всі рядки</option>
 						          </select>
 						          <select class="form-control-sm  px-4 mx-1 pagenum" title="Виберіть сторінку"></select>
-						          <button id="add" onclick="openItemForm()" title="Додати">&#10010</button>
+						          <button id="add" onclick="document.getElementById('add-item').style.display = 'block'" title="Додати">&#10010</button>
 						          </div>
 						        </div>
 						      </th>
@@ -124,7 +135,6 @@
 						    
 						  </tfoot>
 					</table>
-				
 				
 				
 				
@@ -206,20 +216,22 @@
 </div>
 
 <div id="add-item" class="add-item-form">
-	<form name="add-item" action="#" >
 	<div class="row">
-		<div class="col-12">
+		<div class="col-10">
 			<h3>Додати елемент</h3>
-			<a class="btn btn-primary" onclick="document.getElementById('add-item').style.display = 'none'" role="button">Link</a>
+		</div>
+		<div class="col-2">
+			<button class="btn btn-danger" onclick="document.getElementById('add-item').style.display = 'none'" role="button">&#10006;</button>
 		</div>
 	</div>
+	<form name="add-item" action="#" >
 	<div class="row">
 		<div class="col-6">
 			<div class="form-group">
 				<input type="text" id="item-name" placeholder="Назва товару/послуги" required>
 			</div>
 			<div class="form-group">
-				<input type="text" id="price" placeholder="Ціна" required>
+				<input type="text" id="item-price" placeholder="Ціна" required>
 			</div>
 		</div>
 		<div class="col-6">
@@ -239,7 +251,7 @@
 			</select>
 		</div>
 		<div class="form-group">
-			<select id="item-day" required></select>
+			<input type="date" id="item-date">
 		</div>
 		</div>
 		</div>
