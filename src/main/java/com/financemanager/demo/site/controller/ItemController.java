@@ -151,7 +151,6 @@ public class ItemController {
 		log.info("Handling update item with id = " + id);	
 		return itemService.findById(id)
 				.map(item->{
-					item.setId(updatedItem.getId());
 					item.setName(updatedItem.getName());
 					item.setPrice(updatedItem.getPrice());
 					item.setDate(updatedItem.getDate());
@@ -161,7 +160,6 @@ public class ItemController {
 			        return ResponseEntity.ok().build(); 
 				})
 				.orElseGet(() -> {
-						updatedItem.setId(id);
 						Item addedItem =  itemService.saveItem(updatedItem, userToken.substring(7));
 						URI location = ServletUriComponentsBuilder.fromCurrentRequest()
 				                .path("/{id}")
