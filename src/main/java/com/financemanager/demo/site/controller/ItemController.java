@@ -141,7 +141,6 @@ public class ItemController {
 		return ResponseEntity.created(location).build();
 	}
 	
-	//fix that
 	@PutMapping("/{id}")
 	public ResponseEntity<?> updateItem(
 			@RequestHeader("Authorization") String userToken,
