@@ -143,7 +143,7 @@ public class ItemController {
 	
 	//fix that
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateCategory(
+	public ResponseEntity<?> updateItem(
 			@RequestHeader("Authorization") String userToken,
 			@PathVariable
 				@Min(value = 1, message = "Id should be greater than 1") Integer id,

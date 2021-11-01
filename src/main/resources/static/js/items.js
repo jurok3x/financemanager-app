@@ -10,12 +10,6 @@ async function init (){
 	await getUserYearsList();
 	//display all items, draw the bars
 	await displayItems();
-	const buttons = document.getElementById('item-list').getElementsByTagName('button');
-	for (i=0; i< buttons.length; i++){
-		if(buttons[i].className.search('btn-warning') > 0 || buttons[i].id === 'add'){
-			buttons[i].addEventListener('click', )
-		}
-	}
 	await mostPopularItems(0);
 	await drawCategoryDoughnut();
 	drawMonthChart();
@@ -116,8 +110,7 @@ async function getUserYearsList() {
 		document.getElementById("year").value = dateNow.getFullYear();
 	};
 
-async function addItem() {
-	
+async function addItem(url, method) {
 	// fetch all entries from the form and check for null
 	const itemName = document.getElementById("item-name").value;
 	if (!itemName) {
@@ -139,13 +132,14 @@ async function addItem() {
 		return false;
 	}
 	const itemCategory = await getCategoryById(document.getElementById("item-category").value);
-	const  response = await fetch('https://myapp-12344.herokuapp.com/api/items', {
-		method: "POST",
+	const  response = await fetch(url, {
+		method: method,
 		body: JSON.stringify({ name: itemName, price: itemPrice, category: itemCategory, date: itemDate }),
 		headers: { 'Content-Type' : 'application/json', 'authorization' : localStorage.getItem('SavedToken') } 	  	
     });
-	document.getElementById('add-item').style.display = 'none';
+	closeForm();
 	displayItems();
+	
 }
 
 async function mostPopularItems(){	
@@ -175,21 +169,41 @@ async function mostPopularItems(){
 	document.getElementById("mostPopular").getElementsByTagName("tbody")[0].innerHTML = html;	
 }
 
-async function editItem(itemId){
+async function openForm(itemId){
 	document.getElementById('add-item').style.display = 'block';
-	if(!itemId){
-		return false;
+	if(document.getElementById("year").value){
+		let date = new Date(Date.UTC(document.getElementById("year").value));
+		if(document.getElementById("month").value){
+			date.setUTCMonth(document.getElementById("month").value - 1)
+		}
+		document.getElementById('add-item').getElementsByTagName('input')[2].value = date.toISOString().slice(0, 10);
 	}
-	const response = await fetch("https://myapp-12344.herokuapp.com/api/items/" + itemId, {
-		method: "GET",
-		headers: { 'authorization' : localStorage.getItem('SavedToken') }});
-	const item =  await response.json();
-	document.getElementById('add-item').getElementsByTagName('h3')[0].innerHTML = 'Змінити елемент';
-	document.getElementById('add-item').getElementsByTagName('input')[0].value = item.name;
-	document.getElementById('add-item').getElementsByTagName('input')[1].value = item.price;
-	document.getElementById('add-item').getElementsByTagName('input')[3].value = 'Змінити';
-	document.getElementById('add-item').getElementsByTagName('select')[0].value = item.category.id;
-	document.getElementById('add-item').getElementsByTagName('input')[2].value = item.date.slice(0, 10);
+	if(itemId){
+		const response = await fetch("https://myapp-12344.herokuapp.com/api/items/" + itemId, {
+			method: "GET",
+			headers: { 'authorization' : localStorage.getItem('SavedToken') }});
+		const item =  await response.json();
+		document.getElementById('add-item').getElementsByTagName('h3')[0].innerHTML = 'Змінити елемент';
+		document.getElementById('add-item').getElementsByTagName('input')[0].value = item.name;
+		document.getElementById('add-item').getElementsByTagName('input')[1].value = item.price;
+		document.getElementById('add-item').getElementsByTagName('input')[3].value = 'Змінити';
+		document.getElementById('add-item').getElementsByTagName('select')[0].value = item.category.id;
+		document.getElementById('add-item').getElementsByTagName('input')[2].value = item.date.slice(0, 10);
+		document.getElementById('add-item').getElementsByTagName('input')[3].addEventListener('click',
+		() => addItem('https://myapp-12344.herokuapp.com/api/items/' + itemId, 'PUT'));
+	}
+	
+}
+
+function closeForm(){
+	document.getElementById('add-item').getElementsByTagName('input')[3].removeEventListener('click', () => addItem('https://myapp-12344.herokuapp.com/api/items/' + itemId, 'PUT'));
+	document.getElementById('add-item').style.display = 'none'
+	document.getElementById('add-item').getElementsByTagName('h3')[0].innerHTML = 'Додати елемент';
+	document.getElementById('add-item').getElementsByTagName('input')[0].value = '';
+	document.getElementById('add-item').getElementsByTagName('input')[1].value = null;
+	document.getElementById('add-item').getElementsByTagName('input')[3].value = 'Додати';
+	document.getElementById('add-item').getElementsByTagName('select')[0].value = '';
+	document.getElementById('add-item').getElementsByTagName('input')[2].value = new Date().toISOString().slice(0, 10);
 }
 
 async function displayItems(){
@@ -218,7 +232,7 @@ async function displayItems(){
 			'        <td>' + item.price + '</td>\n' +
 			'        <td>' + item.category.name + '</td>' +
 			'        <td>' + item.date.slice(0, 10) + '</td>' +
-			'        <td><button type="button" class="btn btn-warning btn-sm" onclick="editItem(' + item.id + ')" title="Редагувати"> &#9998;</button>' + 
+			'        <td><button type="button" class="btn btn-warning btn-sm" onclick="openForm(' + item.id + ')" title="Редагувати"> &#9998;</button>' + 
 			'<button type="button" class="btn btn-danger btn-sm" onclick="deleteItem(' + item.id + ')" title="Видалити">&#10006;</button></td></tr>';
 			
 			});
@@ -282,6 +296,9 @@ async function drawCategoryDoughnut(){
 		url.searchParams.append('month', month);
 	}
 	const data = await getData(url.href);
+	if(!data){
+		return false;
+	}
 	const categoryDoughnut = siteCore.getCategoryDoughnut();
 	categoryDoughnut.data.labels = data.yLabels;
 	categoryDoughnut.data.datasets[0].data = data.xLabels.map(entry => entry.toFixed(2));
@@ -295,6 +312,9 @@ async function drawMonthChart(){
 		url.searchParams.append('year', year);
 	}
 	const data = await getData(url.href);
+	if(!data){
+		return false;
+	}
 	const monthChart = siteCore.getMonthChart();
 	monthChart.data.labels = data.yLabels.map(entry =>{
 		return monthNames[entry - 1].substr(0, 3) + '.';
@@ -314,6 +334,9 @@ async function drawCategoryBar(){
 		url.searchParams.append('categoryId', catId);
 	}
 	const data = await getData(url);
+	if(!data){
+		return false;
+	}
 	const monthChart = siteCore.getMonthChart();
 	monthChart.data.datasets[0].data = data.xLabels.map(entry => entry.toFixed(2));
 	monthChart.update();
@@ -326,6 +349,9 @@ async function getData(url){
 	let chartData = await response.json();
 	let xLabels = [];
 	let yLabels = [];
+	if(!chartData.length){ 
+		return false;
+	}
 	let objKeys = Object.keys(chartData[0]);
 	chartData.forEach(entry =>{
 		xLabels.push(entry[objKeys[0]]);
