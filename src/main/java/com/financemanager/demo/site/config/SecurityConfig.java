@@ -3,6 +3,7 @@ package com.financemanager.demo.site.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -44,8 +45,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 	.authorizeRequests()
-                	.antMatchers("/api/auth", "/users/fail").permitAll()
-                	.antMatchers("/api/categories/*", "/api/users/*", "/api/roles/*").hasRole("ADMIN")
+                	.antMatchers("/api/auth", "/users/fail").not().fullyAuthenticated()
+                	.antMatchers("/api/items/*").hasAnyRole("USER", "ADMIN")
+                	.antMatchers(HttpMethod.POST, "/**").hasRole("ADMIN")
+                	.antMatchers(HttpMethod.PUT, "/**").hasRole("ADMIN")
+                	.antMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN")
                 	.antMatchers("/css/*", "/js/*", "/").permitAll()
                 	.anyRequest().authenticated()
                 .and()
@@ -76,4 +80,3 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	 
 	 
 }
-
