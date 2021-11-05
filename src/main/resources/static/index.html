@@ -52,14 +52,14 @@
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-		<span class="navbar-text">Вітаємо, <span id="username"></span></span>
+		<span class="navbar-text">Вітаємо, <span id="username">Гість!</span></span>
 		<form class="form-inline">
-			<div class="btn-group" role="group" aria-label="Basic example">
+			<div id="login-button-group" class="btn-group" role="group" aria-label="Basic example">
 				<button class="btn btn-sm btn-secondary"
-				onclick="document.getElementById('login-form').style.display = 'block'" type="button">Вхід</button>
+				onclick="document.getElementById('login-form').classList.toggle('hidden')" type="button">Вхід</button>
 				<button class="btn btn-sm btn-secondary" type="button">Реєстрація</button>
 			</div>
-			<button onclick="logOut()" class="btn btn-sm btn-secondary" type="button">Вийти</button>
+			<button id="logout-button" onclick="logOut()" class="btn btn-sm btn-secondary hidden" type="button">Вийти</button>
 		</form>
 	</nav>
 	<div class="container-fluid">
@@ -272,7 +272,7 @@
 		</form>
 	</div>
 
-	<div id="login-form" class="my-form">
+	<div id="login-form" class="my-form hidden">
 		<form name="login-form" action="#">
 			<div class="form-group">
 				<label for="login">Логін</label> <input type="text"

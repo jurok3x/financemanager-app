@@ -6,6 +6,8 @@ init();
 
 async function init (){
 	if(localStorage.getItem('SavedToken')){
+		document.querySelector('#login-button-group').classList.toggle('hidden');
+		document.querySelector('#logout-button').classList.toggle('hidden');
 		document.getElementById('username').innerText = localStorage.getItem('userName') + '!';
 		//initialize the date
 		await getUserYearsList();
@@ -370,15 +372,19 @@ async function logIn(){
 	 	     'Content-Type': 'application/json'
 	  	  	}  	  	
 	    });
-	 const responseHeader = response.headers.get('authorization');
-	 const user = response.response.json();
+	 const responseHeader = await response.headers.get('authorization');
+	 const user = await response.json();
 	 localStorage.setItem('SavedToken', responseHeader);
 	 localStorage.setItem('userName', user.name);
+	 document.getElementById('login-form').classList.toggle('hidden');
 	 init();
 }
 
 function logOut(){
 	localStorage.clear();
+	document.querySelector('#login-button-group').classList.toggle('hidden');
+	document.querySelector('#logout-button').classList.toggle('hidden');
+	document.getElementById('username').innerText = 'Гість' + '!';
 	location.reload();
 }
 
