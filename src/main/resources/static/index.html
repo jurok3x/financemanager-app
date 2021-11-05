@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1">
-  <title>Головна сторінка</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/css/theme.bootstrap_4.min.css" integrity="" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="css/items.css">
- <script
-  src="https://code.jquery.com/jquery-3.6.0.js"
-  integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
-  crossorigin="anonymous"></script>
-  <script  src="/js/jquery.tablesorter.min.js"></script>
-  <script  src="/js/jquery.tablesorter.js"></script>
-  <script  src="/js/jquery.tablesorter.pager.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js" integrity="sha512-qzgd5cYSZcosqpzpn7zF2ZId8f/8CHmFKZ8j7mU4OUXTNRd5g+ZHBPsgKEwoqxCtdQvExE5LprwwPAgoicguNg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.0/chart.js"></script>
-	<script type="text/javascript">
+<meta charset="UTF-8" name="viewport"
+	content="width=device-width, initial-scale=1">
+<title>Головна сторінка</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+	crossorigin="anonymous">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/css/theme.bootstrap_4.min.css"
+	integrity="" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="css/items.css">
+<script src="https://code.jquery.com/jquery-3.6.0.js"
+	integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+	crossorigin="anonymous"></script>
+<script src="/js/jquery.tablesorter.min.js"></script>
+<script src="/js/jquery.tablesorter.js"></script>
+<script src="/js/jquery.tablesorter.pager.min.js"></script>
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"
+	integrity="sha512-qzgd5cYSZcosqpzpn7zF2ZId8f/8CHmFKZ8j7mU4OUXTNRd5g+ZHBPsgKEwoqxCtdQvExE5LprwwPAgoicguNg=="
+	crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="text/javascript"
+	src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.0/chart.js"></script>
+<script type="text/javascript">
 		$(function() {
   $("#item-list")
   .tablesorter({
@@ -42,63 +51,61 @@
 	</script>
 </head>
 <body>
-<div class="container-fluid">
-	<div class="pos-f-t">
-	  <div class="collapse" id="navbarToggleExternalContent">
-	    <div class="bg-dark p-4">
-	      <h4 class="text-white">Collapsed content</h4>
-	      <span class="text-muted">Toggleable via the navbar brand.</span>
-	    </div>
-	  </div>
-	  <nav class="navbar navbar-dark bg-dark">
-	    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-	      <span class="navbar-toggler-icon"></span>
-	    </button>
-	    <select class="form-select form-select-lg" id="year" onchange="displayItems(), mostPopularItems(), drawCategoryDoughnut()" aria-label=".form-select-lg example"></select>
-				<select class="form-select form-select-lg" id="month" onchange="displayItems(), mostPopularItems(), drawCategoryDoughnut()" aria-label=".form-select-sm example">
-				  <option value="">Весь рік</option>
-				  <option value="1">Січень</option>
-				  <option value="2">Лютий</option>
-				  <option value="3">Березень</option>
-				  <option value="4">Квітень</option>
-				  <option value="5">Травень</option>
-				  <option value="6">Червень</option>
-				  <option value="7">Липень</option>
-				  <option value="8">Серпень</option>
-				  <option value="9">Вересень</option>
-				  <option value="10">Жовтень</option>
-				  <option value="11">Листопад</option>
-				  <option value="12">Грудень</option>
-				</select>
-				<select id="category" onchange="displayItems(), mostPopularItems()">
-						<option value="">Всі категорії</option>
-						<option value="1">Комунікації</option>
-						<option value="2">Їжа</option>
-						<option value="3">Благодійність</option>
-						<option value="4">Транспорт</option>
-						<option value="5">Побут</option>
-						<option value="6">Проживання</option>
-						<option value="7">Ліки</option>
-						<option value="8">Дозвілля</option>
-						<option value="9">Послуги</option>
-						<option value="10">Інше</option>
-					</select>
-	  </nav>
-	</div>
-	<div class="row">
-		<div class="col-6">
-			<button class="btn btn-primary" id="login-text" onclick="document.getElementById('login-form').style.display = 'block'">Login</button>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<span class="navbar-text">Вітаємо, <span id="username"></span></span>
+		<form class="form-inline">
+			<div class="btn-group" role="group" aria-label="Basic example">
+				<button class="btn btn-sm btn-secondary"
+				onclick="document.getElementById('login-form').style.display = 'block'" type="button">Вхід</button>
+				<button class="btn btn-sm btn-secondary" type="button">Реєстрація</button>
+			</div>
+			<button onclick="logOut()" class="btn btn-sm btn-secondary" type="button">Вийти</button>
+		</form>
+	</nav>
+	<div class="container-fluid">
+		<br> <select class="form-select form-select-lg" id="year"
+			onchange="displayItems(), mostPopularItems(), drawCategoryDoughnut()"
+			aria-label=".form-select-lg example"></select> <select
+			class="form-select form-select-lg" id="month"
+			onchange="displayItems(), mostPopularItems(), drawCategoryDoughnut()"
+			aria-label=".form-select-sm example">
+			<option value="">Весь рік</option>
+			<option value="1">Січень</option>
+			<option value="2">Лютий</option>
+			<option value="3">Березень</option>
+			<option value="4">Квітень</option>
+			<option value="5">Травень</option>
+			<option value="6">Червень</option>
+			<option value="7">Липень</option>
+			<option value="8">Серпень</option>
+			<option value="9">Вересень</option>
+			<option value="10">Жовтень</option>
+			<option value="11">Листопад</option>
+			<option value="12">Грудень</option>
+		</select> <select id="category" onchange="displayItems(), mostPopularItems()">
+			<option value="">Всі категорії</option>
+			<option value="1">Комунікації</option>
+			<option value="2">Їжа</option>
+			<option value="3">Благодійність</option>
+			<option value="4">Транспорт</option>
+			<option value="5">Побут</option>
+			<option value="6">Проживання</option>
+			<option value="7">Ліки</option>
+			<option value="8">Дозвілля</option>
+			<option value="9">Послуги</option>
+			<option value="10">Інше</option>
+		</select>
+		<div class="row">
 		</div>
-	</div>
-	<div class="row">
-		<div class="col-6">
-			<p id="total-price"></p>
-			<div class="table-responsive">
-				<table class="table table-bordered table-striped" id="item-list">
-						 <thead class="thead-dark">
-						 	<tr>
-							 	<th scope="col">№</th>
-							    <th scope="col">Назва</th> 
+		<div class="row">
+			<div class="col-6">
+				<p id="total-price"></p>
+				<div class="table-responsive">
+					<table class="table table-bordered table-striped" id="item-list">
+						<thead class="thead-dark">
+							<tr>
+								<th scope="col">№</th>
+								<th scope="col">Назва</th>
 								<th scope="col">Ціна</th>
 								<th scope="col">Категорія</th>
 								<th scope="col">День</th>
@@ -107,173 +114,179 @@
 						</thead>
 						<tbody></tbody>
 						<tfoot>
-						    <tr>
-						      <th colspan="6" class="ts-pager" id="my-pager">
-						        <div class="form-inline">
-						          <div class="btn-group btn-group-sm mx-1" role="group">
-						            <button type="button" class="btn btn-secondary first" title="перша">⇤</button>
-						            <button type="button" class="btn btn-secondary prev" title="попередня">←</button>
-						          </div>
-						          <span class="pagedisplay"></span>
-						          <div class="btn-group btn-group-sm mx-1" role="group">
-						            <button type="button" class="btn btn-secondary next" title="наступна">→</button>
-						            <button type="button" class="btn btn-secondary last" title="остання">⇥</button>
-						          </div>
-						          <div>
-						          <select class="form-control-sm  px-1 pagesize" title="Виберіть розмір сторінки">
-						            <option selected="selected" value="10">10</option>
-						            <option value="20">20</option>
-						            <option value="30">50</option>
-						            <option value="all">Всі рядки</option>
-						          </select>
-						          <select class="form-control-sm  px-4 mx-1 pagenum" title="Виберіть сторінку"></select>
-						          <button id="add" onclick="openForm()" title="Додати">&#10010</button>
-						          </div>
-						        </div>
-						      </th>
-						    </tr>
-						    
-						  </tfoot>
+							<tr>
+								<th colspan="6" class="ts-pager" id="my-pager">
+									<div class="form-inline">
+										<div class="btn-group btn-group-sm mx-1" role="group">
+											<button type="button" class="btn btn-secondary first"
+												title="перша">⇤</button>
+											<button type="button" class="btn btn-secondary prev"
+												title="попередня">←</button>
+										</div>
+										<span class="pagedisplay"></span>
+										<div class="btn-group btn-group-sm mx-1" role="group">
+											<button type="button" class="btn btn-secondary next"
+												title="наступна">→</button>
+											<button type="button" class="btn btn-secondary last"
+												title="остання">⇥</button>
+										</div>
+										<div>
+											<select class="form-control-sm  px-1 pagesize"
+												title="Виберіть розмір сторінки">
+												<option selected="selected" value="10">10</option>
+												<option value="20">20</option>
+												<option value="30">50</option>
+												<option value="all">Всі рядки</option>
+											</select> <select class="form-control-sm  px-4 mx-1 pagenum"
+												title="Виберіть сторінку"></select>
+											<button id="add" onclick="openForm()" title="Додати">&#10010</button>
+										</div>
+									</div>
+								</th>
+							</tr>
+
+						</tfoot>
 					</table>
-				
-				
-				
-			</div>	
-		</div>
-		<div class="col-6">
-			
-				
-			
-			
-			
-			<div class="tabs">
-				<input type="radio" name="tab-btn" id="tab-btn-1" value="" checked>
-				<label for="tab-btn-1">Популярні</label>
-				<input type="radio" name="tab-btn" id="tab-btn-2" value="">
-				<label for="tab-btn-2">Графік</label>
-				<input type="radio" name="tab-btn" id="tab-btn-3" value="">
-				<label for="tab-btn-3">Статистика</label>
-				
-				<div id="content-1">
-					<div class="row">
-						<div class="col-6">
-							<div class="table-responsive">
-								<table class="table table-striped" id="mostPopular">
-									<caption>Найбільш популярні</caption>
+
+
+
+				</div>
+			</div>
+			<div class="col-6">
+
+
+
+
+
+				<div class="tabs">
+					<input type="radio" name="tab-btn" id="tab-btn-1" value="" checked>
+					<label for="tab-btn-1">Популярні</label> <input type="radio"
+						name="tab-btn" id="tab-btn-2" value=""> <label
+						for="tab-btn-2">Графік</label> <input type="radio" name="tab-btn"
+						id="tab-btn-3" value=""> <label for="tab-btn-3">Статистика</label>
+
+					<div id="content-1">
+						<div class="row">
+							<div class="col-6">
+								<div class="table-responsive">
+									<table class="table table-striped" id="mostPopular">
+										<caption>Найбільш популярні</caption>
 										<thead class="thead-dark">
 											<tr>
-										        <th scope="col">№</th>
-										        <th scope="col">Назва</th>
-										      	<th scope="col">Всього</th>
-										     	<th scope="col">Сума</th>
-									   		</tr>
-									    </thead>
-									    <tbody></tbody>
-								</table>
+												<th scope="col">№</th>
+												<th scope="col">Назва</th>
+												<th scope="col">Всього</th>
+												<th scope="col">Сума</th>
+											</tr>
+										</thead>
+										<tbody></tbody>
+									</table>
+								</div>
+							</div>
+							<div class="col-6">
+								<div class="table-responsive">
+									<table class="table table-striped" id="category-count">
+										<caption>По категоріям</caption>
+										<thead class="thead-dark">
+											<tr>
+												<th scope="col">Категорія</th>
+												<th scope="col">Кількість</th>
+											</tr>
+										</thead>
+										<tbody></tbody>
+									</table>
+								</div>
 							</div>
 						</div>
-					<div class="col-6">
-						<div class="table-responsive">
-						<table class="table table-striped" id="category-count">
-						<caption>По категоріям</caption>
-							<thead class="thead-dark">
-								<tr>
-									<th scope="col">Категорія</th>
-								    <th scope="col">Кількість</th>
-								</tr>
-							</thead>
-							<tbody></tbody>
-						</table>
-						</div>
+					</div>
+					<div id="content-2">
+						<select id="category-bar-select" onchange="drawCategoryBar()">
+							<option value="">Виберіть категорію:</option>
+							<option value="1">Комунікації</option>
+							<option value="2">Їжа</option>
+							<option value="3">Благодійність</option>
+							<option value="4">Транспорт</option>
+							<option value="5">Побут</option>
+							<option value="6">Проживання</option>
+							<option value="7">Ліки</option>
+							<option value="8">Дозвілля</option>
+							<option value="9">Послуги</option>
+							<option value="10">Інше</option>
+						</select> <select id="year-chart-select"
+							onchange="drawMonthChart(), drawCategoryBar()"></select>
+						<canvas id="statistics-month" width="400" height="400"></canvas>
+					</div>
+					<div id="content-3">
+						<h3 id="info-category-doughnut"></h3>
+						<canvas id="statistic-category" width="500" height="500"></canvas>
 					</div>
 				</div>
-				</div>
-				<div id="content-2">
-				  <select id="category-bar-select" onchange="drawCategoryBar()">
-						<option value="">Виберіть категорію: </option>
-						<option value="1">Комунікації</option>
-						<option value="2">Їжа</option>
-						<option value="3">Благодійність</option>
-						<option value="4">Транспорт</option>
-						<option value="5">Побут</option>
-						<option value="6">Проживання</option>
-						<option value="7">Ліки</option>
-						<option value="8">Дозвілля</option>
-						<option value="9">Послуги</option>
-						<option value="10">Інше</option>
-					</select>
-			<select id="year-chart-select" onchange="drawMonthChart(), drawCategoryBar()"></select>
-			<canvas id="statistics-month" width="400" height="400"></canvas>
-				</div>
-				<div id="content-3">
-					<h3 id="info-category-doughnut"></h3>
-				  <canvas id="statistic-category" width="500" height="500" ></canvas>
-				</div>
+
 			</div>
-			
 		</div>
 	</div>
-</div>
 
-<div id="add-item" class="add-item-form">
-	<div class="row">
-		<div class="col-10">
-			<h3>Додати елемент</h3>
+	<div id="add-item" class="add-item-form">
+		<div class="row">
+			<div class="col-10">
+				<h3>Додати елемент</h3>
+			</div>
+			<div class="col-2">
+				<button class="btn btn-danger" onclick="closeForm()" role="button">&#10006;</button>
+			</div>
 		</div>
-		<div class="col-2">
-			<button class="btn btn-danger" onclick="closeForm()" role="button">&#10006;</button>
-		</div>
+		<form name="add-item" action="#">
+			<div class="row">
+				<div class="col-6">
+					<div class="form-group">
+						<input type="text" id="item-name"
+							placeholder="Назва товару/послуги" required>
+					</div>
+					<div class="form-group">
+						<input type="text" id="item-price" placeholder="Ціна" required>
+					</div>
+				</div>
+				<div class="col-6">
+					<div class="form-group">
+						<select id="item-category" required>
+							<option value="">Виберіть категорію:</option>
+							<option value="1">Комунікації</option>
+							<option value="2">Їжа</option>
+							<option value="3">Благодійність</option>
+							<option value="4">Транспорт</option>
+							<option value="5">Побут</option>
+							<option value="6">Проживання</option>
+							<option value="7">Ліки</option>
+							<option value="8">Дозвілля</option>
+							<option value="9">Послуги</option>
+							<option value="10">Інше</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<input type="date" id="item-date">
+					</div>
+				</div>
+			</div>
+			<input type="submit" class="btn btn-primary" onclick=""
+				value="Додати">
+		</form>
 	</div>
-	<form name="add-item" action="#" >
-	<div class="row">
-		<div class="col-6">
+
+	<div id="login-form" class="my-form">
+		<form name="login-form" action="#">
 			<div class="form-group">
-				<input type="text" id="item-name" placeholder="Назва товару/послуги" required>
+				<label for="login">Логін</label> <input type="text"
+					class="form-control" id="login" placeholder="Введіть логін">
 			</div>
 			<div class="form-group">
-				<input type="text" id="item-price" placeholder="Ціна" required>
+				<label for="password">Пароль</label> <input type="password"
+					class="form-control" id="password" placeholder="Введіть пароль">
 			</div>
-		</div>
-		<div class="col-6">
-		<div class="form-group">
-			<select id="item-category" required>
-				<option value="">Виберіть категорію:</option>
-				<option value="1">Комунікації</option>
-				<option value="2">Їжа</option>
-				<option value="3">Благодійність</option>
-				<option value="4">Транспорт</option>
-				<option value="5">Побут</option>
-				<option value="6">Проживання</option>
-				<option value="7">Ліки</option>
-				<option value="8">Дозвілля</option>
-				<option value="9">Послуги</option>
-				<option value="10">Інше</option>
-			</select>
-		</div>
-		<div class="form-group">
-			<input type="date" id="item-date">
-		</div>
-		</div>
-		</div>
-		<input type="submit" class="btn btn-primary" onclick="" value="Додати">
-	</form>
-</div>
+			<button type="submit" class="btn btn-primary" onclick="logIn()">Ввійти</button>
+		</form>
+	</div>
 
-<div id="login-form" class="my-form">
-	<form name="login-form" action="#">
-     <div class="form-group">
-    	 <label for="login">Логін</label>
-    	 <input type="text" class="form-control" id="login" placeholder="Введіть логін">
-  	 </div>
-  	 <div class="form-group">
-    	 <label for="password">Пароль</label>
-    	 <input type="password" class="form-control" id="password" placeholder="Введіть пароль">
-  	 </div>
-  	 <button type="submit" class="btn btn-primary" onclick="logIn()">Ввійти</button>
-	</form>
-</div>
-
-<script src="js/items.js"></script>
+	<script src="js/items.js"></script>
 </body>
 
 

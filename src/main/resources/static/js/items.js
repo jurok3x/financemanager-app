@@ -2,21 +2,18 @@ const monthNames = ["Січень", "Лютий", "Березень", "Квіт�
 	"Липень", "Серпень", "Вересень", "Жовтень", "Листопад", "Грудень"];
 //initialize the site: fetch categories, display items for current month, and define all the years in a list
 let siteCore = siteNavigator(); //site
+init();
 
 async function init (){
-	document.getElementById('login-form').style.display = 'none';
-	document.getElementById('login-text').style.display = 'none';
-	//initialize the date
-	await getUserYearsList();
-	//display all items, draw the bars
-	await displayItems();
-	await mostPopularItems(0);
-	await drawCategoryDoughnut();
-	drawMonthChart();
-}
-
-if(localStorage.getItem('SavedToken')){
-	init();
+	if(localStorage.getItem('SavedToken')){
+		document.getElementById('username').innerText = localStorage.getItem('userName') + '!';
+		//initialize the date
+		await getUserYearsList();
+		//display all items, draw the bars
+		await displayItems();
+		await drawCategoryDoughnut();
+		drawMonthChart();
+	}
 }
 
 function siteNavigator(){
@@ -111,6 +108,7 @@ async function getUserYearsList() {
 	};
 
 async function addItem(url, method) {
+	console.log('item changed');
 	// fetch all entries from the form and check for null
 	const itemName = document.getElementById("item-name").value;
 	if (!itemName) {
@@ -139,7 +137,6 @@ async function addItem(url, method) {
     });
 	closeForm();
 	displayItems();
-	
 }
 
 async function mostPopularItems(){	
@@ -170,40 +167,44 @@ async function mostPopularItems(){
 }
 
 async function openForm(itemId){
-	document.getElementById('add-item').style.display = 'block';
+	let myForm = document.getElementById('add-item');
+	myForm.style.display = 'block';
 	if(document.getElementById("year").value){
 		let date = new Date(Date.UTC(document.getElementById("year").value));
 		if(document.getElementById("month").value){
 			date.setUTCMonth(document.getElementById("month").value - 1)
 		}
-		document.getElementById('add-item').getElementsByTagName('input')[2].value = date.toISOString().slice(0, 10);
+		myForm.getElementsByTagName('input')[2].value = date.toISOString().slice(0, 10);
 	}
 	if(itemId){
 		const response = await fetch("https://myapp-12344.herokuapp.com/api/items/" + itemId, {
 			method: "GET",
 			headers: { 'authorization' : localStorage.getItem('SavedToken') }});
 		const item =  await response.json();
-		document.getElementById('add-item').getElementsByTagName('h3')[0].innerHTML = 'Змінити елемент';
-		document.getElementById('add-item').getElementsByTagName('input')[0].value = item.name;
-		document.getElementById('add-item').getElementsByTagName('input')[1].value = item.price;
-		document.getElementById('add-item').getElementsByTagName('input')[3].value = 'Змінити';
-		document.getElementById('add-item').getElementsByTagName('select')[0].value = item.category.id;
-		document.getElementById('add-item').getElementsByTagName('input')[2].value = item.date.slice(0, 10);
-		document.getElementById('add-item').getElementsByTagName('input')[3].addEventListener('click',
-		() => addItem('https://myapp-12344.herokuapp.com/api/items/' + itemId, 'PUT'));
+		myForm.getElementsByTagName('h3')[0].innerHTML = 'Змінити елемент';
+		myForm.getElementsByTagName('input')[0].value = item.name;
+		myForm.getElementsByTagName('input')[1].value = item.price;
+		myForm.getElementsByTagName('input')[3].value = 'Змінити';
+		myForm.getElementsByTagName('select')[0].value = item.category.id;
+		myForm.getElementsByTagName('input')[2].value = item.date.slice(0, 10);
+		const editItem = () => addItem('https://myapp-12344.herokuapp.com/api/items/' + itemId, 'PUT');
+		myForm.getElementsByTagName('input')[3].addEventListener('click', editItem);
+		return false;
 	}
-	
+	const addNewItem = () => addItem('https://myapp-12344.herokuapp.com/api/items/', 'POST');
+	myForm.getElementsByTagName('input')[3].addEventListener('click', addNewItem);
 }
 
 function closeForm(){
-	document.getElementById('add-item').getElementsByTagName('input')[3].removeEventListener('click', () => addItem('https://myapp-12344.herokuapp.com/api/items/' + itemId, 'PUT'));
-	document.getElementById('add-item').style.display = 'none'
-	document.getElementById('add-item').getElementsByTagName('h3')[0].innerHTML = 'Додати елемент';
-	document.getElementById('add-item').getElementsByTagName('input')[0].value = '';
-	document.getElementById('add-item').getElementsByTagName('input')[1].value = null;
-	document.getElementById('add-item').getElementsByTagName('input')[3].value = 'Додати';
-	document.getElementById('add-item').getElementsByTagName('select')[0].value = '';
-	document.getElementById('add-item').getElementsByTagName('input')[2].value = new Date().toISOString().slice(0, 10);
+	let myForm = document.getElementById('add-item');
+	myForm.getElementsByTagName('input')[3].replaceWith(myForm.getElementsByTagName('input')[3].cloneNode(true));
+	myForm.style.display = 'none'
+	myForm.getElementsByTagName('h3')[0].innerHTML = 'Додати елемент';
+	myForm.getElementsByTagName('input')[0].value = '';
+	myForm.getElementsByTagName('input')[1].value = null;
+	myForm.getElementsByTagName('input')[3].value = 'Додати';
+	myForm.getElementsByTagName('select')[0].value = '';
+	myForm.getElementsByTagName('input')[2].value = new Date().toISOString().slice(0, 10);
 }
 
 async function displayItems(){
@@ -263,11 +264,9 @@ async function displayItems(){
 	
 	//sort items	
     $("#item-list").trigger("update");
-    $("#item-list").tablesorter()
-}
-
-async function getItemById(itemId){
-	
+    $("#item-list").tablesorter();
+    
+    mostPopularItems();
 }
 
 async function getCategoryById(catId){
@@ -279,8 +278,6 @@ async function getCategoryById(catId){
 		headers: { 'authorization' : localStorage.getItem('SavedToken') }});
 	return await response.json();
 }
-
-
 
 async function drawCategoryDoughnut(){
 	const year = document.getElementById("year").value;
@@ -327,17 +324,20 @@ async function drawCategoryBar(){
 	const year = document.getElementById("year-chart-select").value;
 	const catId = document.getElementById("category-bar-select").value;
 	let url = new URL('https://myapp-12344.herokuapp.com/api/items/statistics');
+	const monthChart = siteCore.getMonthChart();
+	if(!catId){
+		monthChart.data.datasets[0].data = [];
+		monthChart.update();
+		return false;
+	}
+	url.searchParams.append('categoryId', catId);
 	if(year){
 		url.searchParams.append('year', year);
-	}
-	if(catId){
-		url.searchParams.append('categoryId', catId);
 	}
 	const data = await getData(url);
 	if(!data){
 		return false;
 	}
-	const monthChart = siteCore.getMonthChart();
 	monthChart.data.datasets[0].data = data.xLabels.map(entry => entry.toFixed(2));
 	monthChart.update();
 }
@@ -362,8 +362,7 @@ async function getData(url){
 
 async function logIn(){
 	const userLogin = document.getElementById('login').value;
-	const userPassword = document.getElementById('password').value;
-	
+	const userPassword = document.getElementById('password').value
 	const  response = await fetch("https://myapp-12344.herokuapp.com/api/auth", {
 			method: "POST",
 			body: JSON.stringify({ login: userLogin, password: userPassword }),
@@ -372,7 +371,14 @@ async function logIn(){
 	  	  	}  	  	
 	    });
 	 const responseHeader = response.headers.get('authorization');
+	 const user = response.response.json();
 	 localStorage.setItem('SavedToken', responseHeader);
+	 localStorage.setItem('userName', user.name);
 	 init();
+}
+
+function logOut(){
+	localStorage.clear();
+	location.reload();
 }
 

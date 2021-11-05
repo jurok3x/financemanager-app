@@ -85,3 +85,7 @@ border-left: none;
 background-color: #fff;
 border-bottom: 1px solid #fff;
 }
+
+.hidden{
+	display: none;
+}
