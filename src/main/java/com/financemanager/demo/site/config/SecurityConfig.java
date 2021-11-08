@@ -46,18 +46,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .and()
                 	.authorizeRequests()
                 	.antMatchers("/api/auth", "/users/fail").not().fullyAuthenticated()
+                	.antMatchers(HttpMethod.POST, "/api/users").not().fullyAuthenticated()
                 	.antMatchers("/api/items/*").hasAnyRole("USER", "ADMIN")
                 	.antMatchers(HttpMethod.POST, "/**").hasRole("ADMIN")
                 	.antMatchers(HttpMethod.PUT, "/**").hasRole("ADMIN")
                 	.antMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN")
-<<<<<<< Upstream, based on Training
-                	.antMatchers("/api/auth", "/users/fail").not().fullyAuthenticated()
-                	.antMatchers("/api/items/*").hasAnyRole("USER", "ADMIN")
-                	.antMatchers(HttpMethod.POST, "/**").hasRole("ADMIN")
-                	.antMatchers(HttpMethod.PUT, "/**").hasRole("ADMIN")
-                	.antMatchers(HttpMethod.DELETE, "/**").hasRole("ADMIN")
-=======
->>>>>>> 3d414c3 Security issue put '/api/auth' to the top in Security configuration.
                 	.antMatchers("/css/*", "/js/*", "/").permitAll()
                 	.anyRequest().authenticated()
                 .and()
