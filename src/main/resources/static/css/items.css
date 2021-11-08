@@ -27,14 +27,24 @@
    position: fixed;
    top: 50%;
    left: 50%;
-   width: 400px;
-   height: 250px;
-   margin-left: -200px;
-   margin-top: -125px;
    background: white;
    padding: 10px;
    border-radius: 10px;
    border: 3px solid #000000;
+}
+
+#login-form{
+   width: 400px;
+   height: 250px;
+   margin-left: -200px;
+   margin-top: -125px;
+}
+
+#registration-form{
+   width: 800px;
+   height: 400px;
+   margin-left: -400px;
+   margin-top: -200px;
 }
 
 .tabs {

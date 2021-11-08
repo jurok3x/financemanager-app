@@ -39,6 +39,11 @@ public class DefaultUserService implements UserService{
 	public Optional<User> findById(Integer id) {
 		return userRepository.findById(id);
 	}
+	
+	@Override
+	public Optional<User> findByEmail(String email) {
+		return userRepository.findByEmail(email);
+	}
 
 	@Override
 	public void deleteUser(Integer userId) {

@@ -24,6 +24,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.financemanager.demo.site.entity.User;
 import com.financemanager.demo.site.exception.ResourceNotFoundException;
+import com.financemanager.demo.site.exception.UserAlreadyExistsException;
 import com.financemanager.demo.site.model.UserModel;
 import com.financemanager.demo.site.service.UserModelAssembler;
 import com.financemanager.demo.site.service.UserService;
@@ -82,6 +83,9 @@ public class UserController {
 	@PostMapping
 	public ResponseEntity<?> saveUser(@Valid @RequestBody User user) {
 		log.info("Handling save user: " + user);
+		if(userService.findByLogin(user.getLogin()).isPresent() || userService.findByEmail(user.getEmail()).isPresent()) {
+			throw new UserAlreadyExistsException("User with current login or email already exists.");
+		}
 		User addedUser = userService.saveUser(user);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}")

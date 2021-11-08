@@ -24,6 +24,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import com.financemanager.demo.site.exception.APIException;
 import com.financemanager.demo.site.exception.ResourceNotFoundException;
+import com.financemanager.demo.site.exception.UserAlreadyExistsException;
 
 @ControllerAdvice
 public class RESTExceptionHandler extends ResponseEntityExceptionHandler {
@@ -34,7 +35,19 @@ public class RESTExceptionHandler extends ResponseEntityExceptionHandler {
 		List<String> details = new ArrayList<String>();
 		details.add(ex.getMessage());
 
-		APIException apiException = new APIException("Resource Not Found", HttpStatus.BAD_REQUEST,
+		APIException apiException = new APIException("Resource Not Found.", HttpStatus.BAD_REQUEST,
+				LocalDateTime.now(), details);
+
+		return ResponseEntityBuilder.build(apiException);
+	}
+	
+	@ExceptionHandler(value = { UserAlreadyExistsException.class })
+	protected ResponseEntity<Object> handleUserAlreadyExistsException(UserAlreadyExistsException ex, WebRequest request) {
+
+		List<String> details = new ArrayList<String>();
+		details.add(ex.getMessage());
+
+		APIException apiException = new APIException("User with current login or email already exists.", HttpStatus.BAD_REQUEST,
 				LocalDateTime.now(), details);
 
 		return ResponseEntityBuilder.build(apiException);

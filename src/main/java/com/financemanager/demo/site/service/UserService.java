@@ -24,4 +24,6 @@ public interface UserService {
     List<User> findByRoleId(Integer id);
     
     User getUserFromToken(String userToken);
+
+	Optional<User> findByEmail(String email);
 }

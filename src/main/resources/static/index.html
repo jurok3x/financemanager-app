@@ -54,12 +54,17 @@
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 		<span class="navbar-text">Вітаємо, <span id="username">Гість!</span></span>
 		<form class="form-inline">
-			<div id="login-button-group" class="btn-group" role="group" aria-label="Basic example">
+			<div id="login-button-group" class="btn-group" role="group"
+				aria-label="Basic example">
 				<button class="btn btn-sm btn-secondary"
-				onclick="document.getElementById('login-form').classList.toggle('hidden')" type="button">Вхід</button>
-				<button class="btn btn-sm btn-secondary" type="button">Реєстрація</button>
+					onclick="document.getElementById('login-form').classList.toggle('hidden')"
+					type="button">Вхід</button>
+				<button class="btn btn-sm btn-secondary"
+					onclick="document.getElementById('registration-form').classList.toggle('hidden')"
+					type="button">Реєстрація</button>
 			</div>
-			<button id="logout-button" onclick="logOut()" class="btn btn-sm btn-secondary hidden" type="button">Вийти</button>
+			<button id="logout-button" onclick="logOut()"
+				class="btn btn-sm btn-secondary hidden" type="button">Вийти</button>
 		</form>
 	</nav>
 	<div class="container-fluid">
@@ -95,8 +100,7 @@
 			<option value="9">Послуги</option>
 			<option value="10">Інше</option>
 		</select>
-		<div class="row">
-		</div>
+		<div class="row"></div>
 		<div class="row">
 			<div class="col-6">
 				<p id="total-price"></p>
@@ -283,6 +287,46 @@
 					class="form-control" id="password" placeholder="Введіть пароль">
 			</div>
 			<button type="submit" class="btn btn-primary" onclick="logIn()">Ввійти</button>
+			<button type="button" onclick="document.getElementById('login-form').classList.toggle('hidden')" class="btn btn-danger"">Відміна</button>
+		</form>
+	</div>
+
+	<div id="registration-form" class="my-form hidden">
+		<form name="registration-form" action="#">
+			<h1>Реєстрація</h1>
+			<p>Будь ласка заповніть поля, щоб створити акаунт.</p>
+			<hr>
+			<div class="row">
+				<div class="col-6">
+					<div class="form-group">
+						<label for="email">Email</label> <input type="text"
+							class="form-control" placeholder="Введіть Email" id="email"
+							name="email" required>
+					</div>
+					<div class="form-group">
+						<label for="username">Повне ім'я</label> <input type="text"
+							class="form-control" placeholder="Введіть повне ім'я" id="name"
+							name="name" name="username" required>
+					</div>
+					<button type="button" onclick="document.getElementById('registration-form').classList.toggle('hidden')" class="btn btn-danger"">Відміна</button>
+					<button type="submit" onclick="createUser()" class="btn btn-primary"">Реєстрація</button>
+				</div>
+				<div class="col-6">
+					<div class="form-group">
+						<label for="login">Логін</label> <input type="text"
+							class="form-control" placeholder="Введіть логін"
+							id="login-registration" name="login" name="username" required>
+					</div>
+					<div class="form-group">
+						<label for="password-registration">Пароль</label><input
+							type="password" class="form-control" placeholder="Введіть пароль"
+							id="password-registration" name="password-registration" required>
+						<label for="psw-repeat">Повторіть пароль</label> <input
+							type="password" class="form-control"
+							id="password-repeat" placeholder="Повторіть пароль" name="psw-repeat" required>
+					</div>
+				</div>
+			</div>
 		</form>
 	</div>
 

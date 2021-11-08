@@ -388,3 +388,47 @@ function logOut(){
 	location.reload();
 }
 
+function createUser(){
+	const userEmail = document.getElementById("email").value;
+	if(!userEmail){
+		alert('Введіть email!');
+		return false;
+	}
+	const userName = document.getElementById("name").value;
+	if(!userName){
+		alert('Введіть ім'я!');
+		return false;
+	}
+	const userLogin = document.getElementById("login-registration").value;
+	if(!userLogin){
+		alert('Введіть логін!');
+		return false;
+	}
+	const userPassword = document.getElementById("password-registration").value;
+	if(!userPassword){
+		alert('Введіть пароль!');
+		return false;
+	}
+	const passwordRepeat = document.getElementById("password-repeat").value;
+	if(!passwordRepeat){
+		alert('Повторіть пароль!');
+		return false;
+	}
+	if(userPassword != passwordRepeat){
+		alert('Паролі не співпадають!');
+		return false;
+	}
+	const  response = await fetch(url, {
+		method: method,
+		body: JSON.stringify({ name: userName, login: userLogin, email: userEmail, password: userPassword }),
+		headers: {'Content-Type' : 'application/json'} 	  	
+    });
+	if(response.status != 201){
+		alert(response.text());
+		return false;
+	}
+	alert('Реєстрація успішна!');
+	document.getElementById('registration-form').classList.toggle('hidden');
+	document.getElementById('login-form').classList.toggle('hidden');
+}
+
