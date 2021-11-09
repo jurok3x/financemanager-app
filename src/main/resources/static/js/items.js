@@ -388,7 +388,7 @@ function logOut(){
 	location.reload();
 }
 
-function createUser(){
+async function createUser(){
 	const userEmail = document.getElementById("email").value;
 	if(!userEmail){
 		alert('Введіть email!');
@@ -396,7 +396,7 @@ function createUser(){
 	}
 	const userName = document.getElementById("name").value;
 	if(!userName){
-		alert('Введіть ім'я!');
+		alert('Введіть ім\'я!');
 		return false;
 	}
 	const userLogin = document.getElementById("login-registration").value;
@@ -418,8 +418,8 @@ function createUser(){
 		alert('Паролі не співпадають!');
 		return false;
 	}
-	const  response = await fetch(url, {
-		method: method,
+	const  response = await fetch('https://myapp-12344.herokuapp.com/api/users', {
+		method: "POST",
 		body: JSON.stringify({ name: userName, login: userLogin, email: userEmail, password: userPassword }),
 		headers: {'Content-Type' : 'application/json'} 	  	
     });
