@@ -52,20 +52,26 @@
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-		<span class="navbar-text">Вітаємо, <span id="username">Гість!</span></span>
-		<form class="form-inline">
-			<div id="login-button-group" class="btn-group" role="group"
-				aria-label="Basic example">
-				<button class="btn btn-sm btn-secondary"
-					onclick="document.getElementById('login-form').classList.toggle('hidden')"
-					type="button">Вхід</button>
-				<button class="btn btn-sm btn-secondary"
-					onclick="document.getElementById('registration-form').classList.toggle('hidden')"
-					type="button">Реєстрація</button>
+		<div class="row">
+			<div class="col-10">
+				<span class="navbar-text">Вітаємо, <span id="username">Гість!</span></span>
 			</div>
-			<button id="logout-button" onclick="logOut()"
-				class="btn btn-sm btn-secondary hidden" type="button">Вийти</button>
-		</form>
+			<div class="col-2">
+				<form class="form-inline">
+					<div id="login-button-group" class="btn-group" role="group"
+						aria-label="Basic example">
+						<button class="btn btn-sm btn-secondary"
+							onclick="document.getElementById('login-form').classList.toggle('hidden')"
+							type="button">Вхід</button>
+						<button class="btn btn-sm btn-secondary"
+							onclick="document.getElementById('registration-form').classList.toggle('hidden')"
+							type="button">Реєстрація</button>
+					</div>
+					<button id="logout-button" onclick="logOut()"
+						class="btn btn-sm btn-secondary hidden" type="button">Вийти</button>
+				</form>
+			</div>
+		</div>
 	</nav>
 	<div class="container-fluid">
 		<br> <select class="form-select form-select-lg" id="year"
@@ -287,7 +293,9 @@
 					class="form-control" id="password" placeholder="Введіть пароль">
 			</div>
 			<button type="submit" class="btn btn-primary" onclick="logIn()">Ввійти</button>
-			<button type="button" onclick="document.getElementById('login-form').classList.toggle('hidden')" class="btn btn-danger"">Відміна</button>
+			<button type="button"
+				onclick="document.getElementById('login-form').classList.toggle('hidden')"
+				class="btn btn-danger"">Відміна</button>
 		</form>
 	</div>
 
@@ -308,8 +316,11 @@
 							class="form-control" placeholder="Введіть повне ім'я" id="name"
 							name="name" name="username" required>
 					</div>
-					<button type="button" onclick="document.getElementById('registration-form').classList.toggle('hidden')" class="btn btn-danger"">Відміна</button>
-					<button type="submit" onclick="createUser()" class="btn btn-primary"">Реєстрація</button>
+					<button type="button"
+						onclick="document.getElementById('registration-form').classList.toggle('hidden')"
+						class="btn btn-danger"">Відміна</button>
+					<button type="button" onclick="createUser()"
+						class="btn btn-primary"">Реєстрація</button>
 				</div>
 				<div class="col-6">
 					<div class="form-group">
@@ -322,8 +333,8 @@
 							type="password" class="form-control" placeholder="Введіть пароль"
 							id="password-registration" name="password-registration" required>
 						<label for="psw-repeat">Повторіть пароль</label> <input
-							type="password" class="form-control"
-							id="password-repeat" placeholder="Повторіть пароль" name="psw-repeat" required>
+							type="password" class="form-control" id="password-repeat"
+							placeholder="Повторіть пароль" name="psw-repeat" required>
 					</div>
 				</div>
 			</div>

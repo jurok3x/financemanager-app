@@ -423,8 +423,10 @@ async function createUser(){
 		body: JSON.stringify({ name: userName, login: userLogin, email: userEmail, password: userPassword }),
 		headers: {'Content-Type' : 'application/json'} 	  	
     });
-	if(response.status != 201){
-		alert(response.text());
+    const status = await response.status;
+	if(status != 201){
+		const messeage = await response.json();
+		alert(messeage["message"]);
 		return false;
 	}
 	alert('Реєстрація успішна!');
