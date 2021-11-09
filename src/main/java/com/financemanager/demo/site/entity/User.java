@@ -51,8 +51,6 @@ public class User {
 	
 	@JoinColumn(name="\"role_id\"")
 	@OneToOne
-	@Valid
-	@NotNull(message = "Role must not be empty")
 	private Role role;
 	
 }
