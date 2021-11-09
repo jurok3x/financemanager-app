@@ -31,4 +31,7 @@ public interface ItemService {
     List<Integer> getAllYears(String userToken);
     
     List<DatePartAndCost> getStatisticsByMonth(String userToken, Optional<Integer> categoryId, Optional<String> year);
+
+	List<Item> findAllByUserId(int userId, Optional<String> year, Optional<String> month, Optional<Integer> limit,
+			Optional<Integer> offset);
 }

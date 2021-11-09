@@ -53,6 +53,25 @@ public class DefaultItemService implements ItemService {
 		} return itemRepository
 				.findByUserIdAndDateAll(userService.getUserFromToken(userToken).getId(), dateString);
 	}
+	
+	
+	@Override
+	public List<Item> findAllByUserId(int userId, Optional<String> year, Optional<String> month,
+		Optional<Integer> limit, Optional<Integer> offset) {	
+		String dateString = "%" + year.orElse("") + "-" +
+		month.map(monthString->{
+			if(monthString.length() == 1) {
+				monthString = "0" + monthString;
+			}
+			return monthString;
+		}).orElse("") + "%";
+		if(limit.isPresent() || offset.isPresent()) {
+			return itemRepository
+					.findByUserIdAndDate(userId, dateString,
+							limit.orElse(10), offset.orElse(0));
+		} return itemRepository
+				.findByUserIdAndDateAll(userId, dateString);
+	}
 
 	@Override
 	public List<Item> findByCategory(String userToken, int categoryId, Optional<String> year, Optional<String> month,

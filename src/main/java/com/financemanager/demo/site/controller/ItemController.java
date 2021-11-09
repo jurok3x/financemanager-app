@@ -70,6 +70,21 @@ public class ItemController {
 				HttpStatus.OK);
 	}
 	
+	@GetMapping("/user/{id}")
+	public ResponseEntity<CollectionModel<ItemModel>> findAllByUserId(
+			@PathVariable
+			@Min(value = 1, message = "Id must be greater than or equal to 1") Integer id,
+			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}[0-9]{3}", message = "Incorect year") String> year,
+			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}|1[0-2]{1}", message = "Incorect month") String> month,
+			@RequestParam Optional<@Min(value = 1, message = "Minimum 1 item") Integer> limit,
+			@RequestParam Optional<@Min(value = 0, message = "Offset can not be less then 0") Integer> offset) {
+		log.info("Handling find items with year = " + year.orElse("All") + " and month = " + month.orElse("All"));
+		List<Item> items = itemService.findAllByUserId(id, year, month, limit, offset);
+		return new ResponseEntity<>(
+				itemAssembler.toCollectionModel(items),
+				HttpStatus.OK);
+	}
+	
 	@GetMapping(value = {"/category/{categoryId}"})
 	public ResponseEntity<CollectionModel<ItemModel>> findByCategoryId(
 			@RequestHeader("Authorization") String userToken,
