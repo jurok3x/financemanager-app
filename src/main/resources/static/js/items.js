@@ -183,7 +183,8 @@ async function openForm(itemId){
 			method: "GET",
 			headers: { 'authorization' : localStorage.getItem('SavedToken') }});
 		const item =  await response.json();
-		myForm.getElementsByTagName('h3')[0].innerHTML = 'Змінити елемент';
+		document.getElementById('add-text').classList.toggle('hidden');
+		document.getElementById('edit-text').classList.toggle('hidden');
 		myForm.getElementsByTagName('input')[0].value = item.name;
 		myForm.getElementsByTagName('input')[1].value = item.price;
 		myForm.getElementsByTagName('input')[3].value = 'Змінити';
@@ -201,7 +202,7 @@ function closeForm(){
 	let myForm = document.getElementById('add-item');
 	myForm.getElementsByTagName('input')[3].replaceWith(myForm.getElementsByTagName('input')[3].cloneNode(true));
 	myForm.style.display = 'none'
-	myForm.getElementsByTagName('h3')[0].innerHTML = 'Додати елемент';
+	myForm.getElementsByTagName('h3')[0].innerHTML = '<span id="add-text">Додати</span><span id="edit-text" class="hidden">Змінити</span> елемент';
 	myForm.getElementsByTagName('input')[0].value = '';
 	myForm.getElementsByTagName('input')[1].value = null;
 	myForm.getElementsByTagName('input')[3].value = 'Додати';
