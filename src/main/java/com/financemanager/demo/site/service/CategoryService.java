@@ -5,21 +5,24 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import com.financemanager.demo.site.entity.Category;
+import com.financemanager.demo.site.dto.CategoryDTO;
+import com.financemanager.demo.site.entity.payload.SaveCategoryRequest;
 import com.financemanager.demo.site.entity.projects.ProjectCategoryAndCost;
 import com.financemanager.demo.site.entity.projects.ProjectCategoryAndCount;
 
 @Component
 public interface CategoryService {
-	Category saveCategory(Category category);
+	CategoryDTO save(SaveCategoryRequest request);
+	
+	CategoryDTO update(SaveCategoryRequest request, Integer id);
 
-    void deleteCategory(Integer catId);
+    void delete(Integer id);
 
-    List<Category> findAll();
+    List<CategoryDTO> findAll();
     
-    Optional<Category> findById(Integer catId);
+    Optional<CategoryDTO> findById(Integer id);
     
-    List<ProjectCategoryAndCost> getCategoriesAndCost(String userToken, Optional<String> year, Optional<String> month);
+    List<ProjectCategoryAndCost> getCategoriesAndCost(Optional<Integer> year, Optional<Integer> month);
     
-    List<ProjectCategoryAndCount> getCategoriesAndCount(String userToken, Optional<String> year, Optional<String> month);
+    List<ProjectCategoryAndCount> getCategoriesAndCount(Optional<Integer> year, Optional<Integer> month);
 }

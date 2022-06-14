@@ -20,7 +20,7 @@ import lombok.extern.java.Log;
 @Log
 public class JwtProvider {
 
-	@Value("$(jwt.secret)")
+	@Value("${jwt.secret}")
     private String jwtSecret;
 	
 	public String generateToken(String login) {

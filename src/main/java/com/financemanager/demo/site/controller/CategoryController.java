@@ -4,9 +4,11 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
 
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpMethod;
@@ -18,20 +20,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.financemanager.demo.site.entity.Category;
+import com.financemanager.demo.site.dto.CategoryDTO;
+import com.financemanager.demo.site.entity.payload.SaveCategoryRequest;
 import com.financemanager.demo.site.entity.projects.ProjectCategoryAndCost;
 import com.financemanager.demo.site.entity.projects.ProjectCategoryAndCount;
 import com.financemanager.demo.site.exception.ResourceNotFoundException;
 import com.financemanager.demo.site.model.CategoryModel;
-import com.financemanager.demo.site.service.CategoryModelAssembler;
 import com.financemanager.demo.site.service.CategoryService;
+import com.financemanager.demo.site.service.assembler.CategoryModelAssembler;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.java.Log;
 
@@ -39,25 +42,36 @@ import lombok.extern.java.Log;
 @RequestMapping("/api/categories")
 @AllArgsConstructor
 @Log
+@SecurityRequirement(name = "bearerAuth")
 public class CategoryController {
 	
-	private final CategoryService categoryService;
+	private static final String FIND_BY_ID_INFO = "Handling find caegory with id %d";
+    private static final String FIND_ALL_INFO = "Handling find all caegories request";
+    private static final String UPDATE_CAEGORY_INFO = "Handling update caegory with id %d";
+    private static final String SAVE_CATEGORY_INFO = "Handling save category %s";
+    private static final String FIND_CAEGORIES_AND_COUNT_INFO = "Handling find caegories with their count";
+    private static final String FIND_CAEGORIES_AND_COST_INFO = "Handling find caegories with their cost";
+    private static final String INCORRECT_MONTH_ERROR = "Incorrect month";
+    private static final String INCORRECT_YEAR_ERROR = "Incorrect year";
+    private static final String ID_NOT_FOUND_ERROR = "Category with ID : %d Not Found!";
+    private static final String INCORRECT_ID_ERROR = "Id should be greater than 1";
+    private final CategoryService categoryService;
 	private final CategoryModelAssembler categoryAssembler;
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<CategoryModel> findCategoryById(@PathVariable
-			@Min(value = 1, message = "Id should be greater than 1") Integer id) throws ResourceNotFoundException{
-		log.info("Handling find caegory with id = " + id);
+			@Min(value = 1, message = INCORRECT_ID_ERROR) Integer id) throws ResourceNotFoundException{
+		log.info(String.format(FIND_BY_ID_INFO, id));
 		return categoryService.findById(id)
 				.map(categoryAssembler::toModel)
 				.map(ResponseEntity::ok)
-				.orElseThrow(()->new ResourceNotFoundException("Category with ID :" + id + " Not Found!"));
+				.orElseThrow(()->new ResourceNotFoundException(String.format(ID_NOT_FOUND_ERROR, id)));
 	}
 	
 	@GetMapping
 	public ResponseEntity<CollectionModel<CategoryModel>> findAllCategories() {
-		log.info("Handling find all caegories request");
-		List<Category> categories = categoryService.findAll();
+		log.info(FIND_ALL_INFO);
+		List<CategoryDTO> categories = categoryService.findAll();
 		return new ResponseEntity<>(
 				categoryAssembler.toCollectionModel(categories),
 				HttpStatus.OK);
@@ -65,26 +79,26 @@ public class CategoryController {
 	
 	@GetMapping("/cost")
 	public List<ProjectCategoryAndCost> getCategoriesAndCost(
-			@RequestHeader("Authorization") String userToken,
-			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}[0-9]{3}", message = "Incorect year") String> year,
-			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}|1[0-2]{1}", message = "Incorect month") String> month) {
-		log.info("Handling find caegories with their cost");
-		return categoryService.getCategoriesAndCost(userToken.substring(7), year, month);
+			@RequestParam Optional<@Min(value = 1, message = INCORRECT_YEAR_ERROR) Integer> year,
+			@RequestParam Optional<@Min(value = 1, message = INCORRECT_MONTH_ERROR)
+            @Max(value = 12, message = INCORRECT_MONTH_ERROR) Integer> month) {
+		log.info(FIND_CAEGORIES_AND_COST_INFO);
+		return categoryService.getCategoriesAndCost(year, month);
 	}
 	
 	@GetMapping("/count")
 	public List<ProjectCategoryAndCount> getCategoriesAndCount(
-			@RequestHeader("Authorization") String userToken,
-			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}[0-9]{3}", message = "Incorect year") String> year,
-			@RequestParam Optional<@Pattern(regexp = "[1-9]{1}|1[0-2]{1}", message = "Incorect month") String> month) {
-		log.info("Handling find caegories with their count");
-		return categoryService.getCategoriesAndCount(userToken.substring(7), year, month);
+			@RequestParam Optional<@Min(value = 1, message = INCORRECT_YEAR_ERROR) Integer> year,
+			@RequestParam Optional<@Min(value = 1, message = INCORRECT_MONTH_ERROR)
+			  @Max(value = 12, message = INCORRECT_MONTH_ERROR) Integer> month) {
+		log.info(FIND_CAEGORIES_AND_COUNT_INFO);
+		return categoryService.getCategoriesAndCount(year, month);
 	}
 	
 	@PostMapping
-    public ResponseEntity<?> saveCategory(@Valid @RequestBody Category category) {
-        log.info("Handling save category: " + category);
-        Category addedCategory = categoryService.saveCategory(category);
+    public ResponseEntity<?> save(@Valid @RequestBody SaveCategoryRequest request) {
+        log.info(String.format(SAVE_CATEGORY_INFO, request.toString()));
+        CategoryDTO addedCategory = categoryService.save(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(addedCategory.getId())
@@ -93,35 +107,18 @@ public class CategoryController {
     }
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<?> updateCategory(@PathVariable
-			@Min(value = 1, message = "Id should be greater than 1") Integer id,
-			@Valid @RequestBody Category updatedCategory){
-		log.info("Handling update caegory with id = " + id);	
-		return categoryService.findById(id)
-				.map(category->{
-					category.setId(updatedCategory.getId());
-					category.setName(updatedCategory.getName());
-					categoryService.saveCategory(category);
-			        return ResponseEntity.ok().build(); 
-				})
-				.orElseGet(() -> {
-						updatedCategory.setId(id);
-						Category addedCategory =  categoryService.saveCategory(updatedCategory);
-						URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-				                .path("/{id}")
-				                .buildAndExpand(addedCategory.getId())
-				                .toUri();
-				        return ResponseEntity.created(location).build();
-				        });
+	public ResponseEntity<CategoryDTO> update(
+	        @PathVariable @Min(value = 1, message = INCORRECT_ID_ERROR) Integer id,
+			@Valid @RequestBody SaveCategoryRequest request){
+		log.info(UPDATE_CAEGORY_INFO + id);	
+		return ResponseEntity.ok(categoryService.update(request, id));
 	}
 	
 	@DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable
-    		@Min(value = 1, message = "Id should be greater than 1") Integer id) throws ResourceNotFoundException{
+    public ResponseEntity<Void> delete(
+            @PathVariable @Min(value = 1, message = INCORRECT_ID_ERROR) Integer id) throws ResourceNotFoundException{
         log.info("Handling delete category request: " + id);
-        Category category = categoryService.findById(id)
-        		.orElseThrow(()->new ResourceNotFoundException("Category with ID :" + id + " Not Found!"));
-        categoryService.deleteCategory(category.getId());
+        categoryService.delete(id);
         return ResponseEntity.noContent().build();
     }
 	

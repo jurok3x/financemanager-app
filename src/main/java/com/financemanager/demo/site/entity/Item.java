@@ -32,7 +32,7 @@ public class Item {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="item_id")
-	private int id;
+	private Long id;
 	@Column(name="item_name")
 	@NotBlank(message = "Name must not be empty")
 	private String name;

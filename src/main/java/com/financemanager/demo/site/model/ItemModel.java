@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ItemModel extends RepresentationModel<ItemModel> {
 	
-	private int id;
+	private Long id;
 	private String name;
 	private double price;
 	private Date date;

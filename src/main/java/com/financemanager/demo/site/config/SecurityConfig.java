@@ -15,7 +15,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.financemanager.demo.site.config.jwt.JwtFilter;
-import com.financemanager.demo.site.service.CustomUserDetailsService;
+import com.financemanager.demo.site.service.impl.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -45,8 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .and()
                 	.authorizeRequests()
                 	.antMatchers("/api/auth", "/users/fail").permitAll()
-                	.antMatchers("/api/categories/*", "/api/users/*", "/api/roles/*").hasRole("ADMIN")
-                	.antMatchers("/css/*", "/js/*", "/").permitAll()
+                	.antMatchers("/css/*", "/js/*", "/", "/api/auth/signin", "/api/auth/signup", "/webjars/**","/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**",
+                            "/swagger-resources/**","/v2/api-docs/**", "/swagger.json").permitAll()
                 	.anyRequest().authenticated()
                 .and()
                 	.logout()

@@ -1,9 +1,9 @@
 package com.financemanager.demo.site.controller;
 
-import java.net.URI;
 import java.util.List;
 
-import javax.validation.Valid;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
@@ -14,56 +14,61 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.financemanager.demo.site.entity.User;
+import com.financemanager.demo.site.dto.UserDTO;
 import com.financemanager.demo.site.exception.ResourceNotFoundException;
 import com.financemanager.demo.site.model.UserModel;
-import com.financemanager.demo.site.service.UserModelAssembler;
 import com.financemanager.demo.site.service.UserService;
+import com.financemanager.demo.site.service.assembler.UserModelAssembler;
+
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/users")
 @AllArgsConstructor
-@Log
+@Slf4j
+@SecurityRequirement(name = "bearerAuth")
 public class UserController {
 
-	private final UserService userService;
+	private static final String FIND_ALL_BY_ROLE_ID_INFO = "Handling find all users with role id %d";
+    private static final String FIND_ALL_INFO = "Handling find all users request";
+    private static final String USER_EMAIL_NOT_FOUND_ERROR = "User with email %s Not Found!";
+    private static final String FIND_BY_EMAIL_INFO = "Handling find with email %s";
+    private static final String USER_ID_NOT_FOUND_ERROR = "User with id %d Not Found!";
+    private static final String INCORRECT_ID = "Id should be greater than 1";
+    private static final String FIND_BY_ID_INFO = "Handling find user with Id %d";
+    private final UserService userService;
 	private final UserModelAssembler userAssembler;
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<UserModel> findById(@PathVariable @Min(value = 1,
-	message = "Id should be greater than 1") Integer id) throws ResourceNotFoundException {
-		log.info("Handling find with Id = " + id);
+	message = INCORRECT_ID) Integer id) throws ResourceNotFoundException {
+		log.info(String.format(FIND_BY_ID_INFO, id));
 		return userService.findById(id)
 				.map(userAssembler::toModel)
 				.map(ResponseEntity::ok)
 				.orElseThrow(
-						()->new ResourceNotFoundException("User with ID :" + id +" Not Found!"));	
+						()->new ResourceNotFoundException(String.format(USER_ID_NOT_FOUND_ERROR, id)));	
 	}
 	
-	@GetMapping("/{login}")
-	public ResponseEntity<UserModel> findByLogin(@PathVariable @NotBlank String login) throws ResourceNotFoundException{
-		log.info("Handling find with login = " + login);
-		return userService.findByLogin(login)
+	@GetMapping("/{email}")
+	public ResponseEntity<UserModel> findByEmail(@PathVariable @NotBlank String email) throws ResourceNotFoundException{
+		log.info(String.format(FIND_BY_EMAIL_INFO, email));
+		return userService.findByEmail(email)
 				.map(userAssembler::toModel)
 				.map(ResponseEntity::ok)
 				.orElseThrow(
-						()->new ResourceNotFoundException("User with Login :" + login +" Not Found!"));
+						()->new ResourceNotFoundException(String.format(USER_EMAIL_NOT_FOUND_ERROR, email)));
 	}
 
 	@GetMapping
 	public ResponseEntity<CollectionModel<UserModel>> findAllUsers() {
-		log.info("Handling find all users request");
-		List<User> users = userService.findAll();
+		log.info(FIND_ALL_INFO);
+		List<UserDTO> users = userService.findAll();
 		return new ResponseEntity<>(
 				userAssembler.toCollectionModel(users),
 				HttpStatus.OK);
@@ -71,59 +76,21 @@ public class UserController {
 	
 	@GetMapping("/role/{id}")
 	public ResponseEntity<CollectionModel<UserModel>> findByRoleId(@PathVariable @Min(value = 1,
-		message = "Id should be greater than 1") Integer id) {
-		log.info("Handling find all users with role = " + id + " request");
-		List<User> users = userService.findByRoleId(id);
+		message = INCORRECT_ID) Integer id) {
+		log.info(String.format(FIND_ALL_BY_ROLE_ID_INFO, id));
+		List<UserDTO> users = userService.findByRoleId(id);
 		return new ResponseEntity<>(
 				userAssembler.toCollectionModel(users),
 				HttpStatus.OK);
 	}
-	
-	@PostMapping
-	public ResponseEntity<?> saveUser(@Valid @RequestBody User user) {
-		log.info("Handling save user: " + user);
-		User addedUser = userService.saveUser(user);
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-				.path("/{id}")
-				.buildAndExpand(addedUser.getId())
-				.toUri();
-		return ResponseEntity.created(location).build();
-	}
-	
-	@PutMapping("/{id}")
-	public ResponseEntity<?> updateUser(@PathVariable
-			@Min(value = 1, message = "Id should be greater than 1") Integer id,
-			@Valid @RequestBody User updatedUser){
-		log.info("Handling update user with id = " + id);	
-		return userService.findById(id)
-				.map(user->{
-					user.setId(updatedUser.getId());
-					user.setName(updatedUser.getName());
-					user.setEmail(updatedUser.getEmail());
-					user.setLogin(updatedUser.getLogin());
-					user.setPassword(updatedUser.getPassword());
-					user.setRole(updatedUser.getRole());
-					userService.saveUser(user);
-			        return ResponseEntity.ok().build(); 
-				})
-				.orElseGet(() -> {
-						updatedUser.setId(id);
-						User addedUser =  userService.saveUser(updatedUser);
-						URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-				                .path("/{id}")
-				                .buildAndExpand(addedUser.getId())
-				                .toUri();
-				        return ResponseEntity.created(location).build();
-				        });
-	}
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteUser(@PathVariable @Min(value = 1,
-			message = "Id should be greater than 1") Integer id) throws ResourceNotFoundException{
-		log.info("Handling delete user request with id = " + id);
-		User deletedUser = userService.findById(id).orElseThrow(
-				()->new ResourceNotFoundException("User with ID :" + id +" Not Found!"));
-		userService.deleteUser(deletedUser.getId());
+			message = INCORRECT_ID) Integer id) throws ResourceNotFoundException{
+		log.info(String.format(FIND_BY_ID_INFO, id));
+		UserDTO deletedUser = userService.findById(id).orElseThrow(
+				()->new ResourceNotFoundException(String.format(USER_ID_NOT_FOUND_ERROR, id)));
+		userService.delete(deletedUser.getId());
 		return ResponseEntity.noContent().build();
 	}
 	

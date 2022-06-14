@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RoleModel extends RepresentationModel<RoleModel> {
 
-	private int id;
+	private Integer id;
 	private String name;
 }
 

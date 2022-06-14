@@ -23,7 +23,7 @@ public class Category implements Comparable<Category>{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="category_id")
-	private int id;
+	private Integer id;
 	@Column(name="category_name")
 	@NotBlank(message = "Name must not be empty")
 	private String name;

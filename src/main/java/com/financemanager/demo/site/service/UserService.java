@@ -5,23 +5,19 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import com.financemanager.demo.site.entity.User;
+import com.financemanager.demo.site.dto.UserDTO;
 
 @Component
 public interface UserService {
-	User saveUser(User user);
 
-    void deleteUser(Integer userId);
+    void delete(Integer userId);
+    
+    Optional<UserDTO> findByEmail(String email);
+    
+    Optional<UserDTO> findById(Integer id);
 
-    Optional<User> findByLogin(String login);
+    List<UserDTO> findAll();
     
-    Optional<User> findById(Integer id);
-    
-    Optional<User> findByLoginAndPassword(String login, String password);
+    List<UserDTO> findByRoleId(Integer id);
 
-    List<User> findAll();
-    
-    List<User> findByRoleId(Integer id);
-    
-    User getUserFromToken(String userToken);
 }

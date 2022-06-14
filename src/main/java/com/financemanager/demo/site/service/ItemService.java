@@ -5,30 +5,31 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import com.financemanager.demo.site.entity.Item;
+import com.financemanager.demo.site.dto.ItemDTO;
+import com.financemanager.demo.site.entity.payload.SaveItemRequest;
 import com.financemanager.demo.site.entity.projects.DatePartAndCost;
 import com.financemanager.demo.site.entity.projects.ProjectNameAndCountAndCost;
 
 @Component
 public interface ItemService {
-	Item saveItem(Item item, String userToken);
+	ItemDTO save(SaveItemRequest request);
 	
-	List<Item> saveAllItems(List<Item> items);
+	ItemDTO update(SaveItemRequest request, Long id);
 	
-	Optional<Item> findById(Integer id);
+	Optional<ItemDTO> findById(Long id);
 
-    void deleteItem(Integer id);
+    void delete(Long id);
 
-    List<Item> findAll(String userToken, Optional<String> year, Optional<String> month, Optional<Integer> limit, Optional<Integer> offset);
+    List<ItemDTO> findAll(Optional<Integer> year, Optional<Integer> month, Optional<Integer> limit, Optional<Integer> offset);
     
-    List<Item> findByCategory(String userToken, int categoryId, Optional<String> year, Optional<String> month, Optional<Integer> limit, Optional<Integer> offset);
+    List<ItemDTO> findByCategoryId(Integer categoryId, Optional<Integer> year, Optional<Integer> month, Optional<Integer> limit, Optional<Integer> offset);
     
-    Integer countItemsByCategory(String userToken, int cetegoryId, Optional<String> year, Optional<String> month);
+    Integer countItemsByCategoryId(Integer cetegoryId, Optional<Integer> year, Optional<Integer> month);
     
-    List<ProjectNameAndCountAndCost>getMostFrequentItems(String userToken, Optional<Integer> categoryId, 
-    		Optional<String> year, Optional<String> month, Optional<Integer> limit, Optional<Integer> offset);
+    List<ProjectNameAndCountAndCost>getMostPopularItems(Optional<Integer> categoryId, 
+    		Optional<Integer> year, Optional<Integer> month, Optional<Integer> limit, Optional<Integer> offset);
     
-    List<Integer> getAllYears(String userToken);
+    List<Integer> getActiveYears();
     
-    List<DatePartAndCost> getStatisticsByMonth(String userToken, Optional<Integer> categoryId, Optional<String> year);
+    List<DatePartAndCost> getStatisticsByMonth(Optional<Integer> categoryId, Optional<Integer> year);
 }

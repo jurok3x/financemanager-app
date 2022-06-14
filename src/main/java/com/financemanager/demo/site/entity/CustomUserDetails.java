@@ -9,11 +9,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class CustomUserDetails implements UserDetails {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
-	private String login;
+	private Integer id;
+	private String email;
     private String password;
     private Collection<? extends GrantedAuthority> grantedAuthorities;
     
@@ -23,11 +21,12 @@ public class CustomUserDetails implements UserDetails {
 	}
 	
 	public static CustomUserDetails fromUserToCustomUserDetails(User user) {
-		CustomUserDetails c = new CustomUserDetails();
-		c.login = user.getLogin();
-		c.password = user.getPassword();
-		c.grantedAuthorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getName()));
-		return c;
+		CustomUserDetails userDetails = new CustomUserDetails();
+		userDetails.id = user.getId();
+		userDetails.email = user.getEmail();
+		userDetails.password = user.getPassword();
+		userDetails.grantedAuthorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().getName()));
+		return userDetails;
 	}
 
 	@Override
@@ -37,8 +36,12 @@ public class CustomUserDetails implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return this.login;
+		return this.email;
 	}
+	
+	public Integer getId() {
+        return this.id;
+    }
 
 	@Override
 	public boolean isAccountNonExpired() {

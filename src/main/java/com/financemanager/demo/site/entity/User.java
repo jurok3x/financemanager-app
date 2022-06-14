@@ -30,15 +30,11 @@ public class User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
-	private int id;
+	private Integer id;
 	
 	@Column(name="name")
 	@NotBlank(message = "Name must not be empty")
 	private String name;
-	
-	@Column(name="login")
-	@NotBlank(message = "Login must not be empty")
-	private String login; 
 	
 	@Column(name="password")
 	@NotBlank(message = "Password must not be empty")
