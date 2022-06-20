@@ -20,9 +20,7 @@ public interface ItemService {
 
     void delete(Long id);
 
-    List<ItemDTO> findAll(Optional<Integer> year, Optional<Integer> month, Optional<Integer> limit, Optional<Integer> offset);
-    
-    List<ItemDTO> findByCategoryId(Integer categoryId, Optional<Integer> year, Optional<Integer> month, Optional<Integer> limit, Optional<Integer> offset);
+    List<ItemDTO> findAll(Integer year, Integer month, Integer categoryId, Integer limit, Optional<Integer> offset);
     
     Integer countItemsByCategoryId(Integer cetegoryId, Optional<Integer> year, Optional<Integer> month);
     
@@ -31,5 +29,5 @@ public interface ItemService {
     
     List<Integer> getActiveYears();
     
-    List<DatePartAndCost> getStatisticsByMonth(Optional<Integer> categoryId, Optional<Integer> year);
+    List<DatePartAndCost> getStatisticsByMonth(Optional<Integer> year, Optional<Integer> categoryId);
 }

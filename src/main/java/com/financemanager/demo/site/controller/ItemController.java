@@ -11,7 +11,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -51,7 +49,6 @@ public class ItemController {
     private static final String GET_ALL_ACTIVE_YEARS_INFO = "Handling find all active years";
     private static final String GET_ITEMS_COUNT_INFO = "Handling get items count of category with id %1$d and year %2$d and month %3$d";
     private static final String GET_MOST_POPULAR_ITEMS_INFO = "Handling get most popular items of category with id %1$d and year %2$d and month %3$d";
-    private static final String FIND_BY_DATE_INFO = "Handling find items of year %1$d and month %2$d";
 	private static final String FIND_BY_CATEGORY_ID_AND_DATE_INFO = "Handling find items with category ID %1$d of year %2$d and month %3$d";
     private static final String FIND_BY_ID_INFO = "Handling find item with ID %d";
     private static final String INCORRECT_OFFSET_ERROR = "Offset can not be less then 0";
@@ -76,26 +73,13 @@ public class ItemController {
 	
 	@GetMapping
 	public ResponseEntity<CollectionModel<ItemModel>> findAll(
-			@RequestParam Optional<@Min(value = 0, message = INCORRECT_YEAR_ERROR) Integer> year,
-			@RequestParam Optional<@Min(value = 0, message = INCORECT_MONTH_ERROR) @Max(value = 12, message = INCORECT_MONTH_ERROR) Integer> month,
-			@RequestParam Optional<@Min(value = 1, message = INCORRECT_LIMIT_ERROR) Integer> limit,
+	        @RequestParam(required = false) Integer categoryId,
+			@RequestParam(required = false) @Min(value = 0, message = INCORRECT_YEAR_ERROR) Integer year,
+	        @RequestParam(required = false) @Min(value = 0, message = INCORECT_MONTH_ERROR) @Max(value = 12, message = INCORECT_MONTH_ERROR) Integer month,
+	        @RequestParam(required = false) @Min(value = 1, message = INCORRECT_LIMIT_ERROR) Integer limit,
 			@RequestParam Optional<@Min(value = 0, message = INCORRECT_OFFSET_ERROR) Integer> offset) {
-		log.info(String.format(FIND_BY_DATE_INFO, year.orElse(null), month.orElse(null)));
-		List<ItemDTO> items = itemService.findAll(year, month, limit, offset);
-		return new ResponseEntity<>(
-				itemAssembler.toCollectionModel(items),
-				HttpStatus.OK);
-	}
-	
-	@GetMapping(value = {"/category/{categoryId}"})
-	public ResponseEntity<CollectionModel<ItemModel>> findByCategoryId(
-			@PathVariable Integer categoryId,
-			@RequestParam Optional<@Min(value = 0, message = INCORRECT_YEAR_ERROR) Integer> year,
-	        @RequestParam Optional<@Min(value = 0, message = INCORECT_MONTH_ERROR) @Max(value = 12, message = INCORECT_MONTH_ERROR) Integer> month,
-	        @RequestParam Optional<@Min(value = 1, message = INCORRECT_LIMIT_ERROR) Integer> limit,
-			@RequestParam Optional<@Min(value = 0, message = INCORRECT_OFFSET_ERROR) Integer> offset) {
-		log.info(String.format(FIND_BY_CATEGORY_ID_AND_DATE_INFO, categoryId, year.orElse(null), month.orElse(null)));
-		List<ItemDTO> items = itemService.findByCategoryId(categoryId, year, month, limit, offset);
+		log.info(String.format(FIND_BY_CATEGORY_ID_AND_DATE_INFO, categoryId, year, month));
+		List<ItemDTO> items = itemService.findAll(year, month, categoryId, limit, offset);
 		return new ResponseEntity<>(
 				itemAssembler.toCollectionModel(items),
 				HttpStatus.OK);
@@ -163,32 +147,5 @@ public class ItemController {
 		itemService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
-	
-	@RequestMapping(value = "/" , method = RequestMethod.OPTIONS)
-	ResponseEntity<?> collectionOptions() 
-    {
-         return ResponseEntity
-                 .ok()
-                 .allow(HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS)
-                 .build();
-    }
-	
-	@RequestMapping(value = "/{id}" , method = RequestMethod.OPTIONS)
-	ResponseEntity<?> singularOptions() 
-    {
-         return ResponseEntity
-                 .ok()
-                 .allow(HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE , HttpMethod.OPTIONS)
-                 .build();
-    }
-	
-	@RequestMapping(value = "/statistics, /years, /popular, /count/category/{categoryId}, /category/{categoryId}" , method = RequestMethod.OPTIONS)
-	ResponseEntity<?> specialOptions() 
-    {
-         return ResponseEntity
-                 .ok()
-                 .allow(HttpMethod.GET, HttpMethod.OPTIONS)
-                 .build();
-    }
 		
 }

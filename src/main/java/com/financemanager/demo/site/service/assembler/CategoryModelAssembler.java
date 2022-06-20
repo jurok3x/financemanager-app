@@ -38,7 +38,7 @@ public class CategoryModelAssembler extends RepresentationModelAssemblerSupport<
 				.withRel("items-count"));
 		categoryModel.add(linkTo(
 				methodOn(ItemController.class)
-				.findByCategoryId(entity.getId(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()))
+				.findAll(entity.getId(), null, null, null, null))
 				.withRel("items"));
 		
 		return categoryModel;

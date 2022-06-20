@@ -49,7 +49,7 @@ public class ItemModelAssembler extends RepresentationModelAssemblerSupport<Item
 		CollectionModel<ItemModel> itemsModel = super.toCollectionModel(entities);
 		itemsModel.add(linkTo(
 				methodOn(ItemController.class)
-				.findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()))
+				.findAll(null, null, null, null, null))
 				.withSelfRel());
 		itemsModel.add(linkTo(
 				methodOn(ItemController.class)

@@ -21,26 +21,13 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @Service
 public class DefaultItemService implements ItemService {
-	private static final String ITEM_ID_NOT_FOUND_ERROR = "Item with id - %d, not found";
-    private static final int DEFAULT_LIMIT = 10;
+    private static final String ITEM_ID_NOT_FOUND_ERROR = "Item with id - %d, not found";
     private final ItemRepository itemRepository;
-	private final ItemMapper itemMapper;
-	
-	@Override
-	public ItemDTO save(SaveItemRequest request) {
-	    ItemDTO itemDTO = new ItemDTO();
-        itemDTO.setCategory(request.getCategory());
-        itemDTO.setName(request.getName());
-        itemDTO.setPrice(request.getPrice());
-        itemDTO.setDate(request.getDate());
-        itemDTO.setUser(request.getUser());
-		return itemMapper.toItemDTO(itemRepository.save(itemMapper.toItem(itemDTO)));
-	}
-	
-	@Override
-    public ItemDTO update(SaveItemRequest request, Long id) {
-        ItemDTO itemDTO = itemRepository.findById(id).map(itemMapper::toItemDTO).orElseThrow(
-                () -> new ResourceNotFoundException(String.format(ITEM_ID_NOT_FOUND_ERROR, id)));
+    private final ItemMapper itemMapper;
+
+    @Override
+    public ItemDTO save(SaveItemRequest request) {
+        ItemDTO itemDTO = new ItemDTO();
         itemDTO.setCategory(request.getCategory());
         itemDTO.setName(request.getName());
         itemDTO.setPrice(request.getPrice());
@@ -48,72 +35,64 @@ public class DefaultItemService implements ItemService {
         itemDTO.setUser(request.getUser());
         return itemMapper.toItemDTO(itemRepository.save(itemMapper.toItem(itemDTO)));
     }
-	
-	@Override
-	public Optional<ItemDTO> findById(Long id) {
-	    ItemDTO itemDTO = itemRepository.findById(id).map(itemMapper::toItemDTO).orElseThrow(
-	            () -> new ResourceNotFoundException(String.format(ITEM_ID_NOT_FOUND_ERROR, id)));
-		return Optional.ofNullable(itemDTO);
-	}
 
-	@Override
-	public void delete(Long id) {
-	    ItemDTO deletedItem = itemRepository.findById(id).map(itemMapper::toItemDTO).orElseThrow(
-	              ()->new ResourceNotFoundException(String.format(ITEM_ID_NOT_FOUND_ERROR, id)));
-		itemRepository.deleteById(deletedItem.getId());
-	}
+    @Override
+    public ItemDTO update(SaveItemRequest request, Long id) {
+        ItemDTO itemDTO = itemRepository.findById(id).map(itemMapper::toItemDTO)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(ITEM_ID_NOT_FOUND_ERROR, id)));
+        itemDTO.setCategory(request.getCategory());
+        itemDTO.setName(request.getName());
+        itemDTO.setPrice(request.getPrice());
+        itemDTO.setDate(request.getDate());
+        itemDTO.setUser(request.getUser());
+        return itemMapper.toItemDTO(itemRepository.save(itemMapper.toItem(itemDTO)));
+    }
 
-	@Override
-	public List<ItemDTO> findAll(Optional<Integer> year, Optional<Integer> month,
-		Optional<Integer> limit, Optional<Integer> offset) {	
-		if(limit.isPresent() || offset.isPresent()) {
-			return itemRepository
-					.findByUserIdAndDate(ItemsUtils.getContextUser().getId(), ItemsUtils.formatDateString(year, month),
-							limit.orElse(10), offset.orElse(0)).stream().map(itemMapper::toItemDTO).collect(Collectors.toList());
-		} return itemRepository
-				.findByUserIdAndDateAll(ItemsUtils.getContextUser().getId(), ItemsUtils.formatDateString(year, month))
-				.stream().map(itemMapper::toItemDTO).collect(Collectors.toList());
-	}
+    @Override
+    public Optional<ItemDTO> findById(Long id) {
+        ItemDTO itemDTO = itemRepository.findById(id).map(itemMapper::toItemDTO)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(ITEM_ID_NOT_FOUND_ERROR, id)));
+        return Optional.ofNullable(itemDTO);
+    }
 
-	@Override
-	public List<ItemDTO> findByCategoryId(Integer categoryId, Optional<Integer> year, Optional<Integer> month,
-		Optional<Integer> limit, Optional<Integer> offset) {
-		if(limit.isPresent() || offset.isPresent()) {
-			return itemRepository.findByUserIdAndCategoryIdAndDate(ItemsUtils.getContextUser().getId(), categoryId,
-			        ItemsUtils.formatDateString(year, month), limit.orElse(DEFAULT_LIMIT), offset.orElse(0))
-			        .stream().map(itemMapper::toItemDTO).collect(Collectors.toList());
-		}
-		return itemRepository.findByUserIdAndCategoryIdAndDateAll(ItemsUtils.getContextUser().getId(), categoryId,
-		        ItemsUtils.formatDateString(year, month)).stream().map(itemMapper::toItemDTO).collect(Collectors.toList());
-	}
+    @Override
+    public void delete(Long id) {
+        ItemDTO deletedItem = itemRepository.findById(id).map(itemMapper::toItemDTO)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(ITEM_ID_NOT_FOUND_ERROR, id)));
+        itemRepository.deleteById(deletedItem.getId());
+    }
 
-	@Override
-	public Integer countItemsByCategoryId(Integer cetegoryId, Optional<Integer> year, Optional<Integer> month) {
-			return itemRepository.countByUserIdAndCategoryIdAndDate(ItemsUtils.getContextUser().getId(),
-					cetegoryId, ItemsUtils.formatDateString(year, month));	
-	}
-	
-	@Override
-	public List<ProjectNameAndCountAndCost> getMostPopularItems(Optional<Integer> categoryId, Optional<Integer> year, Optional<Integer> month,
-			Optional<Integer> limit, Optional<Integer> offset) {
-		if(!categoryId.isPresent()) {
-			return itemRepository.getMostFrequentItemsByDate(ItemsUtils.getContextUser().getId(), ItemsUtils.formatDateString(year, month), limit.orElse(5), offset.orElse(0));
-		}
-		return  itemRepository.getMostFrequentItemsByCategoryAndDate(ItemsUtils.getContextUser().getId(), categoryId.get(),
-		        ItemsUtils.formatDateString(year, month), limit.orElse(5), offset.orElse(0));
-	}
+    @Override
+    public List<ItemDTO> findAll(Integer year, Integer month, Integer categoryId, Integer limit,
+            Optional<Integer> offset) {
+        return itemRepository
+                .findAllByUserId(ItemsUtils.getContextUser().getId(), categoryId, month, year,
+                        limit, offset.orElse(0))
+                .stream().map(itemMapper::toItemDTO).collect(Collectors.toList());
+    }
 
-	@Override
-	public List<Integer> getActiveYears() {
-		return itemRepository.getAllYears(ItemsUtils.getContextUser().getId());
-	}
+    @Override
+    public Integer countItemsByCategoryId(Integer categoryId, Optional<Integer> year, Optional<Integer> month) {
+        return itemRepository.countByCategoryId(ItemsUtils.getContextUser().getId(), categoryId,
+                month.orElse(null), year.orElse(null));
+    }
 
-	@Override
-	public List<DatePartAndCost> getStatisticsByMonth(Optional<Integer> categoryId, Optional<Integer> year) {
-		if(!categoryId.isPresent()) {
-			return itemRepository.getMonthStatistics(ItemsUtils.getContextUser().getId(), ItemsUtils.formatDateString(year, Optional.empty()));
-		}
-		return itemRepository.getMonthStatisticsByCategory(ItemsUtils.getContextUser().getId(), ItemsUtils.formatDateString(year, Optional.empty()), categoryId.get());
-	}
+    @Override
+    public List<ProjectNameAndCountAndCost> getMostPopularItems(Optional<Integer> categoryId, Optional<Integer> year,
+            Optional<Integer> month, Optional<Integer> limit, Optional<Integer> offset) {
+        return itemRepository.getMostPopularItems(ItemsUtils.getContextUser().getId(),
+                categoryId.orElse(null), month.orElse(null), year.orElse(null), limit.orElse(null), offset.orElse(0));
+    }
+
+    @Override
+    public List<Integer> getActiveYears() {
+        return itemRepository.getAllActiveYears(ItemsUtils.getContextUser().getId());
+    }
+
+    @Override
+    public List<DatePartAndCost> getStatisticsByMonth(Optional<Integer> year, Optional<Integer> categoryId) {
+        return itemRepository.getMonthStatistics(ItemsUtils.getContextUser().getId(),
+                year.orElse(null), categoryId.orElse(null));
+    }
 
 }
