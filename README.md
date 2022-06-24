@@ -1,2 +1,2 @@
 # my-new-site
-Its my hobby site
+Its my site for monitoring incomes and outcomes.
