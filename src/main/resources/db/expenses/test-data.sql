@@ -1,0 +1,9 @@
+MERGE INTO EXPENSES(id, name, price, date, category_id, user_id) VALUES(1, 'Taxy', 122.9, '2022-05-22', 1, 1);
+MERGE INTO EXPENSES(id, name, price, date, category_id, user_id) VALUES(2, 'Ketchup', 22.9, '2022-01-21', 2, 1);
+MERGE INTO EXPENSES(id, name, price, date, category_id, user_id) VALUES(3, 'Ketchup', 22.9, '2022-02-22', 2, 1);
+MERGE INTO EXPENSES(id, name, price, date, category_id, user_id) VALUES(4, 'Ketchup', 22.9, '2022-06-23', 2, 1);
+MERGE INTO EXPENSES(id, name, price, date, category_id, user_id) VALUES(5, 'Mezym', 45.9, '2022-06-01', 3, 1);
+MERGE INTO EXPENSES(id, name, price, date, category_id, user_id) VALUES(6, 'Mezym', 45.9, '2022-03-23', 3, 1);
+MERGE INTO EXPENSES(id, name, price, date, category_id, user_id) VALUES(7, 'Scissors', 22.9, '2022-06-25', 4, 1);
+MERGE INTO EXPENSES(id, name, price, date, category_id, user_id) VALUES(8, 'Scissors', 22.9, '2022-04-29', 4, 1);
+MERGE INTO EXPENSES(id, name, price, date, category_id, user_id) VALUES(9, 'Room', 1800.9, '2021-06-26', 5, 1);
