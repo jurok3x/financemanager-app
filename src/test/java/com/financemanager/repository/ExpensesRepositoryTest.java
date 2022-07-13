@@ -44,14 +44,12 @@ class ExpensesRepositoryTest {
         assertNotNull(expense.getId());
         assertEquals(1, expensesRepository.count());
         DatePart datePart = new DatePart();
-        int userId = 2;
-        int categoryId = 2;
-        assertEquals(1, expensesRepository.findByUserId(userId, 2, datePart).size());
-        assertEquals(1, expensesRepository.findByUserId(userId, null, datePart).size());
+        assertEquals(1, expensesRepository.findByUserId(user.getId(), category.getId(), datePart).size());
+        assertEquals(1, expensesRepository.findByUserId(user.getId(), null, datePart).size());
         datePart.setMonth(12);
-        assertEquals(1, expensesRepository.findByUserId(userId, categoryId, datePart).size());
+        assertEquals(1, expensesRepository.findByUserId(user.getId(), category.getId(), datePart).size());
         datePart.setYear(2022);
-        assertEquals(1, expensesRepository.findByUserId(userId, categoryId, datePart).size());
+        assertEquals(1, expensesRepository.findByUserId(user.getId(), category.getId(), datePart).size());
     }
     
     @Test
@@ -65,16 +63,14 @@ class ExpensesRepositoryTest {
         }
         assertEquals(10, expensesRepository.count());
         DatePart datePart = new DatePart();
-        int userId = 1;
-        int categoryId = 1;
-        assertEquals(10, expensesRepository.findByUserId(userId, categoryId, datePart, PageRequest.of(0, 10)).getNumberOfElements());
+        assertEquals(10, expensesRepository.findByUserId(user.getId(), category.getId(), datePart, PageRequest.of(0, 10)).getNumberOfElements());
         datePart.setMonth(12);
-        assertEquals(10, expensesRepository.findByUserId(userId, categoryId, datePart, PageRequest.of(0, 10)).getNumberOfElements());
+        assertEquals(10, expensesRepository.findByUserId(user.getId(), category.getId(), datePart, PageRequest.of(0, 10)).getNumberOfElements());
         datePart.setYear(2022);
-        assertEquals(10, expensesRepository.findByUserId(userId, categoryId, datePart, PageRequest.of(0, 10)).getNumberOfElements());
-        assertEquals(5, expensesRepository.findByUserId(userId, categoryId, datePart, PageRequest.of(1, 5)).getNumberOfElements());
+        assertEquals(10, expensesRepository.findByUserId(user.getId(), category.getId(), datePart, PageRequest.of(0, 10)).getNumberOfElements());
+        assertEquals(5, expensesRepository.findByUserId(user.getId(), category.getId(), datePart, PageRequest.of(1, 5)).getNumberOfElements());
         expensesRepository.deleteById(8L);
-        assertEquals(4, expensesRepository.findByUserId(userId, categoryId, datePart, PageRequest.of(1, 5)).getNumberOfElements());
+        assertEquals(4, expensesRepository.findByUserId(user.getId(), category.getId(), datePart, PageRequest.of(1, 5)).getNumberOfElements());
     }
     
     private Expense prepareExspense(Category category, User user) {

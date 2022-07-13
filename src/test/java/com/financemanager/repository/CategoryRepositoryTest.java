@@ -3,6 +3,7 @@ package com.financemanager.repository;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.financemanager.entity.Category;
+import com.financemanager.entity.Role;
 import com.financemanager.entity.User;
 
 import org.junit.jupiter.api.Test;
@@ -26,26 +27,53 @@ class CategoryRepositoryTest {
     
     @Test
     void verifyBootstrappingByPersistingCategory() {
-        Category category = new Category();
-        category.setName("Food");
-        category.addUser(new User(1, "Yurii", "password", "jurok3x@gmai.com", null));
+        Category category = prepareCategory("Food");
+        category.addUser(prepareUser());
         assertNull(category.getId());
         entityManager.persist(category);
         assertNotNull(category.getId());
-        assertEquals(category, categoryRepository.findById(2).get());
+        assertEquals(category, categoryRepository.findById(category.getId()).get());
         assertEquals(1, categoryRepository.count());
-        assertEquals(1, categoryRepository.findById(2).get().getUsers().size());
+        assertEquals(1, categoryRepository.findById(category.getId()).get().getUsers().size());
     }
     
     @Test
     void verifyRepositoryByPersistingCategory() {
-        Category category = new Category();
-        category.setName("Medicine");
+        Category category = prepareCategory("Medicine");
         categoryRepository.save(category);
-        assertEquals(category, categoryRepository.findById(1).get());
+        assertNotNull(category.getId());
+        assertEquals(category, categoryRepository.findById(category.getId()).get());
         assertEquals(1, categoryRepository.count());
-        categoryRepository.deleteById(1);
+        categoryRepository.deleteById(category.getId());
         assertEquals(0, categoryRepository.count());
+    }
+    
+    @Test
+    void findByUserIdTest() {
+        User user = prepareUser();
+        Category category = prepareCategory("Medicine");
+        entityManager.persist(user);
+        entityManager.persist(category);
+        assertEquals(0, categoryRepository.findByUserId(user.getId()).size());
+        user.addCategory(category);
+        assertEquals(1, categoryRepository.findByUserId(user.getId()).size());
+        user.removeCategory(category);
+        assertEquals(0, user.getCategories().size());
+    }
+    
+    private User prepareUser() {
+        User user = new User();
+        user.setEmail("jurok3x@gmail.com");
+        user.setName("Yurii");
+        user.setPassword("metro090");
+        user.setRole(Role.ADMIN);
+        return user;
+    }
+    
+    private Category prepareCategory(String name) {
+        Category category = new Category();
+        category.setName(name);
+        return category;
     }
 
 }

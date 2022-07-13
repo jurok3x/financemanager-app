@@ -77,4 +77,8 @@ public class User {
 	    this.categories.add(category);
 	}
 	
+	public void removeCategory(Category category) {
+        this.categories.remove(category);
+    }
+	
 }

@@ -34,30 +34,29 @@ class IncomeRepositoryTest {
      
     @Test
     void verifyRepositoryByPersistingIncome() {
-        Income income = new Income();
-        income.setName("Salary");
-        income.setDate(new Date());
-        income.setName("Rent");
-        income.setAmount(230);
+        User user = prepareUser();
+        Income income = prepareIncome(230, user);
+        assertNull(income.getId());
+        entityManager.persist(user);
         entityManager.persist(income);
-        assertEquals(230, incomeRepository.findById(1L).get().getAmount());
+        assertNotNull(income.getId());
+        assertEquals(230, incomeRepository.findById(income.getId()).get().getAmount());
         assertEquals(1, incomeRepository.count());
         assertEquals(Arrays.asList(income), incomeRepository.findAll());
-        incomeRepository.deleteById(1L);
+        incomeRepository.deleteById(income.getId());
         assertEquals(0, incomeRepository.count());
     }
     
     @Test
     void verifyBootstrappingByPersistingIncome() {
-        Income income = new Income();
-        income.setAmount(220);
-        income.setName("Salary");
-        income.setDate(new Date());
+        User user = prepareUser();
+        Income income = prepareIncome(220, user);
         assertNull(income.getId());
+        entityManager.persist(user);
         entityManager.persist(income);
         assertNotNull(income.getId());
-        assertEquals(income, incomeRepository.findById(12L).get());
-        assertEquals(220, incomeRepository.findById(12L).get().getAmount());
+        assertEquals(income, incomeRepository.findById(income.getId()).get());
+        assertEquals(220, incomeRepository.findById(income.getId()).get().getAmount());
     }
     
     @Test
@@ -69,14 +68,14 @@ class IncomeRepositoryTest {
         }
         assertEquals(10, incomeRepository.count());
         DatePart datePart = new DatePart();
-        assertEquals(10, incomeRepository.findByUserId(1, datePart).size());
+        assertEquals(10, incomeRepository.findByUserId(user.getId(), datePart).size());
         datePart.setMonth(12);
-        assertEquals(10, incomeRepository.findByUserId(1, datePart).size());
+        assertEquals(10, incomeRepository.findByUserId(user.getId(), datePart).size());
         datePart.setYear(2022);
-        assertEquals(10, incomeRepository.findByUserId(1, datePart).size());
-        assertEquals(5, incomeRepository.findByUserId(1, datePart, PageRequest.of(1, 5)).size());
+        assertEquals(10, incomeRepository.findByUserId(user.getId(), datePart).size());
+        assertEquals(5, incomeRepository.findByUserId(user.getId(), datePart, PageRequest.of(1, 5)).size());
         incomeRepository.deleteById(8L);
-        assertEquals(4, incomeRepository.findByUserId(1, datePart, PageRequest.of(1, 5)).size());
+        assertEquals(4, incomeRepository.findByUserId(user.getId(), datePart, PageRequest.of(1, 5)).size());
     }
     
     private Income prepareIncome(double amount, User user) {
