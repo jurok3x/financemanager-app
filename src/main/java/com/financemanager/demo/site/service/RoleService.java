@@ -5,19 +5,19 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
-import com.financemanager.demo.site.entity.Role;
+import com.financemanager.demo.site.dto.RoleDTO;
 
 @Component
 public interface RoleService {
 
-	Role saveRole(Role role);
+	RoleDTO save(RoleDTO role);
 
-    void deleteRole(Integer catId);
+    void delete(Integer id);
 
-    List<Role> findAll();
+    List<RoleDTO> findAll();
 
-	Optional<Role> findById(Integer roleId);
+	Optional<RoleDTO> findById(Integer roleId);
 
-	Optional<Role> findByName(String name);
+	Optional<RoleDTO> findByName(String name);
 
 }

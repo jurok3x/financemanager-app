@@ -15,9 +15,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserModel extends RepresentationModel<UserModel>{
 
-	private int id;
+	private Integer id;
 	private String name;
-	private String login;
 	private String email;
 	private RoleModel role;
 }

@@ -12,8 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import lombok.Data;
 import lombok.Getter;
@@ -30,25 +32,25 @@ public class Item {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="item_id")
-	private int id;
+	private Long id;
 	@Column(name="item_name")
-	@NotEmpty(message = "Name must not be empty")
+	@NotBlank(message = "Name must not be empty")
 	private String name;
 	@Column(name="price")
-	@NotEmpty(message = "Price must not be empty")
-	@Min(value = 0, message = "Price must be greater than or equal to 0")
+	@NotNull(message = "Price must not be null")
+	@Min(value = 0, message = "Price should be be greater then zero")
 	private double price;
 	@JoinColumn(name="\"category_id\"")
 	@OneToOne
-	@NotEmpty(message = "Category must not be empty")
+	@Valid
+	@NotNull(message = "Category must not be null")
 	private Category category;
 	@JoinColumn(name="\"user_id\"")
 	@OneToOne
-	@NotEmpty(message = "User must not be empty")
 	private User user;
 	@Column(name="date")
-	@NotEmpty(message = "Date must not be empty")
+	@Valid
+	@NotNull(message = "Date must not be null")
 	private Date date;
-	
 }
 

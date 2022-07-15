@@ -15,6 +15,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class CategoryModel extends RepresentationModel<CategoryModel> {
 
-	private int id;
+	private Integer id;
 	private String name;
 }

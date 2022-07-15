@@ -1,4 +1,4 @@
-package com.financemanager.demo.site.service;
+package com.financemanager.demo.site.service.assembler;
 
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
@@ -11,18 +11,18 @@ import org.springframework.hateoas.CollectionModel;
 
 import com.financemanager.demo.site.controller.CategoryController;
 import com.financemanager.demo.site.controller.ItemController;
-import com.financemanager.demo.site.entity.Category;
+import com.financemanager.demo.site.dto.CategoryDTO;
 import com.financemanager.demo.site.model.CategoryModel;
 
 @Component
-public class CategoryModelAssembler extends RepresentationModelAssemblerSupport<Category, CategoryModel> {
+public class CategoryModelAssembler extends RepresentationModelAssemblerSupport<CategoryDTO, CategoryModel> {
 
 	public CategoryModelAssembler() {
 		super(CategoryController.class, CategoryModel.class);
 	}
 
 	@Override
-	public CategoryModel toModel(Category entity) {
+	public CategoryModel toModel(CategoryDTO entity) {
 		CategoryModel categoryModel = instantiateModel(entity);
 		
 		categoryModel.setId(entity.getId());
@@ -45,7 +45,7 @@ public class CategoryModelAssembler extends RepresentationModelAssemblerSupport<
 	}
 	
 	@Override
-	public CollectionModel<CategoryModel> toCollectionModel(Iterable<? extends Category> entities) {
+	public CollectionModel<CategoryModel> toCollectionModel(Iterable<? extends CategoryDTO> entities) {
 		CollectionModel<CategoryModel> categoriesModel = super.toCollectionModel(entities);
 		categoriesModel.add(linkTo(
 				methodOn(CategoryController.class).findAllCategories())

@@ -1,4 +1,4 @@
-package com.financemanager.demo.site.controller;
+package com.financemanager.demo.site.entity.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,4 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AuthResponse {
 	private String token;
+	private String tokenType;
 }

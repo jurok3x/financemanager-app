@@ -10,9 +10,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.financemanager.demo.site.config.jwt.JwtFilter;
-import com.financemanager.demo.site.service.CustomUserDetailsService;
+import com.financemanager.demo.site.service.impl.CustomUserDetailsService;
 
 @Configuration
 @EnableWebSecurity
@@ -34,30 +37,43 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	@Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .httpBasic().disable()
+                .cors()
+                .and()
+        		.httpBasic().disable()
                 .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 	.authorizeRequests()
-                	.antMatchers("/api/auth", "/users/fail").not().fullyAuthenticated()
-                	.antMatchers("/users/admin/get").hasRole("ADMIN")
-                	.antMatchers("/users/user/get").hasAnyRole("ADMIN","USER")
-                	.antMatchers("/").permitAll()
-                	.antMatchers("/api/items/all").permitAll()
+                	.antMatchers("/api/auth", "/users/fail").permitAll()
+                	.antMatchers("/css/*", "/js/*", "/", "/api/auth/signin", "/api/auth/signup", "/webjars/**","/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**",
+                            "/swagger-resources/**","/v2/api-docs/**", "/swagger.json").permitAll()
                 	.anyRequest().authenticated()
-                .and()
-                	.formLogin()
-                //	.loginPage("/registration.html")
-                	.failureUrl("/users/fail")
-                	.defaultSuccessUrl("/")
-                	.permitAll()
                 .and()
                 	.logout()
                 	.permitAll()
-                	.logoutSuccessUrl("/");
+                	.logoutSuccessUrl("/")
+        		.and()
+        			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         
     }
 	
 	 @Autowired
 	 private JwtFilter jwtFilter;
+	 
+	 @Bean
+		public WebMvcConfigurer corsConfigurer() {
+			return new WebMvcConfigurer() {
+				@Override
+				public void addCorsMappings(CorsRegistry registry) {
+					registry.addMapping("/**")
+					.allowedOrigins("*")
+					.allowedHeaders("*")
+					.exposedHeaders("*")
+					.allowedMethods("*");
+				}
+			};
+		}
+	 
+	 
 }
+

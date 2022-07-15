@@ -1,4 +1,4 @@
-package com.financemanager.demo.site.service;
+package com.financemanager.demo.site.service.assembler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -10,11 +10,11 @@ import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSuppor
 import org.springframework.stereotype.Component;
 
 import com.financemanager.demo.site.controller.ItemController;
-import com.financemanager.demo.site.entity.Item;
+import com.financemanager.demo.site.dto.ItemDTO;
 import com.financemanager.demo.site.model.ItemModel;
 
 @Component
-public class ItemModelAssembler extends RepresentationModelAssemblerSupport<Item, ItemModel> {
+public class ItemModelAssembler extends RepresentationModelAssemblerSupport<ItemDTO, ItemModel> {
 
 	public ItemModelAssembler() {
 		super(ItemController.class, ItemModel.class);
@@ -27,7 +27,7 @@ public class ItemModelAssembler extends RepresentationModelAssemblerSupport<Item
 	private UserModelAssembler userAssembler;
 
 	@Override
-	public ItemModel toModel(Item entity) {
+	public ItemModel toModel(ItemDTO entity) {
 		ItemModel itemModel = instantiateModel(entity);
 		
 		itemModel.setId(entity.getId());
@@ -45,7 +45,7 @@ public class ItemModelAssembler extends RepresentationModelAssemblerSupport<Item
 	}
 	
 	@Override
-	public CollectionModel<ItemModel> toCollectionModel(Iterable<? extends Item> entities) {
+	public CollectionModel<ItemModel> toCollectionModel(Iterable<? extends ItemDTO> entities) {
 		CollectionModel<ItemModel> itemsModel = super.toCollectionModel(entities);
 		itemsModel.add(linkTo(
 				methodOn(ItemController.class)
@@ -53,11 +53,11 @@ public class ItemModelAssembler extends RepresentationModelAssemblerSupport<Item
 				.withSelfRel());
 		itemsModel.add(linkTo(
 				methodOn(ItemController.class)
-				.getAllYears())
+				.getActiveYears())
 				.withRel("years"));
 		itemsModel.add(linkTo(
 				methodOn(ItemController.class)
-				.getMostFrequentItems(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()))
+				.getMostPopularItems(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()))
 				.withRel("popular"));
 		itemsModel.add(linkTo(
 				methodOn(ItemController.class)

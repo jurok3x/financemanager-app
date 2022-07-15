@@ -1,4 +1,4 @@
-package com.financemanager.demo.site.service;
+package com.financemanager.demo.site.service.assembler;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -7,11 +7,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import org.springframework.stereotype.Component;
 
 import com.financemanager.demo.site.controller.UserController;
-import com.financemanager.demo.site.entity.User;
+import com.financemanager.demo.site.dto.UserDTO;
 import com.financemanager.demo.site.model.UserModel;
 
 @Component
-public class UserModelAssembler extends RepresentationModelAssemblerSupport<User, UserModel> {
+public class UserModelAssembler extends RepresentationModelAssemblerSupport<UserDTO, UserModel> {
 
 	public UserModelAssembler() {
 		super(UserController.class, UserModel.class);
@@ -21,11 +21,10 @@ public class UserModelAssembler extends RepresentationModelAssemblerSupport<User
 	RoleModelAssembler roleAssembler;
 
 	@Override
-	public UserModel toModel(User entity) {
+	public UserModel toModel(UserDTO entity) {
 		UserModel userModel = instantiateModel(entity);
 		
 		userModel.setId(entity.getId());
-		userModel.setLogin(entity.getLogin());
 		userModel.setName(entity.getName());
 		userModel.setEmail(entity.getEmail());
 		userModel.setRole(roleAssembler.toModel(entity.getRole()));
@@ -39,7 +38,7 @@ public class UserModelAssembler extends RepresentationModelAssemblerSupport<User
 	}
 	
 	@Override
-	public CollectionModel<UserModel> toCollectionModel(Iterable<? extends User> entities) {
+	public CollectionModel<UserModel> toCollectionModel(Iterable<? extends UserDTO> entities) {
 		CollectionModel<UserModel> usersModel = super.toCollectionModel(entities);
 		usersModel.add(linkTo(
 				methodOn(UserController.class)

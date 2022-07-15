@@ -1,4 +1,4 @@
-package com.financemanager.demo.site.controller;
+package com.financemanager.demo.site.entity.payload;
 
 import lombok.Data;
 import lombok.Getter;
@@ -8,6 +8,6 @@ import lombok.Setter;
 @Setter
 @Data
 public class AuthRequest {
-	private String login;
+	private String email;
     private String password;
 }
