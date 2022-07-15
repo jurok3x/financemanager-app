@@ -32,8 +32,10 @@ public class DefaultUserService implements UserService{
 	}
 
 	@Override
-	public void delete(Integer userId) {
-		userRepository.deleteById(userId);		
+	public void delete(Integer id) {
+	    UserDTO userDTO = userRepository.findById(id).map(userMapper::toUserDTO).orElseThrow(() -> new BadCredentialsException(
+                String.format(USER_ID_NOT_FOUND_ERROR, id)));
+		userRepository.deleteById(userDTO.getId());		
 	}
 
 	@Override
@@ -47,5 +49,10 @@ public class DefaultUserService implements UserService{
 	public List<UserDTO> findAll() {
 		return userRepository.findAll().stream().map(userMapper::toUserDTO).collect(Collectors.toList());
 	}
+
+    @Override
+    public List<UserDTO> findByCategoryId(Integer categoryId) {
+        return userRepository.findByCategoryId(categoryId).stream().map(userMapper::toUserDTO).collect(Collectors.toList());
+    }
 
 }

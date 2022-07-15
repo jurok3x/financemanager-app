@@ -68,14 +68,14 @@ class IncomeRepositoryTest {
         }
         assertEquals(10, incomeRepository.count());
         DatePart datePart = new DatePart();
-        assertEquals(10, incomeRepository.findByUserId(user.getId(), datePart).size());
+        assertEquals(10, incomeRepository.findByUserIdAndDatePart(user.getId(), datePart).size());
         datePart.setMonth(12);
-        assertEquals(10, incomeRepository.findByUserId(user.getId(), datePart).size());
+        assertEquals(10, incomeRepository.findByUserIdAndDatePart(user.getId(), datePart).size());
         datePart.setYear(2022);
-        assertEquals(10, incomeRepository.findByUserId(user.getId(), datePart).size());
-        assertEquals(5, incomeRepository.findByUserId(user.getId(), datePart, PageRequest.of(1, 5)).size());
-        incomeRepository.deleteById(8L);
-        assertEquals(4, incomeRepository.findByUserId(user.getId(), datePart, PageRequest.of(1, 5)).size());
+        assertEquals(10, incomeRepository.findByUserIdAndDatePart(user.getId(), datePart).size());
+        assertEquals(5, incomeRepository.findByUserIdAndDatePart(user.getId(), datePart, PageRequest.of(1, 5)).getSize());
+        incomeRepository.deleteById(5L);// TODO: fix this
+        assertEquals(4, incomeRepository.findByUserIdAndDatePart(user.getId(), datePart, PageRequest.of(1, 5)).getSize());
     }
     
     private Income prepareIncome(double amount, User user) {
@@ -85,8 +85,7 @@ class IncomeRepositoryTest {
         income.setDate(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
         income.setName("Salary");
         income.setUser(user);
-        return income;
-        
+        return income; 
     }
     
     private User prepareUser() {

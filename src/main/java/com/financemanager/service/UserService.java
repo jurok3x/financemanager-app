@@ -10,12 +10,14 @@ import org.springframework.stereotype.Component;
 @Component
 public interface UserService {
 
-    void delete(Integer userId);
+    void delete(Integer id);
     
     Optional<UserDTO> findByEmail(String email);
     
     Optional<UserDTO> findById(Integer id);
 
     List<UserDTO> findAll();
+    
+    List<UserDTO> findByCategoryId(Integer categoryId);
 
 }

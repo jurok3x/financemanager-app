@@ -26,7 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.financemanager.dto.ExpenseDTO;
-import com.financemanager.entity.payload.SaveExpenseRequest;
 import com.financemanager.entity.utils.DatePart;
 import com.financemanager.exception.ResourceNotFoundException;
 import com.financemanager.model.ExpenseModel;
@@ -76,16 +75,16 @@ public class ExpensesController {
 	        @RequestParam(required = false) @Min(value = 1, message = INCORRECT_LIMIT_ERROR) Integer limit,
 			@RequestParam Optional<@Min(value = 0, message = INCORRECT_OFFSET_ERROR) Integer> offset) {
 		log.info(String.format(FIND_BY_CATEGORY_ID_AND_DATE_INFO, categoryId, year, month));
-		List<ExpenseDTO> items = expensesService.findByUserId(userId, categoryId, new DatePart(year, month));
+		List<ExpenseDTO> items = expensesService.findByUserIdAndCategoryIdAndDatePart(userId, categoryId, new DatePart(year, month));
 		return new ResponseEntity<>(
 				expensesAssembler.toCollectionModel(items),
 				HttpStatus.OK);
 	}
 	
 	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> save(@Valid @RequestBody SaveExpenseRequest request) {
-		log.info(String.format(SAVE_EXPENSE_INFO, request.toString()));
-		ExpenseDTO addedExpense =  expensesService.save(request);
+	public ResponseEntity<?> save(@Valid @RequestBody ExpenseDTO expenseDTO) {
+		log.info(String.format(SAVE_EXPENSE_INFO, expenseDTO.toString()));
+		ExpenseDTO addedExpense =  expensesService.save(expenseDTO);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}")
 				.buildAndExpand(addedExpense.getId())
@@ -96,9 +95,9 @@ public class ExpensesController {
 	@PutMapping("/{id}")
 	public ResponseEntity<ExpenseDTO> updateItem(
 			@PathVariable @Min(value = 1, message = INCORRECT_ID_ERROR) Long id,
-			@Valid @RequestBody SaveExpenseRequest request){
+			@Valid @RequestBody ExpenseDTO expenseDTO){
 		log.info(String.format(UPDATE_EXPENSE_INFO, id));	
-		return ResponseEntity.ok(expensesService.update(request, id));
+		return ResponseEntity.ok(expensesService.update(expenseDTO, id));
 	}
 	
 	@DeleteMapping("/{id}")
