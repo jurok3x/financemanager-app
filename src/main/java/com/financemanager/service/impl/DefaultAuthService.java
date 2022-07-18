@@ -44,9 +44,9 @@ public class DefaultAuthService implements AuthService {
 
     @Override
     public UserDTO registration(SaveUserRequest request) throws UserAlreadyExistsException {
-        if(userRepository.findByEmail(request.getLogin()).isPresent()) {
+        if(userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException(
-                    String.format(USER_ALREADY_EXISTS_ERROR, request.getLogin()));
+                    String.format(USER_ALREADY_EXISTS_ERROR, request.getEmail()));
         }
         User user = new User();
         user.setEmail(request.getEmail());

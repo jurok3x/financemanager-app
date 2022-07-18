@@ -73,9 +73,9 @@ class IncomeRepositoryTest {
         assertEquals(10, incomeRepository.findByUserIdAndDatePart(user.getId(), datePart).size());
         datePart.setYear(2022);
         assertEquals(10, incomeRepository.findByUserIdAndDatePart(user.getId(), datePart).size());
+        incomeRepository.deleteById(8L);
+        assertEquals(9, incomeRepository.findByUserIdAndDatePart(user.getId(), datePart).size());
         assertEquals(5, incomeRepository.findByUserIdAndDatePart(user.getId(), datePart, PageRequest.of(1, 5)).getSize());
-        incomeRepository.deleteById(5L);// TODO: fix this
-        assertEquals(4, incomeRepository.findByUserIdAndDatePart(user.getId(), datePart, PageRequest.of(1, 5)).getSize());
     }
     
     private Income prepareIncome(double amount, User user) {

@@ -6,6 +6,8 @@ import java.util.Optional;
 import com.financemanager.dto.ExpenseDTO;
 import com.financemanager.entity.utils.DatePart;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,5 +21,7 @@ public interface ExpensesService {
     void delete(Long id);
 
     List<ExpenseDTO> findByUserIdAndCategoryIdAndDatePart(Integer userId, Integer categoryId, DatePart datePart);
+    
+    Page<ExpenseDTO> findByUserIdAndCategoryIdAndDatePart(Integer userId, Integer categoryId, DatePart datePart, Pageable pageable);
     
 }

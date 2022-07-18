@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.financemanager.dto.ExpenseDTO;
@@ -53,6 +55,12 @@ public class DefaultExpensesService implements ExpensesService {
         return expensesRepository
                 .findByUserIdAndCategoryIdAndDatePart(userId, categoryId, datePart)
                 .stream().map(expensesMapper::toExpenseDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<ExpenseDTO> findByUserIdAndCategoryIdAndDatePart(Integer userId, Integer categoryId, DatePart datePart,
+            Pageable pageable) {
+        return expensesRepository.findByUserIdAndCategoryIdAndDatePart(userId, categoryId, datePart, pageable).map(expensesMapper::toExpenseDTO);
     }
 
 }

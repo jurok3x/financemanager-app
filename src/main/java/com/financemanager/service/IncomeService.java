@@ -12,6 +12,8 @@ public interface IncomeService {
     
     IncomeDTO save(IncomeDTO incomeDTO);
     
+    IncomeDTO findById(Long id);
+    
     List<IncomeDTO> findByUserIdAndDatePart(Integer userId, DatePart datePart);
     
     Page<IncomeDTO> findByUserIdAndDatePart(Integer userId, DatePart datePart, Pageable pageable);

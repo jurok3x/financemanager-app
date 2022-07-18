@@ -54,4 +54,11 @@ public class DefaultIncomeService implements IncomeService {
         incomeRepository.deleteById(incomeDTO.getId());
     }
 
+    @Override
+    public IncomeDTO findById(Long id) {
+        IncomeDTO income = incomeRepository.findById(id).map(incomeMapper::toIncomeDTO).orElseThrow(
+                () -> new ResourceNotFoundException(String.format(INCOME_ID_NOT_FOUND_ERROR, id)));
+        return income;
+    }
+
 }
