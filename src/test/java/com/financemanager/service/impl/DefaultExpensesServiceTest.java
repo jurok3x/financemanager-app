@@ -71,7 +71,7 @@ class DefaultExpensesServiceTest {
     void whenFindById_thenReturnCorrectResult() {
         Expense expense = prepareExspense();
         given(expensesRepository.findById(Mockito.anyLong())).willReturn(Optional.of(expense));
-        assertEquals(Optional.of(expensesMapper.toExpenseDTO(expense)), expensesService.findById(expense.getId()));
+        assertEquals(expensesMapper.toExpenseDTO(expense), expensesService.findById(expense.getId()));
         verify(expensesRepository).findById(expense.getId());
     }
     

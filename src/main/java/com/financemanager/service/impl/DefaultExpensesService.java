@@ -1,7 +1,6 @@
 package com.financemanager.service.impl;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -37,10 +36,9 @@ public class DefaultExpensesService implements ExpensesService {
     }
 
     @Override
-    public Optional<ExpenseDTO> findById(Long id) {
-        ExpenseDTO expenseDTO = expensesRepository.findById(id).map(expensesMapper::toExpenseDTO)
+    public ExpenseDTO findById(Long id) {
+        return expensesRepository.findById(id).map(expensesMapper::toExpenseDTO)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(EXPENSE_ID_NOT_FOUND_ERROR, id)));
-        return Optional.ofNullable(expenseDTO);
     }
 
     @Override

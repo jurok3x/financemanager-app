@@ -41,7 +41,6 @@ public class CategoryController {
     private static final String FIND_ALL_INFO = "Handling find all caegories request";
     private static final String UPDATE_CAEGORY_INFO = "Handling update caegory with id %d";
     private static final String SAVE_CATEGORY_INFO = "Handling save category %s";
-    private static final String ID_NOT_FOUND_ERROR = "Category with ID : %d Not Found!";
     private static final String INCORRECT_ID_ERROR = "Id should be greater than 1";
     private final CategoryService categoryService;
 	private final CategoryModelAssembler categoryAssembler;
@@ -50,10 +49,7 @@ public class CategoryController {
 	public ResponseEntity<CategoryModel> findCategoryById(@PathVariable
 			@Min(value = 1, message = INCORRECT_ID_ERROR) Integer id) throws ResourceNotFoundException{
 		log.info(String.format(FIND_BY_ID_INFO, id));
-		return categoryService.findById(id)
-				.map(categoryAssembler::toModel)
-				.map(ResponseEntity::ok)
-				.orElseThrow(()->new ResourceNotFoundException(String.format(ID_NOT_FOUND_ERROR, id)));
+		return ResponseEntity.ok(categoryAssembler.toModel(categoryService.findById(id)));
 	}
 	
 	@GetMapping

@@ -69,7 +69,7 @@ public class IncomeController {
         return ResponseEntity.ok(incomeAssembler.toCollectionModel(incomes));
     }
     
-    @GetMapping("/user/{userId}")
+    @GetMapping("/page/user/{userId}")
     public ResponseEntity<Page<IncomeModel>> findByUserIdAndCategoryIdAndDatePart(
             @PathVariable @Min(value = 1, message = INCORRECT_ID_ERROR) Integer userId,
             @RequestParam(required = false) @Min(value = 0, message = INCORRECT_YEAR_ERROR) Integer year,

@@ -50,7 +50,6 @@ public class ExpensesController {
     private static final String INCORECT_MONTH_ERROR = "Incorect month";
     private static final String INCORRECT_YEAR_ERROR = "Incorrect year";
     private static final String INCORRECT_LIMIT_ERROR = "Incorrect limit";
-    private static final String EXPENSE_ID_NOT_FOUND_ERROR = "Expense with ID %d Not Found!";
     private static final String INCORRECT_ID_ERROR = "Id must be greater than or equal to 1";
     private ExpensesService expensesService;
 	private ExpenseModelAssembler expensesAssembler;
@@ -59,11 +58,7 @@ public class ExpensesController {
 	public ResponseEntity<ExpenseModel> findById(@PathVariable
 			@Min(value = 1, message = INCORRECT_ID_ERROR) Long id) throws ResourceNotFoundException {
 		log.info(String.format(FIND_BY_ID_INFO, id));
-	    return expensesService.findById(id)
-				.map(expensesAssembler::toModel)
-				.map(ResponseEntity::ok)
-				.orElseThrow(
-						()->new ResourceNotFoundException(String.format(EXPENSE_ID_NOT_FOUND_ERROR, id)));
+	    return ResponseEntity.ok(expensesAssembler.toModel(expensesService.findById(id)));
 	}
 	
 	@GetMapping("/user/{userId}")

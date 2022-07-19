@@ -42,7 +42,7 @@ class DefaultUserServiceTest {
     void whenFindById_thenReturnCorrectResult() {
        User user = prepareUser();
        given(userRepository.findById(Mockito.anyInt())).willReturn(Optional.of(user));
-       assertEquals(Optional.of(userMapper.toUserDTO(user)), userService.findById(user.getId()));
+       assertEquals(userMapper.toUserDTO(user), userService.findById(user.getId()));
        verify(userRepository).findById(user.getId());
     }
     
@@ -50,7 +50,7 @@ class DefaultUserServiceTest {
     void whenFindByEmail_thenReturnCorrectResult() {
        User user = prepareUser();
        given(userRepository.findByEmail(Mockito.anyString())).willReturn(Optional.of(user));
-       assertEquals(Optional.of(userMapper.toUserDTO(user)), userService.findByEmail(user.getEmail()));
+       assertEquals(userMapper.toUserDTO(user), userService.findByEmail(user.getEmail()));
        verify(userRepository).findByEmail(user.getEmail());
     }
     

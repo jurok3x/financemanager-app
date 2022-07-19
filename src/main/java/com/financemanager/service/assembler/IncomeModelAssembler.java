@@ -14,7 +14,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 @Component
 public class IncomeModelAssembler  extends RepresentationModelAssemblerSupport<IncomeDTO, IncomeModel>{
 
-    public IncomeModelAssembler(Class<?> controllerClass, Class<IncomeModel> resourceType) {
+    public IncomeModelAssembler() {
         super(IncomeController.class, IncomeModel.class);
     }
     
@@ -40,9 +40,10 @@ public class IncomeModelAssembler  extends RepresentationModelAssemblerSupport<I
     @Override
     public CollectionModel<IncomeModel> toCollectionModel(Iterable<? extends IncomeDTO> entities) {
         CollectionModel<IncomeModel> incomesModel = super.toCollectionModel(entities);
+        int userId = entities.iterator().hasNext() ? entities.iterator().next().getUserDTO().getId() : null;
         incomesModel.add(linkTo(
                 methodOn(IncomeController.class)
-                .findByUserIdAndCategoryIdAndDatePart(entities.iterator().next().getUserDTO().getId(), null, null))
+                .findByUserIdAndCategoryIdAndDatePart(userId, null, null))
                 .withSelfRel());
         return incomesModel;
     }

@@ -36,9 +36,7 @@ public class UserController {
 
     private static final String FIND_BY_CATEGORY_ID = "Find users for category with id %d";
     private static final String FIND_ALL_INFO = "Handling find all users request";
-    private static final String USER_EMAIL_NOT_FOUND_ERROR = "User with email %s Not Found!";
     private static final String FIND_BY_EMAIL_INFO = "Handling find with email %s";
-    private static final String USER_ID_NOT_FOUND_ERROR = "User with id %d Not Found!";
     private static final String INCORRECT_ID = "Id should be greater than 1";
     private static final String FIND_BY_ID_INFO = "Handling find user with Id %d";
     private final UserService userService;
@@ -48,21 +46,13 @@ public class UserController {
 	public ResponseEntity<UserModel> findById(@PathVariable @Min(value = 1,
 	message = INCORRECT_ID) Integer id) throws ResourceNotFoundException {
 		log.info(String.format(FIND_BY_ID_INFO, id));
-		return userService.findById(id)
-				.map(userAssembler::toModel)
-				.map(ResponseEntity::ok)
-				.orElseThrow(
-						()->new ResourceNotFoundException(String.format(USER_ID_NOT_FOUND_ERROR, id)));	
+		return ResponseEntity.ok(userAssembler.toModel(userService.findById(id)));
 	}
 	
 	@GetMapping("/{email}")
 	public ResponseEntity<UserModel> findByEmail(@PathVariable @NotBlank String email) throws ResourceNotFoundException{
 		log.info(String.format(FIND_BY_EMAIL_INFO, email));
-		return userService.findByEmail(email)
-				.map(userAssembler::toModel)
-				.map(ResponseEntity::ok)
-				.orElseThrow(
-						()->new ResourceNotFoundException(String.format(USER_EMAIL_NOT_FOUND_ERROR, email)));
+		return ResponseEntity.ok(userAssembler.toModel(userService.findByEmail(email)));
 	}
 
 	@GetMapping
@@ -87,9 +77,7 @@ public class UserController {
 	public ResponseEntity<Void> deleteUser(@PathVariable @Min(value = 1,
 			message = INCORRECT_ID) Integer id) throws ResourceNotFoundException{
 		log.info(String.format(FIND_BY_ID_INFO, id));
-		UserDTO deletedUser = userService.findById(id).orElseThrow(
-				()->new ResourceNotFoundException(String.format(USER_ID_NOT_FOUND_ERROR, id)));
-		userService.delete(deletedUser.getId());
+		userService.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
