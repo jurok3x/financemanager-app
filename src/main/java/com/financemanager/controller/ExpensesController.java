@@ -67,7 +67,7 @@ public class ExpensesController {
 	}
 	
 	@GetMapping("/user/{userId}")
-	public ResponseEntity<CollectionModel<ExpenseModel>> findByUserId(
+	public ResponseEntity<CollectionModel<ExpenseModel>> findByUserIdAndCategoryIdAndDatePart(
 	        @PathVariable(name = "userId") Integer userId,
 	        @RequestParam(required = false) Integer categoryId,
 			@RequestParam(required = false) @Min(value = 0, message = INCORRECT_YEAR_ERROR) Integer year,
@@ -81,7 +81,7 @@ public class ExpensesController {
 				HttpStatus.OK);
 	}
 	
-	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> save(@Valid @RequestBody ExpenseDTO expenseDTO) {
 		log.info(String.format(SAVE_EXPENSE_INFO, expenseDTO.toString()));
 		ExpenseDTO addedExpense =  expensesService.save(expenseDTO);

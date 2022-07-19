@@ -34,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @SecurityRequirement(name = "bearerAuth")
 public class UserController {
 
+    private static final String FIND_BY_CATEGORY_ID = "Find users for category with id %d";
     private static final String FIND_ALL_INFO = "Handling find all users request";
     private static final String USER_EMAIL_NOT_FOUND_ERROR = "User with email %s Not Found!";
     private static final String FIND_BY_EMAIL_INFO = "Handling find with email %s";
@@ -72,6 +73,15 @@ public class UserController {
 				userAssembler.toCollectionModel(users),
 				HttpStatus.OK);
 	}
+	
+	@GetMapping("/category/{categoryId}")
+    public ResponseEntity<CollectionModel<UserModel>> findUsersByCategoryId(@PathVariable Integer categoryId) {
+        log.info(String.format(FIND_BY_CATEGORY_ID, categoryId));
+        List<UserDTO> users = userService.findByCategoryId(categoryId);
+        return new ResponseEntity<>(
+                userAssembler.toCollectionModel(users),
+                HttpStatus.OK);
+    }
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deleteUser(@PathVariable @Min(value = 1,

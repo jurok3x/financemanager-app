@@ -47,7 +47,7 @@ public class ExpenseModelAssembler extends RepresentationModelAssemblerSupport<E
 		CollectionModel<ExpenseModel> expenseModel = super.toCollectionModel(entities);
 		expenseModel.add(linkTo(
 				methodOn(ExpensesController.class)
-				.findByUserId(null, null, null, null, null, null))
+				.findByUserIdAndCategoryIdAndDatePart(null, null, null, null, null, null))
 				.withSelfRel());
 		return expenseModel;
 	}

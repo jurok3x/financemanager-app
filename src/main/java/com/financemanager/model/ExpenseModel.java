@@ -19,7 +19,7 @@ public class ExpenseModel extends RepresentationModel<ExpenseModel> {
 	
 	private Long id;
 	private String name;
-	private double price;
+	private Double price;
 	private Date date;
 	private CategoryModel category;
 	private UserModel user;

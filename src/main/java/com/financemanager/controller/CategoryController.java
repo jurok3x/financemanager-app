@@ -65,6 +65,15 @@ public class CategoryController {
 				HttpStatus.OK);
 	}
 	
+	@GetMapping("/user/{userId}")
+    public ResponseEntity<CollectionModel<CategoryModel>> findByUserId(@PathVariable Integer userId) {
+        log.info(FIND_ALL_INFO);
+        List<CategoryDTO> categories = categoryService.findByUserId(userId);
+        return new ResponseEntity<>(
+                categoryAssembler.toCollectionModel(categories),
+                HttpStatus.OK);
+    }
+	
 	@PostMapping
     public ResponseEntity<?> save(@Valid @RequestBody CategoryDTO categoryDTO) {
         log.info(String.format(SAVE_CATEGORY_INFO, categoryDTO.toString()));

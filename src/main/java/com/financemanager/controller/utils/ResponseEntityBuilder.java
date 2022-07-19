@@ -1,4 +1,4 @@
-package com.financemanager.controller;
+package com.financemanager.controller.utils;
 
 import com.financemanager.exception.APIException;
 
