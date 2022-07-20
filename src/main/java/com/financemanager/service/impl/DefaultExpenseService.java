@@ -12,13 +12,13 @@ import com.financemanager.entity.utils.DatePart;
 import com.financemanager.exception.ResourceNotFoundException;
 import com.financemanager.mapper.ExpensesMapper;
 import com.financemanager.repository.ExpensesRepository;
-import com.financemanager.service.ExpensesService;
+import com.financemanager.service.ExpenseService;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class DefaultExpensesService implements ExpensesService {
+public class DefaultExpenseService implements ExpenseService {
     private static final String EXPENSE_ID_NOT_FOUND_ERROR = "Expense with id - %d, not found";
     private final ExpensesRepository expensesRepository;
     private final ExpensesMapper expensesMapper;

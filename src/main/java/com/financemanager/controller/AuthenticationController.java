@@ -1,13 +1,11 @@
 package com.financemanager.controller;
 
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -44,13 +42,13 @@ public class AuthenticationController {
 	
 	@PostMapping("/signin")
 	public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request){
-	    log.info(String.format(LOGIN_INFO, request.getEmail()));
-		return ResponseEntity.ok(new AuthResponse(authService.login(request), "Bearer"));
+	    log.info(LOGIN_INFO, request.getEmail());
+		return ResponseEntity.ok(authService.login(request));
 	}
 	
 	@PostMapping("/signup")
     public ResponseEntity<UserModel> registration(@RequestBody @Valid SaveUserRequest request) throws UserAlreadyExistsException{
-	    log.info(String.format(REGISTRATION_INFO, request.toString()));
+	    log.info(REGISTRATION_INFO, request.toString());
 	    UserDTO addedUser = authService.registration(request);
 	    URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -61,17 +59,8 @@ public class AuthenticationController {
 	
 	@PutMapping("/update/{id}")
     public ResponseEntity<UserModel> updateUserName(@RequestBody String userName, @PathVariable Integer id){
-	    log.info(String.format(UPDATE_USER_INFO, userName));
+	    log.info(UPDATE_USER_INFO, userName);
         return ResponseEntity.ok(userAssembler.toModel(authService.updateName(userName, id)));
     }
 	
-	@RequestMapping(value = "/" , method = RequestMethod.OPTIONS)
-	ResponseEntity<?> singularOptions() 
-    {
-         return ResponseEntity
-                 .ok()
-                 .allow(HttpMethod.POST, HttpMethod.OPTIONS)
-                 .build();
-    }
-
 }

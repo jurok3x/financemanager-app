@@ -5,6 +5,7 @@ import com.financemanager.dto.UserDTO;
 import com.financemanager.entity.Role;
 import com.financemanager.entity.User;
 import com.financemanager.entity.payload.AuthRequest;
+import com.financemanager.entity.payload.AuthResponse;
 import com.financemanager.entity.payload.SaveUserRequest;
 import com.financemanager.exception.UserAlreadyExistsException;
 import com.financemanager.mapper.UserMapper;
@@ -32,14 +33,14 @@ public class DefaultAuthService implements AuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public String login(AuthRequest request) {
+    public AuthResponse login(AuthRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new BadCredentialsException(
                 String.format(USER_EMAIL_NOT_FOUND_ERROR, request.getEmail())));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException(
                     String.format(WRONG_PASSWORD_ERROR, request.getEmail()));
         }
-        return jwtProvider.generateToken(user.getEmail());
+        return new AuthResponse(jwtProvider.generateToken(user.getEmail()), "Bearer");
     }
 
     @Override

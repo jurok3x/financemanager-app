@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Component
-public interface ExpensesService {
+public interface ExpenseService {
 	ExpenseDTO save(ExpenseDTO exspenseDTO);
 	
 	ExpenseDTO update(ExpenseDTO exspenseDTO, Long id);

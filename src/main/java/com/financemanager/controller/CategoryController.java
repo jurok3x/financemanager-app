@@ -28,16 +28,17 @@ import com.financemanager.service.CategoryService;
 import com.financemanager.service.assembler.CategoryModelAssembler;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/categories")
 @AllArgsConstructor
-@Log
+@Slf4j
 @SecurityRequirement(name = "bearerAuth")
 public class CategoryController {
 	
-	private static final String FIND_BY_ID_INFO = "Handling find caegory with id %d";
+	private static final String FIND_CATEGORIES_BY_USER_ID_INFO = "Handling find categories of user with id %d";
+    private static final String FIND_BY_ID_INFO = "Handling find caegory with id %d";
     private static final String FIND_ALL_INFO = "Handling find all caegories request";
     private static final String UPDATE_CAEGORY_INFO = "Handling update caegory with id %d";
     private static final String SAVE_CATEGORY_INFO = "Handling save category %s";
@@ -63,7 +64,7 @@ public class CategoryController {
 	
 	@GetMapping("/user/{userId}")
     public ResponseEntity<CollectionModel<CategoryModel>> findByUserId(@PathVariable Integer userId) {
-        log.info(FIND_ALL_INFO);
+        log.info(FIND_CATEGORIES_BY_USER_ID_INFO, userId);
         List<CategoryDTO> categories = categoryService.findByUserId(userId);
         return new ResponseEntity<>(
                 categoryAssembler.toCollectionModel(categories),
