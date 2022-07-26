@@ -26,7 +26,7 @@ public class DefaultAuthService implements AuthService {
     private static final String WRONG_PASSWORD_ERROR = "Wrong password for user with email %s";
     private static final String USER_EMAIL_NOT_FOUND_ERROR = "User with email - %s not found";
     private static final String USER_ID_NOT_FOUND_ERROR = "User with id %d not found";
-    private static final Role DEFAULT_ROLE = Role.USER;
+    private static final Role DEFAULT_ROLE = new Role(2, "ROLE_USER");
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;

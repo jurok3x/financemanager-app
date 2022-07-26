@@ -11,6 +11,7 @@ import javax.validation.constraints.Min;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +48,7 @@ public class CategoryController {
 	private final CategoryModelAssembler categoryAssembler;
 	
 	@GetMapping("/{id}")
+	@PreAuthorize(" hasAuthority('category:read')") 
 	public ResponseEntity<CategoryModel> findCategoryById(@PathVariable
 			@Min(value = 1, message = INCORRECT_ID_ERROR) Integer id) throws ResourceNotFoundException{
 		log.info(String.format(FIND_BY_ID_INFO, id));
@@ -54,6 +56,7 @@ public class CategoryController {
 	}
 	
 	@GetMapping
+	@PreAuthorize("hasAuthority('category:read')") 
 	public ResponseEntity<CollectionModel<CategoryModel>> findAllCategories() {
 		log.info(FIND_ALL_INFO);
 		List<CategoryDTO> categories = categoryService.findAll();
@@ -63,6 +66,7 @@ public class CategoryController {
 	}
 	
 	@GetMapping("/user/{userId}")
+	@PreAuthorize("#userId == authentication.principal.id && hasAuthority('category:read')") 
     public ResponseEntity<CollectionModel<CategoryModel>> findByUserId(@PathVariable Integer userId) {
         log.info(FIND_CATEGORIES_BY_USER_ID_INFO, userId);
         List<CategoryDTO> categories = categoryService.findByUserId(userId);

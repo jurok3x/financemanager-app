@@ -48,7 +48,7 @@ class CustomUserDetailsServiceTest {
        user.setEmail("jurok3x@gmail.com");
        user.setName("Yurii");
        user.setPassword("metro2033");
-       user.setRole(Role.ADMIN);
+       user.setRole(new Role(2, "ROLE_USER"));
        return user;
    }
 }

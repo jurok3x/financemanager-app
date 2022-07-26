@@ -1,21 +1,26 @@
 package com.financemanager.entity;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@RequiredArgsConstructor
-@Getter
-public enum Permission {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "permissions")
+@Data
+@NoArgsConstructor
+public class Permission {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Integer id;
     
-    USER_READ("user:read"),
-    USER_WRITE("user:write"),
-    CATEGORY_READ("category:read"),
-    CATEGORY_WRITE("category:write"),
-    EXPENSE_READ("expense:read"),
-    EXPENSE_WRITE("expense:write"),
-    INCOME_READ("income:read"),
-    INCOME_WRITE("income:write");
-    
-    private final String permission;
+    @Column(name = "name")
+    private String name;
 
 }

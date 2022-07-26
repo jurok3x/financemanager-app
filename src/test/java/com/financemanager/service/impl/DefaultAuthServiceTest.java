@@ -121,7 +121,7 @@ class DefaultAuthServiceTest {
         user.setEmail("jurok3x@gmail.com");
         user.setName("Yurii");
         user.setPassword(USER_PASSWORD);
-        user.setRole(Role.ADMIN);
+        user.setRole(new Role(2, "ROLE_USER"));
         return user;
     }
 

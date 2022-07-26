@@ -92,7 +92,14 @@ class ExpensesRepositoryTest {
     }
     
     private User prepareUser() {
-        return new User(null, "Yurii", "metro", "jurok3x@gmail.com", Role.ADMIN);
+        User user = new User();
+        Role role = new Role(null, "ROLE_USER");
+        entityManager.persist(role);
+        user.setEmail("jurok3x@gmail.com");
+        user.setName("Yurii");
+        user.setPassword("metro090");
+        user.setRole(role);
+        return user;
     }
 
 }

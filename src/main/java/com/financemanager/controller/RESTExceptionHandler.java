@@ -167,7 +167,7 @@ public class RESTExceptionHandler extends ResponseEntityExceptionHandler {
 	
 	@ExceptionHandler({ AccessDeniedException.class })
     public ResponseEntity<Object> handleAccessDeniedException(
-      Exception ex, HttpHeaders headers,
+            AccessDeniedException ex, HttpHeaders headers,
 		HttpStatus status, WebRequest request) {
 		List<String> details = new ArrayList<String>();
 		details.add(NO_ACCES_ERROR);

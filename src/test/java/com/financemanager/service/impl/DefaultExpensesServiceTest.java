@@ -122,7 +122,7 @@ class DefaultExpensesServiceTest {
         category.setId(1);
         category.setName("Food");
         expense.setCategory(category);
-        User user = new User(null, "Yurii", null, "jurok3x@gmail.com", Role.ADMIN);
+        User user = new User(null, "Yurii", null, "jurok3x@gmail.com", new Role(2, "ROLE_USER"));
         user.setId(1);
         expense.setUser(user);
         return expense;

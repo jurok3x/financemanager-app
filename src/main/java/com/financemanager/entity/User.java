@@ -4,14 +4,13 @@ package com.financemanager.entity;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -46,8 +45,8 @@ public class User {
 	private String email;
 	
 	@JoinColumn(name="\"role_id\"")
+	@ManyToOne
 	@NotNull(message = "Role must not be empty")
-	@Enumerated(EnumType.ORDINAL)
 	private Role role;
 	
 	@ManyToMany(cascade = CascadeType.MERGE)
@@ -55,7 +54,7 @@ public class User {
 	        name = "\"users_categories\"",
 	        joinColumns = @JoinColumn(name = "\"user_id\""),
 	        inverseJoinColumns = @JoinColumn(name = "\"category_id\""))
-	private Set<Category> categories = new HashSet<>();
+	private Set<Category> categories;
 	
 	public User() {
 	    this.categories = new HashSet<>();

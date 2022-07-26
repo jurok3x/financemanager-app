@@ -42,7 +42,7 @@ public class AuthenticationController {
 	
 	@PostMapping("/signin")
 	public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request){
-	    log.info(LOGIN_INFO, request.getEmail());
+	    log.info(LOGIN_INFO + request.getEmail());
 		return ResponseEntity.ok(authService.login(request));
 	}
 	

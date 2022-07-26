@@ -1,30 +1,65 @@
 package com.financemanager.entity;
 
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import static com.financemanager.entity.Permission.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
 
-@Getter
-@RequiredArgsConstructor
-public enum Role {
-    USER(Arrays.asList(USER_READ, USER_WRITE, CATEGORY_READ, CATEGORY_WRITE,
-            INCOME_READ, INCOME_WRITE, EXPENSE_READ, EXPENSE_WRITE).stream().collect(Collectors.toSet())),
-    ADMIN(Arrays.asList(USER_READ, USER_WRITE, CATEGORY_READ, CATEGORY_WRITE,
-            INCOME_READ, INCOME_WRITE, EXPENSE_READ, EXPENSE_WRITE).stream().collect(Collectors.toSet()));
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Entity
+@Table(name = "roles")
+@NoArgsConstructor
+public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    @Getter
+    @Setter
+    private Integer id;
+    
+    @NotBlank
+    @Column(name = "name")
+    @Getter
+    @Setter
+    private String name;
+    public Role(Integer id, @NotBlank String name) {
+        super();
+        this.id = id;
+        this.name = name;
+    }
+
+    @ManyToMany(cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "\"role_permissions\"",
+            joinColumns = @JoinColumn(name = "\"role_id\""),
+            inverseJoinColumns = @JoinColumn(name = "\"permission_id\""))
+    private List<Permission> permissions;
     
     public Set<SimpleGrantedAuthority> getGrantedAuthorities() {
-        Set<SimpleGrantedAuthority> userPermissions = getPermissions().stream()
-                .map(permission -> new SimpleGrantedAuthority(permission.getPermission())).collect(Collectors.toSet());
-        userPermissions.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
+        Set<SimpleGrantedAuthority> userPermissions = null;
+        if(permissions == null || permissions.isEmpty()) {
+            return userPermissions;
+        }
+        userPermissions = permissions.stream()
+                .map(permission -> new SimpleGrantedAuthority(permission.getName())).collect(Collectors.toSet());
+        userPermissions.add(new SimpleGrantedAuthority(this.name));
         return userPermissions;
     }
-    
-    private final Set<Permission> permissions;
+
 }

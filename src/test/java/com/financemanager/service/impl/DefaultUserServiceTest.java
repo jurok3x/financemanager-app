@@ -90,7 +90,7 @@ class DefaultUserServiceTest {
         user.setEmail("jurok3x@gmail.com");
         user.setName("Yurii");
         user.setPassword("metro090");
-        user.setRole(Role.ADMIN);
+        user.setRole(new Role(2, "ROLE_USER"));
         return user;
     }
 

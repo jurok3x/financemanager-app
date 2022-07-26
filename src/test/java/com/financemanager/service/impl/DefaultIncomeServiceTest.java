@@ -112,7 +112,7 @@ class DefaultIncomeServiceTest {
         LocalDate date = LocalDate.of(2022, 12, 21);
         income.setDate(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
         income.setName("Salary");
-        income.setUser(new User(null, "Yurii", null, "jurok3x@gmail.com", Role.ADMIN));
+        income.setUser(new User(null, "Yurii", null, "jurok3x@gmail.com", new Role(2, "ROLE_USER")));
         return income; 
     }
 

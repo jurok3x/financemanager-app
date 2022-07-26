@@ -1,10 +1,8 @@
 package com.financemanager.entity;
 
 import java.util.Collection;
-import java.util.Collections;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class CustomUserDetails implements UserDetails {
@@ -25,7 +23,7 @@ public class CustomUserDetails implements UserDetails {
 		userDetails.id = user.getId();
 		userDetails.email = user.getEmail();
 		userDetails.password = user.getPassword();
-		userDetails.grantedAuthorities = Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()));
+		userDetails.grantedAuthorities = user.getRole().getGrantedAuthorities();
 		return userDetails;
 	}
 
