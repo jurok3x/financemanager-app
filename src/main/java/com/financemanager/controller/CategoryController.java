@@ -28,20 +28,20 @@ import com.financemanager.service.CategoryService;
 import com.financemanager.service.assembler.CategoryModelAssembler;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/categories")
 @AllArgsConstructor
-@Log
+@Slf4j
 @SecurityRequirement(name = "bearerAuth")
 public class CategoryController {
 	
-	private static final String FIND_BY_ID_INFO = "Handling find caegory with id %d";
+	private static final String FIND_CATEGORIES_BY_USER_ID_INFO = "Handling find categories of user with id %d";
+    private static final String FIND_BY_ID_INFO = "Handling find caegory with id %d";
     private static final String FIND_ALL_INFO = "Handling find all caegories request";
     private static final String UPDATE_CAEGORY_INFO = "Handling update caegory with id %d";
     private static final String SAVE_CATEGORY_INFO = "Handling save category %s";
-    private static final String ID_NOT_FOUND_ERROR = "Category with ID : %d Not Found!";
     private static final String INCORRECT_ID_ERROR = "Id should be greater than 1";
     private final CategoryService categoryService;
 	private final CategoryModelAssembler categoryAssembler;
@@ -50,10 +50,7 @@ public class CategoryController {
 	public ResponseEntity<CategoryModel> findCategoryById(@PathVariable
 			@Min(value = 1, message = INCORRECT_ID_ERROR) Integer id) throws ResourceNotFoundException{
 		log.info(String.format(FIND_BY_ID_INFO, id));
-		return categoryService.findById(id)
-				.map(categoryAssembler::toModel)
-				.map(ResponseEntity::ok)
-				.orElseThrow(()->new ResourceNotFoundException(String.format(ID_NOT_FOUND_ERROR, id)));
+		return ResponseEntity.ok(categoryAssembler.toModel(categoryService.findById(id)));
 	}
 	
 	@GetMapping
@@ -64,6 +61,15 @@ public class CategoryController {
 				categoryAssembler.toCollectionModel(categories),
 				HttpStatus.OK);
 	}
+	
+	@GetMapping("/user/{userId}")
+    public ResponseEntity<CollectionModel<CategoryModel>> findByUserId(@PathVariable Integer userId) {
+        log.info(FIND_CATEGORIES_BY_USER_ID_INFO, userId);
+        List<CategoryDTO> categories = categoryService.findByUserId(userId);
+        return new ResponseEntity<>(
+                categoryAssembler.toCollectionModel(categories),
+                HttpStatus.OK);
+    }
 	
 	@PostMapping
     public ResponseEntity<?> save(@Valid @RequestBody CategoryDTO categoryDTO) {

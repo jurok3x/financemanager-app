@@ -59,7 +59,7 @@ class DefaultCategoryServiceTest {
     void whenFindById_thenReturnCorrectResult() {
         Category category = prepareCategory();
         given(categoryRepository.findById(Mockito.anyInt())).willReturn(Optional.of(category));
-        assertEquals(Optional.of(categoryMapper.toCategoryDTO(category)), categoryService.findById(category.getId()));
+        assertEquals(categoryMapper.toCategoryDTO(category), categoryService.findById(category.getId()));
         verify(categoryRepository).findById(category.getId());
     }
     

@@ -2,7 +2,6 @@ package com.financemanager.controller;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
@@ -10,6 +9,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,7 +30,7 @@ import com.financemanager.dto.ExpenseDTO;
 import com.financemanager.entity.utils.DatePart;
 import com.financemanager.exception.ResourceNotFoundException;
 import com.financemanager.model.ExpenseModel;
-import com.financemanager.service.ExpensesService;
+import com.financemanager.service.ExpenseService;
 import com.financemanager.service.assembler.ExpenseModelAssembler;
 
 import lombok.AllArgsConstructor;
@@ -46,34 +47,27 @@ public class ExpensesController {
     private static final String DELETE_EXPENSE_INFO = "Handling delete expense with id %d";
 	private static final String FIND_BY_CATEGORY_ID_AND_DATE_INFO = "Handling find expenses with category ID %1$d of year %2$d and month %3$d";
     private static final String FIND_BY_ID_INFO = "Handling find expense with ID %d";
-    private static final String INCORRECT_OFFSET_ERROR = "Offset can not be less then 0";
     private static final String INCORECT_MONTH_ERROR = "Incorect month";
+    private static final String INCORRECT_PAGE_ERROR = "Incorrect page number";
+    private static final String INCORRECT_SIZE_ERROR = "Incorrect page size";
     private static final String INCORRECT_YEAR_ERROR = "Incorrect year";
-    private static final String INCORRECT_LIMIT_ERROR = "Incorrect limit";
-    private static final String EXPENSE_ID_NOT_FOUND_ERROR = "Expense with ID %d Not Found!";
     private static final String INCORRECT_ID_ERROR = "Id must be greater than or equal to 1";
-    private ExpensesService expensesService;
+    private ExpenseService expensesService;
 	private ExpenseModelAssembler expensesAssembler;
 
 	@GetMapping("/{id}")
 	public ResponseEntity<ExpenseModel> findById(@PathVariable
 			@Min(value = 1, message = INCORRECT_ID_ERROR) Long id) throws ResourceNotFoundException {
 		log.info(String.format(FIND_BY_ID_INFO, id));
-	    return expensesService.findById(id)
-				.map(expensesAssembler::toModel)
-				.map(ResponseEntity::ok)
-				.orElseThrow(
-						()->new ResourceNotFoundException(String.format(EXPENSE_ID_NOT_FOUND_ERROR, id)));
+	    return ResponseEntity.ok(expensesAssembler.toModel(expensesService.findById(id)));
 	}
 	
 	@GetMapping("/user/{userId}")
-	public ResponseEntity<CollectionModel<ExpenseModel>> findByUserId(
+	public ResponseEntity<CollectionModel<ExpenseModel>> findByUserIdAndCategoryIdAndDatePart(
 	        @PathVariable(name = "userId") Integer userId,
 	        @RequestParam(required = false) Integer categoryId,
 			@RequestParam(required = false) @Min(value = 0, message = INCORRECT_YEAR_ERROR) Integer year,
-	        @RequestParam(required = false) @Min(value = 0, message = INCORECT_MONTH_ERROR) @Max(value = 12, message = INCORECT_MONTH_ERROR) Integer month,
-	        @RequestParam(required = false) @Min(value = 1, message = INCORRECT_LIMIT_ERROR) Integer limit,
-			@RequestParam Optional<@Min(value = 0, message = INCORRECT_OFFSET_ERROR) Integer> offset) {
+	        @RequestParam(required = false) @Min(value = 0, message = INCORECT_MONTH_ERROR) @Max(value = 12, message = INCORECT_MONTH_ERROR) Integer month) {
 		log.info(String.format(FIND_BY_CATEGORY_ID_AND_DATE_INFO, categoryId, year, month));
 		List<ExpenseDTO> items = expensesService.findByUserIdAndCategoryIdAndDatePart(userId, categoryId, new DatePart(year, month));
 		return new ResponseEntity<>(
@@ -81,7 +75,20 @@ public class ExpensesController {
 				HttpStatus.OK);
 	}
 	
-	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping("/page/user/{userId}")
+    public ResponseEntity<Page<ExpenseModel>> findByUserIdAndCategoryIdAndDatePart(
+            @PathVariable(name = "userId") Integer userId,
+            @RequestParam(required = false) Integer categoryId,
+            @RequestParam(required = false) @Min(value = 0, message = INCORRECT_YEAR_ERROR) Integer year,
+            @RequestParam(required = false) @Min(value = 0, message = INCORECT_MONTH_ERROR) @Max(value = 12, message = INCORECT_MONTH_ERROR) Integer month,
+            @RequestParam(required = false) @Min(value = 0, message = INCORRECT_SIZE_ERROR) Integer size,
+            @RequestParam(required = false) @Min(value = 0, message = INCORRECT_PAGE_ERROR) Integer page) {
+        log.info(String.format(FIND_BY_CATEGORY_ID_AND_DATE_INFO, categoryId, year, month));
+        Page<ExpenseDTO> expensesPage = expensesService.findByUserIdAndCategoryIdAndDatePart(userId, categoryId, new DatePart(year, month), PageRequest.of(page, size));
+        return ResponseEntity.ok(expensesPage.map(expensesAssembler::toModel));
+    }
+	
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> save(@Valid @RequestBody ExpenseDTO expenseDTO) {
 		log.info(String.format(SAVE_EXPENSE_INFO, expenseDTO.toString()));
 		ExpenseDTO addedExpense =  expensesService.save(expenseDTO);

@@ -1,7 +1,6 @@
 package com.financemanager.service.impl;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,10 +24,9 @@ public class DefaultUserService implements UserService{
 	
 	
 	@Override
-	public Optional<UserDTO> findById(Integer id) {
-	    UserDTO userDTO = userRepository.findById(id).map(userMapper::toUserDTO).orElseThrow(() -> new BadCredentialsException(
+	public UserDTO findById(Integer id) {
+	    return userRepository.findById(id).map(userMapper::toUserDTO).orElseThrow(() -> new BadCredentialsException(
                 String.format(USER_ID_NOT_FOUND_ERROR, id)));
-		return Optional.ofNullable(userDTO);
 	}
 
 	@Override
@@ -39,10 +37,9 @@ public class DefaultUserService implements UserService{
 	}
 
 	@Override
-    public Optional<UserDTO> findByEmail(String email){
-        UserDTO userDTO = userRepository.findByEmail(email).map(userMapper::toUserDTO).orElseThrow(() -> new BadCredentialsException(
+    public UserDTO findByEmail(String email){
+	    return userRepository.findByEmail(email).map(userMapper::toUserDTO).orElseThrow(() -> new BadCredentialsException(
                 String.format(USER_EMAIL_NOT_FOUND_ERROR, email)));
-        return Optional.ofNullable(userDTO);
     }
 
 	@Override

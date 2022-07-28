@@ -32,6 +32,7 @@ import java.util.Optional;
 @ExtendWith(value = { MockitoExtension.class })
 class DefaultAuthServiceTest {
     
+    private static final String USER_PASSWORD = "metro2033";
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -53,10 +54,8 @@ class DefaultAuthServiceTest {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         given(userRepository.findByEmail(Mockito.anyString())).willReturn(Optional.of(user));
         given(jwtProvider.generateToken(Mockito.anyString())).willReturn("token");
-        AuthRequest request = new AuthRequest();
-        request.setEmail(user.getEmail());
-        request.setPassword("metro2033");
-        assertEquals("token", authService.login(request));
+        AuthRequest request = new AuthRequest(user.getEmail(), USER_PASSWORD);
+        assertEquals("token", authService.login(request).getToken());
         verify(userRepository).findByEmail(request.getEmail());
         verify(jwtProvider).generateToken(request.getEmail());
     }
@@ -64,9 +63,7 @@ class DefaultAuthServiceTest {
     @Test
     void whenEmailNotFound_thenThrowException() {
         given(userRepository.findByEmail(Mockito.anyString())).willReturn(Optional.empty());
-        AuthRequest request = new AuthRequest();
-        request.setEmail("emptyemail");
-        request.setPassword("metro2033");
+        AuthRequest request = new AuthRequest("emptyemail", USER_PASSWORD);
         assertThrows(BadCredentialsException.class, () -> authService.login(request));
         verify(userRepository).findByEmail(request.getEmail());
         verifyNoInteractions(jwtProvider);
@@ -77,9 +74,7 @@ class DefaultAuthServiceTest {
         User user = prepareUser();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         given(userRepository.findByEmail(Mockito.anyString())).willReturn(Optional.empty());
-        AuthRequest request = new AuthRequest();
-        request.setEmail(user.getEmail());
-        request.setPassword("wrong_password");
+        AuthRequest request = new AuthRequest(user.getEmail(), "wrong_password");
         assertThrows(BadCredentialsException.class, () -> authService.login(request));
         verify(userRepository).findByEmail(request.getEmail());
         verifyNoInteractions(jwtProvider);
@@ -125,7 +120,7 @@ class DefaultAuthServiceTest {
         user.setId(1);
         user.setEmail("jurok3x@gmail.com");
         user.setName("Yurii");
-        user.setPassword("metro2033");
+        user.setPassword(USER_PASSWORD);
         user.setRole(Role.ADMIN);
         return user;
     }

@@ -1,7 +1,6 @@
 package com.financemanager.service.impl;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -39,10 +38,9 @@ public class DefaultCategoryService implements CategoryService {
     }
 
     @Override
-    public Optional<CategoryDTO> findById(Integer id) {
-        CategoryDTO categoryDTO = categoryRepository.findById(id).map(categoryMapper::toCategoryDTO).orElseThrow(
+    public CategoryDTO findById(Integer id) {
+        return categoryRepository.findById(id).map(categoryMapper::toCategoryDTO).orElseThrow(
                 () -> new ResourceNotFoundException(String.format(CATEGORY_ID_NOT_FOUND_ERROR, id)));
-        return Optional.ofNullable(categoryDTO);
     }
 
     @Override

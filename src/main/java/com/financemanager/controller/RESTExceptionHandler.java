@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
 
+import com.financemanager.controller.utils.ResponseEntityBuilder;
 import com.financemanager.exception.APIException;
 import com.financemanager.exception.ResourceNotFoundException;
 import com.financemanager.exception.UserAlreadyExistsException;

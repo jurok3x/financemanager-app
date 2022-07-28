@@ -1,7 +1,6 @@
 package com.financemanager.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.financemanager.dto.UserDTO;
 
@@ -12,9 +11,9 @@ public interface UserService {
 
     void delete(Integer id);
     
-    Optional<UserDTO> findByEmail(String email);
+    UserDTO findByEmail(String email);
     
-    Optional<UserDTO> findById(Integer id);
+    UserDTO findById(Integer id);
 
     List<UserDTO> findAll();
     

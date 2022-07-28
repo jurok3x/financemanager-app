@@ -20,8 +20,8 @@ public class ExpensesMapper {
         expenseDTO.setName(expense.getName());
         expenseDTO.setPrice(expense.getPrice());
         expenseDTO.setDate(expense.getDate());
-        expenseDTO.setUser(userMapper.toUserDTO(expense.getUser()));
-        expenseDTO.setCategory(categoryMapper.toCategoryDTO(expense.getCategory()));
+        expenseDTO.setUserDTO(userMapper.toUserDTO(expense.getUser()));
+        expenseDTO.setCategoryDTO(categoryMapper.toCategoryDTO(expense.getCategory()));
         return expenseDTO;
     }
     
@@ -31,8 +31,8 @@ public class ExpensesMapper {
         expense.setName(expenseDTO.getName());
         expense.setPrice(expenseDTO.getPrice());
         expense.setDate(expenseDTO.getDate());
-        expense.setUser(userMapper.toUser(expenseDTO.getUser()));
-        expense.setCategory(categoryMapper.toCategory(expenseDTO.getCategory()));
+        expense.setUser(userMapper.toUser(expenseDTO.getUserDTO()));
+        expense.setCategory(categoryMapper.toCategory(expenseDTO.getCategoryDTO()));
         return expense;
     }
 

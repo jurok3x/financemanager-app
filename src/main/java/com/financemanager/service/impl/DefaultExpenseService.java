@@ -1,7 +1,6 @@
 package com.financemanager.service.impl;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -13,13 +12,13 @@ import com.financemanager.entity.utils.DatePart;
 import com.financemanager.exception.ResourceNotFoundException;
 import com.financemanager.mapper.ExpensesMapper;
 import com.financemanager.repository.ExpensesRepository;
-import com.financemanager.service.ExpensesService;
+import com.financemanager.service.ExpenseService;
 
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @Service
-public class DefaultExpensesService implements ExpensesService {
+public class DefaultExpenseService implements ExpenseService {
     private static final String EXPENSE_ID_NOT_FOUND_ERROR = "Expense with id - %d, not found";
     private final ExpensesRepository expensesRepository;
     private final ExpensesMapper expensesMapper;
@@ -37,10 +36,9 @@ public class DefaultExpensesService implements ExpensesService {
     }
 
     @Override
-    public Optional<ExpenseDTO> findById(Long id) {
-        ExpenseDTO expenseDTO = expensesRepository.findById(id).map(expensesMapper::toExpenseDTO)
+    public ExpenseDTO findById(Long id) {
+        return expensesRepository.findById(id).map(expensesMapper::toExpenseDTO)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(EXPENSE_ID_NOT_FOUND_ERROR, id)));
-        return Optional.ofNullable(expenseDTO);
     }
 
     @Override

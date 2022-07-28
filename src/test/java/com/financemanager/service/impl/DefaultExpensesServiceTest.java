@@ -14,7 +14,7 @@ import com.financemanager.mapper.CategoryMapper;
 import com.financemanager.mapper.ExpensesMapper;
 import com.financemanager.mapper.UserMapper;
 import com.financemanager.repository.ExpensesRepository;
-import com.financemanager.service.ExpensesService;
+import com.financemanager.service.ExpenseService;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,12 +41,12 @@ class DefaultExpensesServiceTest {
     @Mock
     private ExpensesRepository expensesRepository;
     private ExpensesMapper expensesMapper;
-    private ExpensesService expensesService;
+    private ExpenseService expensesService;
     
     @BeforeEach
     void setUp() {
         expensesMapper = new ExpensesMapper(new UserMapper(), new CategoryMapper());
-        expensesService = new DefaultExpensesService(expensesRepository, expensesMapper);
+        expensesService = new DefaultExpenseService(expensesRepository, expensesMapper);
     }
     
     @Test
@@ -71,7 +71,7 @@ class DefaultExpensesServiceTest {
     void whenFindById_thenReturnCorrectResult() {
         Expense expense = prepareExspense();
         given(expensesRepository.findById(Mockito.anyLong())).willReturn(Optional.of(expense));
-        assertEquals(Optional.of(expensesMapper.toExpenseDTO(expense)), expensesService.findById(expense.getId()));
+        assertEquals(expensesMapper.toExpenseDTO(expense), expensesService.findById(expense.getId()));
         verify(expensesRepository).findById(expense.getId());
     }
     

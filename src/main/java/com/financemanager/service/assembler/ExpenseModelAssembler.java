@@ -31,8 +31,8 @@ public class ExpenseModelAssembler extends RepresentationModelAssemblerSupport<E
 		expenseModel.setId(entity.getId());
 		expenseModel.setName(entity.getName());
 		expenseModel.setPrice(entity.getPrice());
-		expenseModel.setCategory(categoryAssembler.toModel(entity.getCategory()));
-		expenseModel.setUser(userAssembler.toModel(entity.getUser()));
+		expenseModel.setCategory(categoryAssembler.toModel(entity.getCategoryDTO()));
+		expenseModel.setUser(userAssembler.toModel(entity.getUserDTO()));
 		expenseModel.setDate(entity.getDate());
 		
 		expenseModel.add(linkTo(
@@ -45,9 +45,10 @@ public class ExpenseModelAssembler extends RepresentationModelAssemblerSupport<E
 	@Override
 	public CollectionModel<ExpenseModel> toCollectionModel(Iterable<? extends ExpenseDTO> entities) {
 		CollectionModel<ExpenseModel> expenseModel = super.toCollectionModel(entities);
+		int userId = entities.iterator().hasNext() ? entities.iterator().next().getUserDTO().getId() : null;
 		expenseModel.add(linkTo(
 				methodOn(ExpensesController.class)
-				.findByUserId(null, null, null, null, null, null))
+				.findByUserIdAndCategoryIdAndDatePart(userId, null, null, null))
 				.withSelfRel());
 		return expenseModel;
 	}
