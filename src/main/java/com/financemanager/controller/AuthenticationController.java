@@ -60,9 +60,9 @@ public class AuthenticationController {
     }
 	
 	@PutMapping("/update/{id}")
-    public ResponseEntity<UserModel> updateUser(@RequestBody @Valid SaveUserRequest request, @PathVariable Integer id){
-	    log.info(String.format(UPDATE_USER_INFO, request.getEmail()));
-        return ResponseEntity.ok(userAssembler.toModel(authService.updateUser(request, id)));
+    public ResponseEntity<UserModel> updateUserName(@RequestBody String userName, @PathVariable Integer id){
+	    log.info(String.format(UPDATE_USER_INFO, userName));
+        return ResponseEntity.ok(userAssembler.toModel(authService.updateName(userName, id)));
     }
 	
 	@RequestMapping(value = "/" , method = RequestMethod.OPTIONS)

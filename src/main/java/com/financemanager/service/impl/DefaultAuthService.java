@@ -24,6 +24,7 @@ public class DefaultAuthService implements AuthService {
     private static final String USER_ALREADY_EXISTS_ERROR = "User with email %s already exists";
     private static final String WRONG_PASSWORD_ERROR = "Wrong password for user with email %s";
     private static final String USER_EMAIL_NOT_FOUND_ERROR = "User with email - %s not found";
+    private static final String USER_ID_NOT_FOUND_ERROR = "User with id %d not found";
     private static final Role DEFAULT_ROLE = Role.USER;
     private final UserMapper userMapper;
     private final UserRepository userRepository;
@@ -43,23 +44,23 @@ public class DefaultAuthService implements AuthService {
 
     @Override
     public UserDTO registration(SaveUserRequest request) throws UserAlreadyExistsException {
-        if(userRepository.findByEmail(request.getLogin()).isPresent()) {
+        if(userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException(
-                    String.format(USER_ALREADY_EXISTS_ERROR, request.getLogin()));
+                    String.format(USER_ALREADY_EXISTS_ERROR, request.getEmail()));
         }
-        User newUser = new User();
-        newUser.setEmail(request.getEmail());
-        newUser.setName(request.getName());
-        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-        newUser.setRole(DEFAULT_ROLE);
-        return userMapper.toUserDTO(userRepository.save(newUser));
+        User user = new User();
+        user.setEmail(request.getEmail());
+        user.setName(request.getName());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setRole(DEFAULT_ROLE);
+        return userMapper.toUserDTO(userRepository.save(user));
     }
 
     @Override
-    public UserDTO updateUser(SaveUserRequest request, Integer id) {
-        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new BadCredentialsException(
-                String.format(USER_EMAIL_NOT_FOUND_ERROR, request.getLogin())));
-        user.setName(request.getName());
+    public UserDTO updateName(String name, Integer id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new BadCredentialsException(
+                String.format(USER_ID_NOT_FOUND_ERROR, id)));
+        user.setName(name);
         return userMapper.toUserDTO(userRepository.save(user));
     }
 

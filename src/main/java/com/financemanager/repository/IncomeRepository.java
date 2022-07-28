@@ -3,6 +3,7 @@ package com.financemanager.repository;
 import com.financemanager.entity.Income;
 import com.financemanager.entity.utils.DatePart;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,7 +20,7 @@ public interface IncomeRepository extends JpaRepository<Income, Long> {
             + "AND (EXTRACT(month from income.date) = :#{#datePart.month} OR :#{#datePart.month} IS NULL)\n"
             + "AND (EXTRACT(year from income.date) = :#{#datePart.year} OR :#{#datePart.year} IS NULL)\n"
             + "ORDER BY income.date\n")
-    List<Income> findByUserId(
+    List<Income> findByUserIdAndDatePart(
             @Param("userId")Integer userId,
             @Param("datePart") DatePart datePart);
     
@@ -28,7 +29,7 @@ public interface IncomeRepository extends JpaRepository<Income, Long> {
             + "AND (EXTRACT(month from income.date) = :#{#datePart.month} OR :#{#datePart.month} IS NULL)\n"
             + "AND (EXTRACT(year from income.date) = :#{#datePart.year} OR :#{#datePart.year} IS NULL)\n"
             + "ORDER BY income.date\n")
-    List<Income> findByUserId(
+    Page<Income> findByUserIdAndDatePart(
             @Param("userId")Integer userId,
             @Param("datePart") DatePart datePart,
             Pageable pageable);

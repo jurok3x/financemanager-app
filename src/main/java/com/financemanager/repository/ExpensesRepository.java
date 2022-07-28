@@ -21,7 +21,7 @@ public interface ExpensesRepository extends JpaRepository<Expense, Long> {
             + "AND (EXTRACT(month from expense.date) = :#{#datePart.month} OR :#{#datePart.month} IS NULL)\n"
             + "AND (EXTRACT(year from expense.date) = :#{#datePart.year} OR :#{#datePart.year} IS NULL)\n"
             + "ORDER BY expense.date\n")
-	List<Expense> findByUserId(
+	List<Expense> findByUserIdAndCategoryIdAndDatePart(
 			@Param("userId") Integer userId,
 			@Nullable @Param("categoryId") Integer categoryId,
 			@Param("datePart") DatePart datePart);
@@ -31,7 +31,7 @@ public interface ExpensesRepository extends JpaRepository<Expense, Long> {
 	            + "AND (EXTRACT(month from expense.date) = :#{#datePart.month} OR :#{#datePart.month} IS NULL)\n"
 	            + "AND (EXTRACT(year from expense.date) = :#{#datePart.year} OR :#{#datePart.year} IS NULL)\n"
 	            + "ORDER BY expense.date\n")
-	    Page<Expense> findByUserId(
+	    Page<Expense> findByUserIdAndCategoryIdAndDatePart(
 	            @Param("userId") Integer userId,
 	            @Nullable @Param("categoryId") Integer categoryId,
 	            @Param("datePart") DatePart datePart,

@@ -8,6 +8,8 @@ import com.financemanager.exception.UserAlreadyExistsException;
 public interface AuthService {
     
     String login(AuthRequest request);
+    
     UserDTO registration(SaveUserRequest request) throws UserAlreadyExistsException;
-    UserDTO updateUser(SaveUserRequest request, Integer id);
+    
+    UserDTO updateName(String name, Integer id);
 }

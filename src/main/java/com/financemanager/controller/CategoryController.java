@@ -9,7 +9,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 import org.springframework.hateoas.CollectionModel;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,12 +18,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.financemanager.dto.CategoryDTO;
-import com.financemanager.entity.payload.SaveCategoryRequest;
 import com.financemanager.exception.ResourceNotFoundException;
 import com.financemanager.model.CategoryModel;
 import com.financemanager.service.CategoryService;
@@ -69,9 +66,9 @@ public class CategoryController {
 	}
 	
 	@PostMapping
-    public ResponseEntity<?> save(@Valid @RequestBody SaveCategoryRequest request) {
-        log.info(String.format(SAVE_CATEGORY_INFO, request.toString()));
-        CategoryDTO addedCategory = categoryService.save(request);
+    public ResponseEntity<?> save(@Valid @RequestBody CategoryDTO categoryDTO) {
+        log.info(String.format(SAVE_CATEGORY_INFO, categoryDTO.toString()));
+        CategoryDTO addedCategory = categoryService.save(categoryDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(addedCategory.getId())
@@ -82,9 +79,9 @@ public class CategoryController {
 	@PutMapping("/{id}")
 	public ResponseEntity<CategoryDTO> update(
 	        @PathVariable @Min(value = 1, message = INCORRECT_ID_ERROR) Integer id,
-			@Valid @RequestBody SaveCategoryRequest request){
+			@Valid @RequestBody CategoryDTO categoryDTO){
 		log.info(UPDATE_CAEGORY_INFO + id);	
-		return ResponseEntity.ok(categoryService.update(request, id));
+		return ResponseEntity.ok(categoryService.update(categoryDTO, id));
 	}
 	
 	@DeleteMapping("/{id}")
@@ -95,30 +92,4 @@ public class CategoryController {
         return ResponseEntity.noContent().build();
     }
 	
-	@RequestMapping(value = "/" , method = RequestMethod.OPTIONS)
-	ResponseEntity<?> collectionOptions() 
-    {
-         return ResponseEntity
-                 .ok()
-                 .allow(HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS)
-                 .build();
-    }
-	
-	@RequestMapping(value = "/{id}" , method = RequestMethod.OPTIONS)
-	ResponseEntity<?> singularOptions() 
-    {
-         return ResponseEntity
-                 .ok()
-                 .allow(HttpMethod.GET, HttpMethod.PUT, HttpMethod.DELETE , HttpMethod.OPTIONS)
-                 .build();
-    }
-	
-	@RequestMapping(value = "/cost, /count" , method = RequestMethod.OPTIONS)
-	ResponseEntity<?> specialOptions() 
-    {
-         return ResponseEntity
-                 .ok()
-                 .allow(HttpMethod.GET, HttpMethod.OPTIONS)
-                 .build();
-    }
 }

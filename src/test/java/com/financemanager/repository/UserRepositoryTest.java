@@ -29,7 +29,7 @@ class UserRepositoryTest {
     void whenFindUserByEmail_thenReturnUser() {
         User user = prepareUser();
         entityManager.persist(user);
-        assertEquals(user, userRepository.findByEmail("jurok3x@gmail.com").get());
+        assertEquals(user, userRepository.findByEmail(user.getEmail()).get());
     }
     
     @Test
