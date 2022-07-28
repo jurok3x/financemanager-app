@@ -24,7 +24,7 @@ public class UserModelAssembler extends RepresentationModelAssemblerSupport<User
 		userModel.setId(entity.getId());
 		userModel.setName(entity.getName());
 		userModel.setEmail(entity.getEmail());
-		userModel.setRole(entity.getRole());
+		userModel.setRoleDTO(entity.getRoleDTO());
 		
 		userModel.add(linkTo(
 				methodOn(UserController.class)

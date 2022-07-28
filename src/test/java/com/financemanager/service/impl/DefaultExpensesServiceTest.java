@@ -12,6 +12,7 @@ import com.financemanager.entity.User;
 import com.financemanager.entity.utils.DatePart;
 import com.financemanager.mapper.CategoryMapper;
 import com.financemanager.mapper.ExpensesMapper;
+import com.financemanager.mapper.RoleMapper;
 import com.financemanager.mapper.UserMapper;
 import com.financemanager.repository.ExpensesRepository;
 import com.financemanager.service.ExpenseService;
@@ -45,7 +46,7 @@ class DefaultExpensesServiceTest {
     
     @BeforeEach
     void setUp() {
-        expensesMapper = new ExpensesMapper(new UserMapper(), new CategoryMapper());
+        expensesMapper = new ExpensesMapper(new UserMapper(new RoleMapper()), new CategoryMapper());
         expensesService = new DefaultExpenseService(expensesRepository, expensesMapper);
     }
     
@@ -54,7 +55,7 @@ class DefaultExpensesServiceTest {
         Expense expense = prepareExspense();
         given(expensesRepository.save(Mockito.any(Expense.class))).willReturn(expense);
         assertEquals(expensesMapper.toExpenseDTO(expense), expensesService.save(expensesMapper.toExpenseDTO(expense)));
-        verify(expensesRepository).save(expense);
+        verify(expensesRepository).save(Mockito.any(Expense.class));
     }
     
     @Test
@@ -64,7 +65,7 @@ class DefaultExpensesServiceTest {
         given(expensesRepository.findById(Mockito.anyLong())).willReturn(Optional.of(expense));
         assertEquals(expensesMapper.toExpenseDTO(expense), expensesService.update(expensesMapper.toExpenseDTO(expense), expense.getId()));
         verify(expensesRepository).findById(expense.getId()); 
-        verify(expensesRepository).save(expense); 
+        verify(expensesRepository).save(Mockito.any(Expense.class)); 
     }
     
     @Test

@@ -10,6 +10,7 @@ import com.financemanager.entity.Role;
 import com.financemanager.entity.User;
 import com.financemanager.entity.utils.DatePart;
 import com.financemanager.mapper.IncomeMapper;
+import com.financemanager.mapper.RoleMapper;
 import com.financemanager.mapper.UserMapper;
 import com.financemanager.repository.IncomeRepository;
 import com.financemanager.service.IncomeService;
@@ -43,7 +44,7 @@ class DefaultIncomeServiceTest {
     
     @BeforeEach
     void setUp() {
-        incomeMapper = new IncomeMapper(new UserMapper());
+        incomeMapper = new IncomeMapper(new UserMapper(new RoleMapper()));
         incomeService = new DefaultIncomeService(incomeRepository, incomeMapper);
     }
     
@@ -52,7 +53,7 @@ class DefaultIncomeServiceTest {
         Income income = prepareIncome();
         given(incomeRepository.save(Mockito.any(Income.class))).willReturn(income);
         assertEquals(incomeMapper.toIncomeDTO(income), incomeService.save(incomeMapper.toIncomeDTO(income)));
-        verify(incomeRepository).save(income);
+        verify(incomeRepository).save(Mockito.any(Income.class));
     }
     
     @Test
@@ -62,7 +63,7 @@ class DefaultIncomeServiceTest {
         given(incomeRepository.findById(Mockito.anyLong())).willReturn(Optional.of(income));
         assertEquals(incomeMapper.toIncomeDTO(income), incomeService.update(incomeMapper.toIncomeDTO(income), income.getId()));
         verify(incomeRepository).findById(income.getId());
-        verify(incomeRepository).save(income);
+        verify(incomeRepository).save(Mockito.any(Income.class));
     }
     
     @Test

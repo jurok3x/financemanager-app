@@ -53,14 +53,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 	.authorizeRequests()
-                	.antMatchers("/api/auth", "/users/fail").permitAll()
                 	.antMatchers("/css/*", "/js/*", "/", "/api/auth/signin", "/api/auth/signup", "/webjars/**","/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**",
                             "/swagger-resources/**","/v2/api-docs/**", "/swagger.json").permitAll()
                 	.anyRequest().authenticated()
-                .and()
-                	.logout()
-                	.permitAll()
-                	.logoutSuccessUrl("/")
         		.and()
         			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         

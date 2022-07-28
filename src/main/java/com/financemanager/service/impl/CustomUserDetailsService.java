@@ -1,5 +1,7 @@
 package com.financemanager.service.impl;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
@@ -8,19 +10,22 @@ import com.financemanager.entity.User;
 import com.financemanager.exception.ResourceNotFoundException;
 import com.financemanager.repository.UserRepository;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
+@PropertySource(value = { "classpath:/messages/authentification/info.properties" })
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private static final String USER_EMAIL_NOT_FOUND_ERROR = "User with email %s not found!";
     private final UserRepository userRepository;
 	
+    @Value("${user_email_not_found.error}")
+    private String userEmailNotFoundError;
+    
 	@Override
 	public CustomUserDetails loadUserByUsername(String email) throws ResourceNotFoundException{
 		User user = userRepository.findByEmail(email).orElseThrow(
-				()->new ResourceNotFoundException(String.format(USER_EMAIL_NOT_FOUND_ERROR, email)));
+				()->new ResourceNotFoundException(String.format(userEmailNotFoundError, email)));
 		return CustomUserDetails.fromUserToCustomUserDetails(user);	
 	}
 

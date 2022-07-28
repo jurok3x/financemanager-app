@@ -12,33 +12,41 @@ import com.financemanager.mapper.UserMapper;
 import com.financemanager.repository.UserRepository;
 import com.financemanager.service.AuthService;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
+@PropertySource(value = { "classpath:/messages/authentification/info.properties", "classpath:/messages/user/info.properties" })
 public class DefaultAuthService implements AuthService {
     
-    private static final String USER_ALREADY_EXISTS_ERROR = "User with email %s already exists";
-    private static final String WRONG_PASSWORD_ERROR = "Wrong password for user with email %s";
-    private static final String USER_EMAIL_NOT_FOUND_ERROR = "User with email - %s not found";
-    private static final String USER_ID_NOT_FOUND_ERROR = "User with id %d not found";
-    private static final Role DEFAULT_ROLE = new Role(2, "ROLE_USER");
     private final UserMapper userMapper;
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+    private final Role DEFAULT_ROLE = new Role(2, "ROLE_USER");
+    
+    @Value("${user_already_exists.error}")
+    private String userAlreadyExistsError;
+    @Value("${wrong_password.error}")
+    private String badPasswordError;
+    @Value("${user_email_not_found.error}")
+    private String userEmailNotFoundError;
+    @Value("${user_id_not_found.error}")
+    private String userIdNotFoundError;
 
     @Override
     public AuthResponse login(AuthRequest request) {
         User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new BadCredentialsException(
-                String.format(USER_EMAIL_NOT_FOUND_ERROR, request.getEmail())));
+                String.format(userEmailNotFoundError, request.getEmail())));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException(
-                    String.format(WRONG_PASSWORD_ERROR, request.getEmail()));
+                    String.format(badPasswordError, request.getEmail()));
         }
         return new AuthResponse(jwtProvider.generateToken(user.getEmail()), "Bearer");
     }
@@ -47,7 +55,7 @@ public class DefaultAuthService implements AuthService {
     public UserDTO registration(SaveUserRequest request) throws UserAlreadyExistsException {
         if(userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException(
-                    String.format(USER_ALREADY_EXISTS_ERROR, request.getEmail()));
+                    String.format(userAlreadyExistsError, request.getEmail()));
         }
         User user = new User();
         user.setEmail(request.getEmail());
@@ -60,7 +68,7 @@ public class DefaultAuthService implements AuthService {
     @Override
     public UserDTO updateName(String name, Integer id) {
         User user = userRepository.findById(id).orElseThrow(() -> new BadCredentialsException(
-                String.format(USER_ID_NOT_FOUND_ERROR, id)));
+                String.format(userIdNotFoundError, id)));
         user.setName(name);
         return userMapper.toUserDTO(userRepository.save(user));
     }

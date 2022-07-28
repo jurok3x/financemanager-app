@@ -3,6 +3,8 @@ package com.financemanager.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -14,14 +16,18 @@ import com.financemanager.mapper.ExpensesMapper;
 import com.financemanager.repository.ExpensesRepository;
 import com.financemanager.service.ExpenseService;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
 @Service
+@RequiredArgsConstructor
+@PropertySource(value = { "classpath:/messages/expense/info.properties" })
 public class DefaultExpenseService implements ExpenseService {
-    private static final String EXPENSE_ID_NOT_FOUND_ERROR = "Expense with id - %d, not found";
+    
     private final ExpensesRepository expensesRepository;
     private final ExpensesMapper expensesMapper;
+    
+    @Value("${expense_id_not_found.error}")
+    private String expenseNotFoundError;
 
     @Override
     public ExpenseDTO save(ExpenseDTO expenseDTO) {
@@ -31,20 +37,20 @@ public class DefaultExpenseService implements ExpenseService {
     @Override
     public ExpenseDTO update(ExpenseDTO expenseDTO, Long id) {
         expensesRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format(EXPENSE_ID_NOT_FOUND_ERROR, id)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(expenseNotFoundError, id)));
         return expensesMapper.toExpenseDTO(expensesRepository.save(expensesMapper.toExpense(expenseDTO)));
     }
 
     @Override
     public ExpenseDTO findById(Long id) {
         return expensesRepository.findById(id).map(expensesMapper::toExpenseDTO)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format(EXPENSE_ID_NOT_FOUND_ERROR, id)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(expenseNotFoundError, id)));
     }
 
     @Override
     public void delete(Long id) {
         ExpenseDTO deletedExpense = expensesRepository.findById(id).map(expensesMapper::toExpenseDTO)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format(EXPENSE_ID_NOT_FOUND_ERROR, id)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format(expenseNotFoundError, id)));
         expensesRepository.deleteById(deletedExpense.getId());
     }
 

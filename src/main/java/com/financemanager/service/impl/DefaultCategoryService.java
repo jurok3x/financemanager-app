@@ -3,6 +3,8 @@ package com.financemanager.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import com.financemanager.dto.CategoryDTO;
@@ -15,10 +17,14 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Service
+@PropertySource(value = { "classpath:/messages/category/info.properties" })
 public class DefaultCategoryService implements CategoryService {
-    private static final String CATEGORY_ID_NOT_FOUND_ERROR = "Category with id %d not found";
+    
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
+    
+    @Value("${category_id_not_found.error}")
+    private String categoryIdNotFoundError;
 
     @Override
     public CategoryDTO save(CategoryDTO categoryDTO) {
@@ -28,7 +34,7 @@ public class DefaultCategoryService implements CategoryService {
     @Override
     public void delete(Integer id) {
         CategoryDTO categoryDTO = categoryRepository.findById(id).map(categoryMapper::toCategoryDTO).orElseThrow(
-                () -> new ResourceNotFoundException(String.format(CATEGORY_ID_NOT_FOUND_ERROR, id)));
+                () -> new ResourceNotFoundException(String.format(categoryIdNotFoundError, id)));
         categoryRepository.deleteById(categoryDTO.getId());
     }
 
@@ -40,13 +46,13 @@ public class DefaultCategoryService implements CategoryService {
     @Override
     public CategoryDTO findById(Integer id) {
         return categoryRepository.findById(id).map(categoryMapper::toCategoryDTO).orElseThrow(
-                () -> new ResourceNotFoundException(String.format(CATEGORY_ID_NOT_FOUND_ERROR, id)));
+                () -> new ResourceNotFoundException(String.format(categoryIdNotFoundError, id)));
     }
 
     @Override
     public CategoryDTO update(CategoryDTO categoryDTO, Integer id) {
         categoryRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(String.format(CATEGORY_ID_NOT_FOUND_ERROR, id)));
+                () -> new ResourceNotFoundException(String.format(categoryIdNotFoundError, id)));
         return categoryMapper.toCategoryDTO(categoryRepository.save(categoryMapper.toCategory(categoryDTO)));
     }
 

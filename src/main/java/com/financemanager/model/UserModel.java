@@ -2,7 +2,7 @@ package com.financemanager.model;
 
 import org.springframework.hateoas.RepresentationModel;
 
-import com.financemanager.entity.Role;
+import com.financemanager.dto.RoleDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,5 +20,5 @@ public class UserModel extends RepresentationModel<UserModel>{
 	private Integer id;
 	private String name;
 	private String email;
-	private Role role;
+	private RoleDTO roleDTO;
 }

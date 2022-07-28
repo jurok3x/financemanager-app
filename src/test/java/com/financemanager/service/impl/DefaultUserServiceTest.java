@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.financemanager.entity.Role;
 import com.financemanager.entity.User;
+import com.financemanager.mapper.RoleMapper;
 import com.financemanager.mapper.UserMapper;
 import com.financemanager.repository.UserRepository;
 import com.financemanager.service.UserService;
@@ -34,7 +35,7 @@ class DefaultUserServiceTest {
     
     @BeforeEach
     void setUp() {
-        userMapper = new UserMapper();
+        userMapper = new UserMapper(new RoleMapper());
         userService = new DefaultUserService(userRepository, userMapper);
     }
     

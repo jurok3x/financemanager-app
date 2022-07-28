@@ -7,8 +7,10 @@ import com.financemanager.mapper.IncomeMapper;
 import com.financemanager.repository.IncomeRepository;
 import com.financemanager.service.IncomeService;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,14 +18,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
+@PropertySource(value = { "classpath:/messages/income/info.properties" })
 public class DefaultIncomeService implements IncomeService {
     
-    private IncomeRepository incomeRepository;
-    private IncomeMapper incomeMapper;
+    private final IncomeRepository incomeRepository;
+    private final IncomeMapper incomeMapper;
     
-    private static final String INCOME_ID_NOT_FOUND_ERROR = "Income with id %d not found";
+    @Value("${not_found.error}")
+    private String incomeNotFoundError;
 
     @Override
     public IncomeDTO save(IncomeDTO incomeDTO) {
@@ -43,21 +47,21 @@ public class DefaultIncomeService implements IncomeService {
     @Override
     public IncomeDTO update(IncomeDTO incomeDTO, Long id) {
         incomeRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(String.format(INCOME_ID_NOT_FOUND_ERROR, id)));
+                () -> new ResourceNotFoundException(String.format(incomeNotFoundError, id)));
         return incomeMapper.toIncomeDTO(incomeRepository.save(incomeMapper.toIncome(incomeDTO)));
     }
 
     @Override
     public void delete(Long id) {
         IncomeDTO incomeDTO = incomeRepository.findById(id).map(incomeMapper::toIncomeDTO).orElseThrow(
-                () -> new ResourceNotFoundException(String.format(INCOME_ID_NOT_FOUND_ERROR, id)));
+                () -> new ResourceNotFoundException(String.format(incomeNotFoundError, id)));
         incomeRepository.deleteById(incomeDTO.getId());
     }
 
     @Override
     public IncomeDTO findById(Long id) {
         IncomeDTO income = incomeRepository.findById(id).map(incomeMapper::toIncomeDTO).orElseThrow(
-                () -> new ResourceNotFoundException(String.format(INCOME_ID_NOT_FOUND_ERROR, id)));
+                () -> new ResourceNotFoundException(String.format(incomeNotFoundError, id)));
         return income;
     }
 
