@@ -4,16 +4,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import com.financemanager.entity.Category;
+import com.financemanager.entity.CustomUserDetails;
 import com.financemanager.entity.Expense;
 import com.financemanager.entity.Role;
 import com.financemanager.entity.User;
 import com.financemanager.entity.utils.DatePart;
 import com.financemanager.mapper.CategoryMapper;
 import com.financemanager.mapper.ExpensesMapper;
-import com.financemanager.mapper.RoleMapper;
-import com.financemanager.mapper.UserMapper;
 import com.financemanager.repository.ExpensesRepository;
 import com.financemanager.service.ExpenseService;
 
@@ -27,6 +27,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -43,10 +45,14 @@ class DefaultExpensesServiceTest {
     private ExpensesRepository expensesRepository;
     private ExpensesMapper expensesMapper;
     private ExpenseService expensesService;
+    private CategoryMapper categoryMapper;
+    @Mock
+    private Authentication auth;
     
     @BeforeEach
     void setUp() {
-        expensesMapper = new ExpensesMapper(new UserMapper(new RoleMapper()), new CategoryMapper());
+        categoryMapper = new CategoryMapper();
+        expensesMapper = new ExpensesMapper(categoryMapper);
         expensesService = new DefaultExpenseService(expensesRepository, expensesMapper);
     }
     
@@ -61,6 +67,7 @@ class DefaultExpensesServiceTest {
     @Test
     void whenUpdate_thenReturnCorrectResult() {
         Expense expense = prepareExspense();
+        prepareContext();
         given(expensesRepository.save(Mockito.any(Expense.class))).willReturn(expense);
         given(expensesRepository.findById(Mockito.anyLong())).willReturn(Optional.of(expense));
         assertEquals(expensesMapper.toExpenseDTO(expense), expensesService.update(expensesMapper.toExpenseDTO(expense), expense.getId()));
@@ -71,6 +78,7 @@ class DefaultExpensesServiceTest {
     @Test
     void whenFindById_thenReturnCorrectResult() {
         Expense expense = prepareExspense();
+        prepareContext();
         given(expensesRepository.findById(Mockito.anyLong())).willReturn(Optional.of(expense));
         assertEquals(expensesMapper.toExpenseDTO(expense), expensesService.findById(expense.getId()));
         verify(expensesRepository).findById(expense.getId());
@@ -101,6 +109,7 @@ class DefaultExpensesServiceTest {
     @Test
     void verifyDeleteById() {
         Expense expense = prepareExspense();
+        prepareContext();
         given(expensesRepository.findById(Mockito.anyLong())).willReturn(Optional.of(expense));
         expensesService.delete(expense.getId());
         verify(expensesRepository).findById(expense.getId());
@@ -123,10 +132,19 @@ class DefaultExpensesServiceTest {
         category.setId(1);
         category.setName("Food");
         expense.setCategory(category);
-        User user = new User(null, "Yurii", null, "jurok3x@gmail.com", new Role(2, "ROLE_USER"));
-        user.setId(1);
+        User user = prepareUser();
         expense.setUser(user);
         return expense;
+    }
+    
+    private void prepareContext() {
+        CustomUserDetails user = CustomUserDetails.fromUserToCustomUserDetails(prepareUser());
+        when(auth.getPrincipal()).thenReturn(user);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
+    private User prepareUser() {
+        return new User(1, "Yurii", "metro", "jurok3x@gmail.com", new Role(2, "ROLE_ADMIN"));
     }
 
 }

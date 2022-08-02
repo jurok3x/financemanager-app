@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,8 +43,8 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 @PropertySource(value = { "classpath:/messages/income/info.properties" })
 public class IncomeController {
     
-    private IncomeService incomeService;
-    private IncomeModelAssembler incomeAssembler;
+    private final IncomeService incomeService;
+    private final IncomeModelAssembler incomeAssembler;
     
     @Value("${update.info}")
     private String updateInfo;
@@ -57,12 +58,14 @@ public class IncomeController {
     private String findByIdInfo;
     
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('income:read')")
     public ResponseEntity<IncomeModel> findById(@PathVariable Long id) {
         log.info(findByIdInfo, id);
         return ResponseEntity.ok(incomeAssembler.toModel(incomeService.findById(id)));
     }
     
     @GetMapping("/user/{userId}")
+    @PreAuthorize("#userId == authentication.principal.id && hasAuthority('income:read')") 
     public ResponseEntity<CollectionModel<IncomeModel>> findByUserIdAndCategoryIdAndDatePart(
             @PathVariable Integer userId,
             @RequestParam(required = false) @Min(value = 0) Integer year,
@@ -73,6 +76,7 @@ public class IncomeController {
     }
     
     @GetMapping("/page/user/{userId}")
+    @PreAuthorize("#userId == authentication.principal.id && hasAuthority('income:read')") 
     public ResponseEntity<Page<IncomeModel>> findByUserIdAndCategoryIdAndDatePart(
             @PathVariable Integer userId,
             @RequestParam(required = false) @Min(value = 0) Integer year,
@@ -85,6 +89,7 @@ public class IncomeController {
     }
     
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('income:write')") 
     public ResponseEntity<?> save(@Valid @RequestBody IncomeDTO incomeDTO) {
         log.info(saveInfo, incomeDTO.toString());
         IncomeDTO addedIncome = incomeService.save(incomeDTO);
@@ -96,9 +101,8 @@ public class IncomeController {
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<IncomeModel> update(
-            @PathVariable Long id,
-            @Valid @RequestBody IncomeDTO incomeDTO) {
+    @PreAuthorize("hasAuthority('income:write')")
+    public ResponseEntity<IncomeModel> update(@PathVariable Long id, @Valid @RequestBody IncomeDTO incomeDTO) {
         log.info(updateInfo, id);
         return ResponseEntity.ok(incomeAssembler.toModel(incomeService.update(incomeDTO, id)));
     }

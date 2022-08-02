@@ -21,6 +21,6 @@ public class ExpenseModel extends RepresentationModel<ExpenseModel> {
 	private String name;
 	private Double price;
 	private Date date;
-	private CategoryModel category;
-	private UserModel user;
+	private Integer categoryId;
+	private Integer userId;
 }

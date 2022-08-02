@@ -10,6 +10,8 @@ import com.financemanager.model.UserModel;
 
 import org.springframework.stereotype.Component;
 
+import java.util.stream.Collectors;
+
 @Component
 public class UserModelAssembler extends RepresentationModelAssemblerSupport<UserDTO, UserModel> {
 
@@ -25,6 +27,7 @@ public class UserModelAssembler extends RepresentationModelAssemblerSupport<User
 		userModel.setName(entity.getName());
 		userModel.setEmail(entity.getEmail());
 		userModel.setRoleDTO(entity.getRoleDTO());
+		userModel.setCategoriesId(entity.getCategories().stream().map(category -> category.getId()).collect(Collectors.toSet()));
 		
 		userModel.add(linkTo(
 				methodOn(UserController.class)

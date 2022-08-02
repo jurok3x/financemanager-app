@@ -12,6 +12,7 @@ import com.financemanager.entity.User;
 import com.financemanager.entity.payload.AuthRequest;
 import com.financemanager.entity.payload.SaveUserRequest;
 import com.financemanager.exception.UserAlreadyExistsException;
+import com.financemanager.mapper.CategoryMapper;
 import com.financemanager.mapper.RoleMapper;
 import com.financemanager.mapper.UserMapper;
 import com.financemanager.repository.UserRepository;
@@ -46,7 +47,7 @@ class DefaultAuthServiceTest {
     
     @BeforeEach
     void setUp() {
-        userMapper = new UserMapper(new RoleMapper());
+        userMapper = new UserMapper(new RoleMapper(), new CategoryMapper());
         passwordEncoder = new BCryptPasswordEncoder();
         authService = new DefaultAuthService(userMapper, userRepository, jwtProvider, passwordEncoder);
         ReflectionTestUtils.setField(authService, "badPasswordError", "Wrong password for user with email {}");

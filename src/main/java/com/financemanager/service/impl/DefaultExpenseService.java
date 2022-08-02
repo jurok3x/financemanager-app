@@ -7,9 +7,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.financemanager.dto.ExpenseDTO;
+import com.financemanager.entity.CustomUserDetails;
 import com.financemanager.entity.utils.DatePart;
 import com.financemanager.exception.ResourceNotFoundException;
 import com.financemanager.mapper.ExpensesMapper;
@@ -36,6 +39,7 @@ public class DefaultExpenseService implements ExpenseService {
 
     @Override
     public ExpenseDTO update(ExpenseDTO expenseDTO, Long id) {
+        checkPermission(expenseDTO);
         expensesRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(expenseNotFoundError, id)));
         return expensesMapper.toExpenseDTO(expensesRepository.save(expensesMapper.toExpense(expenseDTO)));
@@ -43,15 +47,18 @@ public class DefaultExpenseService implements ExpenseService {
 
     @Override
     public ExpenseDTO findById(Long id) {
-        return expensesRepository.findById(id).map(expensesMapper::toExpenseDTO)
+        ExpenseDTO expenseDTO = expensesRepository.findById(id).map(expensesMapper::toExpenseDTO)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(expenseNotFoundError, id)));
+        checkPermission(expenseDTO);
+        return expenseDTO;
     }
 
     @Override
     public void delete(Long id) {
-        ExpenseDTO deletedExpense = expensesRepository.findById(id).map(expensesMapper::toExpenseDTO)
+        ExpenseDTO expenseDTO = expensesRepository.findById(id).map(expensesMapper::toExpenseDTO)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format(expenseNotFoundError, id)));
-        expensesRepository.deleteById(deletedExpense.getId());
+        checkPermission(expenseDTO);    
+        expensesRepository.deleteById(expenseDTO.getId());
     }
 
     @Override
@@ -65,6 +72,13 @@ public class DefaultExpenseService implements ExpenseService {
     public Page<ExpenseDTO> findByUserIdAndCategoryIdAndDatePart(Integer userId, Integer categoryId, DatePart datePart,
             Pageable pageable) {
         return expensesRepository.findByUserIdAndCategoryIdAndDatePart(userId, categoryId, datePart, pageable).map(expensesMapper::toExpenseDTO);
+    }
+    
+    private void checkPermission(ExpenseDTO expenseDTO){
+        CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(expenseDTO.getUserId() != user.getId() && !user.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
+           throw new AccessDeniedException("You don't have permission for this action"); 
+        }
     }
 
 }

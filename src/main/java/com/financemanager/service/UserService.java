@@ -14,6 +14,10 @@ public interface UserService {
     UserDTO findByEmail(String email);
     
     UserDTO findById(Integer id);
+    
+    UserDTO addCategory(Integer userId, Integer categoryId);
+    
+    UserDTO removeCategory(Integer userId, Integer categoryId);
 
     List<UserDTO> findAll();
     

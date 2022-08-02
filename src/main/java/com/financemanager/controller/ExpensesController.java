@@ -17,6 +17,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,8 +47,8 @@ import lombok.extern.slf4j.Slf4j;
 @SecurityRequirement(name = "bearerAuth")
 public class ExpensesController {
 
-    private ExpenseService expensesService;
-    private ExpenseModelAssembler expensesAssembler;
+    private final ExpenseService expensesService;
+    private final ExpenseModelAssembler expensesAssembler;
 
     @Value("${update.info}")
     private String updateInfo;
@@ -61,38 +62,42 @@ public class ExpensesController {
     private String findByIdInfo;
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('expense:read')")
     public ResponseEntity<ExpenseModel> findById(@PathVariable Long id) throws ResourceNotFoundException {
-        log.info(String.format(findByIdInfo, id));
+        log.info(findByIdInfo, id);
         return ResponseEntity.ok(expensesAssembler.toModel(expensesService.findById(id)));
     }
 
     @GetMapping("/user/{userId}")
+    @PreAuthorize("#userId == authentication.principal.id && hasAuthority('expense:read')") 
     public ResponseEntity<CollectionModel<ExpenseModel>> findByUserIdAndCategoryIdAndDatePart(
             @PathVariable(name = "userId") Integer userId, @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) @Min(value = 0) Integer year,
             @RequestParam(required = false) @Min(value = 0) @Max(value = 12) Integer month) {
-        log.info(String.format(findByUserIdAndCategoryIdAndDatePartInfo, categoryId, year, month));
+        log.info(findByUserIdAndCategoryIdAndDatePartInfo, userId, categoryId, year, month);
         List<ExpenseDTO> items = expensesService.findByUserIdAndCategoryIdAndDatePart(userId, categoryId,
                 new DatePart(year, month));
         return new ResponseEntity<>(expensesAssembler.toCollectionModel(items), HttpStatus.OK);
     }
 
     @GetMapping("/page/user/{userId}")
+    @PreAuthorize("#userId == authentication.principal.id && hasAuthority('expense:read')") 
     public ResponseEntity<Page<ExpenseModel>> findByUserIdAndCategoryIdAndDatePart(
             @PathVariable(name = "userId") Integer userId, @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) @Min(value = 0) Integer year,
             @RequestParam(required = false) @Min(value = 0) @Max(value = 12) Integer month,
             @RequestParam(required = false) @Min(value = 0) Integer size,
             @RequestParam(required = false) @Min(value = 0) Integer page) {
-        log.info(String.format(findByUserIdAndCategoryIdAndDatePartInfo, categoryId, year, month));
+        log.info(findByUserIdAndCategoryIdAndDatePartInfo, userId, categoryId, year, month);
         Page<ExpenseDTO> expensesPage = expensesService.findByUserIdAndCategoryIdAndDatePart(userId, categoryId,
                 new DatePart(year, month), PageRequest.of(page, size));
         return ResponseEntity.ok(expensesPage.map(expensesAssembler::toModel));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('expense:write')")
     public ResponseEntity<?> save(@Valid @RequestBody ExpenseDTO expenseDTO) {
-        log.info(String.format(saveInfo, expenseDTO.toString()));
+        log.info(saveInfo, expenseDTO.toString());
         ExpenseDTO addedExpense = expensesService.save(expenseDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(addedExpense.getId()).toUri();
@@ -100,14 +105,15 @@ public class ExpensesController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('expense:write')")
     public ResponseEntity<ExpenseDTO> updateItem(@PathVariable Long id, @Valid @RequestBody ExpenseDTO expenseDTO) {
-        log.info(String.format(updateInfo, id));
+        log.info(updateInfo, id);
         return ResponseEntity.ok(expensesService.update(expenseDTO, id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteItem(@PathVariable Long id) throws ResourceNotFoundException {
-        log.info(String.format(deleteInfo, id));
+        log.info(deleteInfo, id);
         expensesService.delete(id);
         return ResponseEntity.noContent().build();
     }

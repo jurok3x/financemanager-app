@@ -96,7 +96,7 @@ public class CategoryController {
     }
 	
 	@PutMapping("/{id}")
-	//@PreAuthorize("#userId == authentication.principal.id && hasAuthority('category:write')")
+	@PreAuthorize("hasAuthority('category:write')") 
 	public ResponseEntity<CategoryDTO> update(
 	        @PathVariable Integer id,
 			@Valid @RequestBody CategoryDTO categoryDTO){

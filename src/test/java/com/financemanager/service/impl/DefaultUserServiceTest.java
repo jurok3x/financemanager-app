@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import com.financemanager.entity.Role;
 import com.financemanager.entity.User;
+import com.financemanager.mapper.CategoryMapper;
 import com.financemanager.mapper.RoleMapper;
 import com.financemanager.mapper.UserMapper;
 import com.financemanager.repository.UserRepository;
@@ -32,10 +33,12 @@ class DefaultUserServiceTest {
     private UserRepository userRepository;
     private UserService userService;
     private UserMapper userMapper;
+    private CategoryMapper categoryMapper;
     
     @BeforeEach
     void setUp() {
-        userMapper = new UserMapper(new RoleMapper());
+        categoryMapper = new CategoryMapper();
+        userMapper = new UserMapper(new RoleMapper(), categoryMapper);
         userService = new DefaultUserService(userRepository, userMapper);
     }
     
