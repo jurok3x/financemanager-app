@@ -12,6 +12,8 @@ import com.financemanager.entity.User;
 import com.financemanager.entity.payload.AuthRequest;
 import com.financemanager.entity.payload.SaveUserRequest;
 import com.financemanager.exception.UserAlreadyExistsException;
+import com.financemanager.mapper.CategoryMapper;
+import com.financemanager.mapper.RoleMapper;
 import com.financemanager.mapper.UserMapper;
 import com.financemanager.repository.UserRepository;
 import com.financemanager.service.AuthService;
@@ -26,6 +28,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
@@ -33,6 +36,7 @@ import java.util.Optional;
 class DefaultAuthServiceTest {
     
     private static final String USER_PASSWORD = "metro2033";
+    
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -43,9 +47,13 @@ class DefaultAuthServiceTest {
     
     @BeforeEach
     void setUp() {
-        userMapper = new UserMapper();
+        userMapper = new UserMapper(new RoleMapper(), new CategoryMapper());
         passwordEncoder = new BCryptPasswordEncoder();
         authService = new DefaultAuthService(userMapper, userRepository, jwtProvider, passwordEncoder);
+        ReflectionTestUtils.setField(authService, "badPasswordError", "Wrong password for user with email {}");
+        ReflectionTestUtils.setField(authService, "userAlreadyExistsError", "User with email {} already exists");
+        ReflectionTestUtils.setField(authService, "userEmailNotFoundError", "User with email {} not found");
+        ReflectionTestUtils.setField(authService, "userIdNotFoundError", "User with id {} not found");
     }
     
     @Test
@@ -74,6 +82,7 @@ class DefaultAuthServiceTest {
         User user = prepareUser();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         given(userRepository.findByEmail(Mockito.anyString())).willReturn(Optional.empty());
+        
         AuthRequest request = new AuthRequest(user.getEmail(), "wrong_password");
         assertThrows(BadCredentialsException.class, () -> authService.login(request));
         verify(userRepository).findByEmail(request.getEmail());
@@ -121,7 +130,7 @@ class DefaultAuthServiceTest {
         user.setEmail("jurok3x@gmail.com");
         user.setName("Yurii");
         user.setPassword(USER_PASSWORD);
-        user.setRole(Role.ADMIN);
+        user.setRole(new Role(2, "ROLE_USER"));
         return user;
     }
 

@@ -56,10 +56,12 @@ class UserRepositoryTest {
     
     private User prepareUser() {
         User user = new User();
+        Role role = new Role(null, "ROLE_USER");
+        entityManager.persist(role);
         user.setEmail("jurok3x@gmail.com");
         user.setName("Yurii");
         user.setPassword("metro090");
-        user.setRole(Role.ADMIN);
+        user.setRole(role);
         return user;
     }
     

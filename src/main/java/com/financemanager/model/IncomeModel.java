@@ -20,5 +20,5 @@ public class IncomeModel extends RepresentationModel<IncomeModel>{
     private String name;
     private Double amount;
     private Date date;
-    private UserModel user;
+    private Integer userId;
 }

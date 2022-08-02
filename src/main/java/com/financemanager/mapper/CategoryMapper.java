@@ -5,6 +5,8 @@ import com.financemanager.entity.Category;
 
 import org.springframework.stereotype.Component;
 
+import java.util.stream.Collectors;
+
 @Component
 public class CategoryMapper {
     
@@ -12,6 +14,7 @@ public class CategoryMapper {
         CategoryDTO categoryDTO = new CategoryDTO();
         categoryDTO.setId(category.getId());
         categoryDTO.setName(category.getName());
+        categoryDTO.setUsersId(category.getUsers().stream().map(user -> user.getId()).collect(Collectors.toSet()));
         return categoryDTO;
     }
 

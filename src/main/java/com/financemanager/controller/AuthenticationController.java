@@ -1,6 +1,9 @@
 package com.financemanager.controller;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,31 +27,36 @@ import com.financemanager.model.UserModel;
 import com.financemanager.service.AuthService;
 import com.financemanager.service.assembler.UserModelAssembler;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/auth")
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
+@PropertySource(value = { "classpath:/messages/authentification/info.properties" })
 @SecurityRequirement(name = "bearerAuth")
 public class AuthenticationController {
 	
-	private static final String LOGIN_INFO = "Login user with email %s";
-    private static final String UPDATE_USER_INFO = "Update user with email %s";
-    private static final String REGISTRATION_INFO = "Registration new user: %s";
     private final UserModelAssembler userAssembler;
 	private final AuthService authService;
 	
+	@Value("${login.info}")
+    private String loginInfo;
+    @Value("${update_user.info}")
+    private String updateUserInfo;
+    @Value("${registration.info}")
+    private String registrationInfo;
+	
 	@PostMapping("/signin")
 	public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request){
-	    log.info(LOGIN_INFO, request.getEmail());
+	    log.info(loginInfo, request.getEmail());
 		return ResponseEntity.ok(authService.login(request));
 	}
 	
 	@PostMapping("/signup")
     public ResponseEntity<UserModel> registration(@RequestBody @Valid SaveUserRequest request) throws UserAlreadyExistsException{
-	    log.info(REGISTRATION_INFO, request.toString());
+	    log.info(registrationInfo, request.toString());
 	    UserDTO addedUser = authService.registration(request);
 	    URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -58,8 +66,9 @@ public class AuthenticationController {
     }
 	
 	@PutMapping("/update/{id}")
+	@PreAuthorize("#id == authentication.principal.id || hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserModel> updateUserName(@RequestBody String userName, @PathVariable Integer id){
-	    log.info(UPDATE_USER_INFO, userName);
+	    log.info(updateUserInfo, id, userName);
         return ResponseEntity.ok(userAssembler.toModel(authService.updateName(userName, id)));
     }
 	

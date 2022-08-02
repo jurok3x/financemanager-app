@@ -7,16 +7,23 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Component;
 
+import java.util.stream.Collectors;
+
+
 @AllArgsConstructor
 @Component
 public class UserMapper {
+    
+    private RoleMapper roleMapper;
+    private CategoryMapper categoryMapper;
     
     public UserDTO toUserDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setName(user.getName());
         userDTO.setEmail(user.getEmail());
-        userDTO.setRole(user.getRole());
+        userDTO.setRoleDTO(roleMapper.toRoleDTO(user.getRole()));
+        userDTO.setCategories(user.getCategories().stream().map(categoryMapper::toCategoryDTO).collect(Collectors.toSet()));
         return userDTO;
     }
 
@@ -25,7 +32,7 @@ public class UserMapper {
         user.setId(userDTO.getId());
         user.setName(userDTO.getName());
         user.setEmail(userDTO.getEmail());
-        user.setRole(userDTO.getRole());
+        user.setRole(roleMapper.toRole(userDTO.getRoleDTO()));
         return user;
     }
 

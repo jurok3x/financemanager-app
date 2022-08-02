@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -19,6 +20,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(
+        securedEnabled = true,
+        jsr250Enabled = true,
+        prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
 	@Autowired
@@ -48,14 +53,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 	.authorizeRequests()
-                	.antMatchers("/api/auth", "/users/fail").permitAll()
                 	.antMatchers("/css/*", "/js/*", "/", "/api/auth/signin", "/api/auth/signup", "/webjars/**","/swagger-ui/**","/swagger-ui.html","/v3/api-docs/**",
                             "/swagger-resources/**","/v2/api-docs/**", "/swagger.json").permitAll()
                 	.anyRequest().authenticated()
-                .and()
-                	.logout()
-                	.permitAll()
-                	.logoutSuccessUrl("/")
         		.and()
         			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         

@@ -1,24 +1,22 @@
 package com.financemanager.entity;
 
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.Data;
 
@@ -46,19 +44,19 @@ public class User {
 	private String email;
 	
 	@JoinColumn(name="\"role_id\"")
+	@ManyToOne
 	@NotNull(message = "Role must not be empty")
-	@Enumerated(EnumType.ORDINAL)
 	private Role role;
 	
-	@ManyToMany(cascade = CascadeType.MERGE)
+	@ManyToMany
 	@JoinTable(
 	        name = "\"users_categories\"",
 	        joinColumns = @JoinColumn(name = "\"user_id\""),
 	        inverseJoinColumns = @JoinColumn(name = "\"category_id\""))
-	private Set<Category> categories = new HashSet<>();
+	private List<Category> categories;
 	
 	public User() {
-	    this.categories = new HashSet<>();
+	    this.categories = new ArrayList<>();
 	}
 	
 	public User(Integer id, String name,
@@ -70,7 +68,7 @@ public class User {
         this.password = password;
         this.email = email;
         this.role = role;
-        this.categories = new HashSet<>();
+        this.categories = new ArrayList<>();
     }
 	
 	public void addCategory(Category category) {

@@ -41,7 +41,6 @@ public class RESTExceptionHandler extends ResponseEntityExceptionHandler {
     private static final String RESOURCE_NOT_FOUND_ERROR = "Resource Not Found";
     private static final String USER_ALREADY_EXISTS_ERROR = "User with current email already exists.";
     private static final String NO_ACCES_ERROR = "You dont' have rights to acces this resource";
-    private static final String ERROR_OCCURRED = "Error occurred";
     private static final String METHOD_NOT_FOUND_ERROR = "Method Not Found";
     private static final String UNSUPPORTED_MEDIA_TYPE_ERROR = "Unsupported Media Type";
 
@@ -166,9 +165,7 @@ public class RESTExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 	
 	@ExceptionHandler({ AccessDeniedException.class })
-    public ResponseEntity<Object> handleAccessDeniedException(
-      Exception ex, HttpHeaders headers,
-		HttpStatus status, WebRequest request) {
+    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
 		List<String> details = new ArrayList<String>();
 		details.add(NO_ACCES_ERROR);
 		
@@ -178,15 +175,4 @@ public class RESTExceptionHandler extends ResponseEntityExceptionHandler {
 		return ResponseEntityBuilder.build(apiException);
     }
 
-	@ExceptionHandler({ Exception.class })
-	public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
-
-		List<String> details = new ArrayList<String>();
-		details.add(ex.getLocalizedMessage());
-
-		APIException apiException = new APIException(ERROR_OCCURRED, HttpStatus.BAD_REQUEST,
-				LocalDateTime.now(), details);
-
-		return ResponseEntityBuilder.build(apiException);
-	}
 }

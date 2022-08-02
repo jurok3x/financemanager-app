@@ -6,11 +6,13 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,35 +29,44 @@ import com.financemanager.model.CategoryModel;
 import com.financemanager.service.CategoryService;
 import com.financemanager.service.assembler.CategoryModelAssembler;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/categories")
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
+@PropertySource(value = { "classpath:/messages/category/info.properties" })
 @SecurityRequirement(name = "bearerAuth")
 public class CategoryController {
-	
-	private static final String FIND_CATEGORIES_BY_USER_ID_INFO = "Handling find categories of user with id %d";
-    private static final String FIND_BY_ID_INFO = "Handling find caegory with id %d";
-    private static final String FIND_ALL_INFO = "Handling find all caegories request";
-    private static final String UPDATE_CAEGORY_INFO = "Handling update caegory with id %d";
-    private static final String SAVE_CATEGORY_INFO = "Handling save category %s";
-    private static final String INCORRECT_ID_ERROR = "Id should be greater than 1";
+    
     private final CategoryService categoryService;
 	private final CategoryModelAssembler categoryAssembler;
 	
+	@Value("${find_by_user_id.info}")
+    private String findByUserIdInfo;
+    @Value("${find_by_id.info}")
+    private String findByIdInfo;
+    @Value("${find_all.info}")
+    private String findAllInfo;
+    @Value("${update.info}")
+    private String updateInfo;
+    @Value("${save.info}")
+    private String saveInfo;
+    @Value("${delete.info}")
+    private String deleteInfo;
+	
 	@GetMapping("/{id}")
-	public ResponseEntity<CategoryModel> findCategoryById(@PathVariable
-			@Min(value = 1, message = INCORRECT_ID_ERROR) Integer id) throws ResourceNotFoundException{
-		log.info(String.format(FIND_BY_ID_INFO, id));
+	@PreAuthorize(" hasAuthority('category:read')") 
+	public ResponseEntity<CategoryModel> findCategoryById(@PathVariable Integer id) throws ResourceNotFoundException{
+		log.info(findByIdInfo, id);
 		return ResponseEntity.ok(categoryAssembler.toModel(categoryService.findById(id)));
 	}
 	
 	@GetMapping
+	@PreAuthorize("hasAuthority('category:read')") 
 	public ResponseEntity<CollectionModel<CategoryModel>> findAllCategories() {
-		log.info(FIND_ALL_INFO);
+		log.info(findAllInfo);
 		List<CategoryDTO> categories = categoryService.findAll();
 		return new ResponseEntity<>(
 				categoryAssembler.toCollectionModel(categories),
@@ -63,8 +74,9 @@ public class CategoryController {
 	}
 	
 	@GetMapping("/user/{userId}")
+	@PreAuthorize("#userId == authentication.principal.id && hasAuthority('category:read')") 
     public ResponseEntity<CollectionModel<CategoryModel>> findByUserId(@PathVariable Integer userId) {
-        log.info(FIND_CATEGORIES_BY_USER_ID_INFO, userId);
+        log.info(findByUserIdInfo, userId);
         List<CategoryDTO> categories = categoryService.findByUserId(userId);
         return new ResponseEntity<>(
                 categoryAssembler.toCollectionModel(categories),
@@ -72,8 +84,9 @@ public class CategoryController {
     }
 	
 	@PostMapping
+	@PreAuthorize("hasAuthority('category:write')") 
     public ResponseEntity<?> save(@Valid @RequestBody CategoryDTO categoryDTO) {
-        log.info(String.format(SAVE_CATEGORY_INFO, categoryDTO.toString()));
+        log.info(String.format(saveInfo, categoryDTO.toString()));
         CategoryDTO addedCategory = categoryService.save(categoryDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -83,17 +96,18 @@ public class CategoryController {
     }
 	
 	@PutMapping("/{id}")
+	@PreAuthorize("hasAuthority('category:write')") 
 	public ResponseEntity<CategoryDTO> update(
-	        @PathVariable @Min(value = 1, message = INCORRECT_ID_ERROR) Integer id,
+	        @PathVariable Integer id,
 			@Valid @RequestBody CategoryDTO categoryDTO){
-		log.info(UPDATE_CAEGORY_INFO + id);	
+		log.info(updateInfo + id);	
 		return ResponseEntity.ok(categoryService.update(categoryDTO, id));
 	}
 	
 	@DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
-            @PathVariable @Min(value = 1, message = INCORRECT_ID_ERROR) Integer id) throws ResourceNotFoundException{
-        log.info("Handling delete category request: " + id);
+            @PathVariable Integer id) throws ResourceNotFoundException{
+        log.info(deleteInfo, id);
         categoryService.delete(id);
         return ResponseEntity.noContent().build();
     }

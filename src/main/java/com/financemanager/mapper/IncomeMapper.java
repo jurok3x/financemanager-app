@@ -11,15 +11,13 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class IncomeMapper {
     
-    private final UserMapper userMapper;
-    
     public IncomeDTO toIncomeDTO (Income income) {
         IncomeDTO incomeDTO = new IncomeDTO();
         incomeDTO.setId(income.getId());
         incomeDTO.setAmount(income.getAmount());
         incomeDTO.setName(income.getName());
         incomeDTO.setDate(income.getDate());
-        incomeDTO.setUserDTO(userMapper.toUserDTO(income.getUser()));
+        incomeDTO.setUserId(income.getUser().getId());
         return incomeDTO;
     }
     
@@ -29,7 +27,6 @@ public class IncomeMapper {
         income.setAmount(incomeDTO.getAmount());
         income.setName(incomeDTO.getName());
         income.setDate(incomeDTO.getDate());
-        income.setUser(userMapper.toUser(incomeDTO.getUserDTO()));
         return income;
     }
 

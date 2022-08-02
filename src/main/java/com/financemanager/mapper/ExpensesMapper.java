@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class ExpensesMapper {
     
-    private final UserMapper userMapper;
     private final CategoryMapper categoryMapper;
     
     public ExpenseDTO toExpenseDTO(Expense expense) {
@@ -20,7 +19,7 @@ public class ExpensesMapper {
         expenseDTO.setName(expense.getName());
         expenseDTO.setPrice(expense.getPrice());
         expenseDTO.setDate(expense.getDate());
-        expenseDTO.setUserDTO(userMapper.toUserDTO(expense.getUser()));
+        expenseDTO.setUserId(expense.getUser().getId());
         expenseDTO.setCategoryDTO(categoryMapper.toCategoryDTO(expense.getCategory()));
         return expenseDTO;
     }
@@ -31,7 +30,6 @@ public class ExpensesMapper {
         expense.setName(expenseDTO.getName());
         expense.setPrice(expenseDTO.getPrice());
         expense.setDate(expenseDTO.getDate());
-        expense.setUser(userMapper.toUser(expenseDTO.getUserDTO()));
         expense.setCategory(categoryMapper.toCategory(expenseDTO.getCategoryDTO()));
         return expense;
     }

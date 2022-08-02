@@ -4,7 +4,6 @@ import com.financemanager.controller.IncomeController;
 import com.financemanager.dto.IncomeDTO;
 import com.financemanager.model.IncomeModel;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
@@ -17,9 +16,6 @@ public class IncomeModelAssembler  extends RepresentationModelAssemblerSupport<I
     public IncomeModelAssembler() {
         super(IncomeController.class, IncomeModel.class);
     }
-    
-    @Autowired
-    private UserModelAssembler userAssembler;
 
     @Override
     public IncomeModel toModel(IncomeDTO entity) {
@@ -28,7 +24,7 @@ public class IncomeModelAssembler  extends RepresentationModelAssemblerSupport<I
         incomeModel.setName(entity.getName());
         incomeModel.setAmount(entity.getAmount());
         incomeModel.setDate(entity.getDate());
-        incomeModel.setUser(userAssembler.toModel(entity.getUserDTO()));
+        incomeModel.setUserId(entity.getUserId());
         
         incomeModel.add(linkTo(
                 methodOn(IncomeController.class)
@@ -40,7 +36,7 @@ public class IncomeModelAssembler  extends RepresentationModelAssemblerSupport<I
     @Override
     public CollectionModel<IncomeModel> toCollectionModel(Iterable<? extends IncomeDTO> entities) {
         CollectionModel<IncomeModel> incomesModel = super.toCollectionModel(entities);
-        int userId = entities.iterator().hasNext() ? entities.iterator().next().getUserDTO().getId() : null;
+        int userId = entities.iterator().hasNext() ? entities.iterator().next().getUserId() : null;
         incomesModel.add(linkTo(
                 methodOn(IncomeController.class)
                 .findByUserIdAndCategoryIdAndDatePart(userId, null, null))

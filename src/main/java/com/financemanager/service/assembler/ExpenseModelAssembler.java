@@ -1,6 +1,5 @@
 package com.financemanager.service.assembler;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
@@ -17,12 +16,6 @@ public class ExpenseModelAssembler extends RepresentationModelAssemblerSupport<E
 	public ExpenseModelAssembler() {
 		super(ExpensesController.class, ExpenseModel.class);
 	}
-	
-	@Autowired
-	private CategoryModelAssembler categoryAssembler;
-	
-	@Autowired
-	private UserModelAssembler userAssembler;
 
 	@Override
 	public ExpenseModel toModel(ExpenseDTO entity) {
@@ -31,8 +24,8 @@ public class ExpenseModelAssembler extends RepresentationModelAssemblerSupport<E
 		expenseModel.setId(entity.getId());
 		expenseModel.setName(entity.getName());
 		expenseModel.setPrice(entity.getPrice());
-		expenseModel.setCategory(categoryAssembler.toModel(entity.getCategoryDTO()));
-		expenseModel.setUser(userAssembler.toModel(entity.getUserDTO()));
+		expenseModel.setCategoryId(entity.getCategoryDTO().getId());
+		expenseModel.setUserId(entity.getUserId());
 		expenseModel.setDate(entity.getDate());
 		
 		expenseModel.add(linkTo(
@@ -45,7 +38,7 @@ public class ExpenseModelAssembler extends RepresentationModelAssemblerSupport<E
 	@Override
 	public CollectionModel<ExpenseModel> toCollectionModel(Iterable<? extends ExpenseDTO> entities) {
 		CollectionModel<ExpenseModel> expenseModel = super.toCollectionModel(entities);
-		int userId = entities.iterator().hasNext() ? entities.iterator().next().getUserDTO().getId() : null;
+		Integer userId = entities.iterator().hasNext() ? entities.iterator().next().getUserId() : null;
 		expenseModel.add(linkTo(
 				methodOn(ExpensesController.class)
 				.findByUserIdAndCategoryIdAndDatePart(userId, null, null, null))

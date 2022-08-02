@@ -14,16 +14,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "\"categories\"")
 @Data
-@NoArgsConstructor
-@Getter
-@Setter
 public class Category implements Comparable<Category>{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +27,18 @@ public class Category implements Comparable<Category>{
 	@NotBlank(message = "Name must not be empty")
 	private String name;
 	@ManyToMany(mappedBy = "categories", cascade = CascadeType.MERGE)
-	private Set<User> users = new HashSet<>();
+	private Set<User> users;
+	
+	public Category(Integer id, String name) {
+        this.id = id;
+        this.name = name;
+        this.users = new HashSet<>();
+    }
+	
+	public Category() {
+        this.users = new HashSet<>();
+    }
+	
 	@Override
 	public int compareTo(Category category) {
 		return this.id - category.getId();
@@ -46,4 +51,5 @@ public class Category implements Comparable<Category>{
 	public void removeUser(User user) {
         this.users.remove(user);
     }
+
 }

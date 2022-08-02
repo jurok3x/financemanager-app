@@ -4,13 +4,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
+import com.financemanager.entity.CustomUserDetails;
 import com.financemanager.entity.Income;
 import com.financemanager.entity.Role;
 import com.financemanager.entity.User;
 import com.financemanager.entity.utils.DatePart;
 import com.financemanager.mapper.IncomeMapper;
-import com.financemanager.mapper.UserMapper;
 import com.financemanager.repository.IncomeRepository;
 import com.financemanager.service.IncomeService;
 
@@ -24,6 +25,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -40,10 +43,12 @@ class DefaultIncomeServiceTest {
     private IncomeRepository incomeRepository;
     private IncomeService incomeService;
     private IncomeMapper incomeMapper;
+    @Mock
+    private Authentication auth;
     
     @BeforeEach
     void setUp() {
-        incomeMapper = new IncomeMapper(new UserMapper());
+        incomeMapper = new IncomeMapper();
         incomeService = new DefaultIncomeService(incomeRepository, incomeMapper);
     }
     
@@ -52,22 +57,24 @@ class DefaultIncomeServiceTest {
         Income income = prepareIncome();
         given(incomeRepository.save(Mockito.any(Income.class))).willReturn(income);
         assertEquals(incomeMapper.toIncomeDTO(income), incomeService.save(incomeMapper.toIncomeDTO(income)));
-        verify(incomeRepository).save(income);
+        verify(incomeRepository).save(Mockito.any(Income.class));
     }
     
     @Test
     void whenUpdate_thenReturnCorrectResult() {
         Income income = prepareIncome();
+        prepareContext();
         given(incomeRepository.save(Mockito.any(Income.class))).willReturn(income);
         given(incomeRepository.findById(Mockito.anyLong())).willReturn(Optional.of(income));
         assertEquals(incomeMapper.toIncomeDTO(income), incomeService.update(incomeMapper.toIncomeDTO(income), income.getId()));
         verify(incomeRepository).findById(income.getId());
-        verify(incomeRepository).save(income);
+        verify(incomeRepository).save(Mockito.any(Income.class));
     }
     
     @Test
     void whenFindById_thenReturnCorrectResult() {
         Income income = prepareIncome();
+        prepareContext();
         given(incomeRepository.findById(Mockito.anyLong())).willReturn(Optional.of(income));
         assertEquals(incomeMapper.toIncomeDTO(income), incomeService.findById(income.getId()));
         verify(incomeRepository).findById(income.getId());
@@ -94,6 +101,7 @@ class DefaultIncomeServiceTest {
     @Test
     void verifyDeleteById() {
         Income income = prepareIncome();
+        prepareContext();
         given(incomeRepository.findById(Mockito.anyLong())).willReturn(Optional.of(income));
         incomeService.delete(income.getId());
         verify(incomeRepository).findById(income.getId());
@@ -103,6 +111,7 @@ class DefaultIncomeServiceTest {
     @AfterEach
     void tearDown() {
         verifyNoMoreInteractions(incomeRepository);
+        SecurityContextHolder.clearContext();
     }
     
     private Income prepareIncome() {
@@ -112,8 +121,17 @@ class DefaultIncomeServiceTest {
         LocalDate date = LocalDate.of(2022, 12, 21);
         income.setDate(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
         income.setName("Salary");
-        income.setUser(new User(null, "Yurii", null, "jurok3x@gmail.com", Role.ADMIN));
+        income.setUser(prepareUser());
         return income; 
     }
+    
+    private void prepareContext() {
+        CustomUserDetails user = CustomUserDetails.fromUserToCustomUserDetails(prepareUser());
+        when(auth.getPrincipal()).thenReturn(user);
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
 
+    private User prepareUser() {
+        return new User(1, "Yurii", "metro", "jurok3x@gmail.com", new Role(2, "ROLE_ADMIN"));
+    }
 }
