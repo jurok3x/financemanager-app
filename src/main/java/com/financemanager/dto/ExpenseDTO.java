@@ -9,13 +9,11 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExpenseDTO {
-    
+public class ExpenseDTO {   
     private Long id;
     private String name;
     private double price;
     private CategoryDTO categoryDTO;
     private Integer userId;
     private Date date;
-
 }

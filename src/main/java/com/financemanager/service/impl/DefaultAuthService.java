@@ -34,7 +34,7 @@ public class DefaultAuthService implements AuthService {
     @Value("${user_already_exists.error}")
     private String userAlreadyExistsError;
     @Value("${wrong_password.error}")
-    private String badPasswordError;
+    private String wrongPasswordError;
     @Value("${user_email_not_found.error}")
     private String userEmailNotFoundError;
     @Value("${user_id_not_found.error}")
@@ -46,7 +46,7 @@ public class DefaultAuthService implements AuthService {
                 String.format(userEmailNotFoundError, request.getEmail())));
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new BadCredentialsException(
-                    String.format(badPasswordError, request.getEmail()));
+                    String.format(wrongPasswordError, request.getEmail()));
         }
         return new AuthResponse(jwtProvider.generateToken(user.getEmail()), "Bearer");
     }

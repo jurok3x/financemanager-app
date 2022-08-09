@@ -22,25 +22,26 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 import java.net.URI;
 import java.util.List;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @RestController
 @RequestMapping("/api/incomes")
 @RequiredArgsConstructor
 @Slf4j
 @PropertySource(value = { "classpath:/messages/income/info.properties" })
+@SecurityRequirement(name = "bearerAuth")
 public class IncomeController {
     
     private final IncomeService incomeService;
@@ -90,7 +91,7 @@ public class IncomeController {
     
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('income:write')") 
-    public ResponseEntity<?> save(@Valid @RequestBody IncomeDTO incomeDTO) {
+    public ResponseEntity<?> save(@RequestBody IncomeDTO incomeDTO) {
         log.info(saveInfo, incomeDTO.toString());
         IncomeDTO addedIncome = incomeService.save(incomeDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -102,7 +103,7 @@ public class IncomeController {
     
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('income:write')")
-    public ResponseEntity<IncomeModel> update(@PathVariable Long id, @Valid @RequestBody IncomeDTO incomeDTO) {
+    public ResponseEntity<IncomeModel> update(@RequestBody IncomeDTO incomeDTO, @PathVariable Long id) {
         log.info(updateInfo, id);
         return ResponseEntity.ok(incomeAssembler.toModel(incomeService.update(incomeDTO, id)));
     }
@@ -110,6 +111,7 @@ public class IncomeController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         log.info(deleteInfo, id);
+        incomeService.delete(id);
         return ResponseEntity.noContent().build();
     }
 

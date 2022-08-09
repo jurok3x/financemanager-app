@@ -50,7 +50,7 @@ class DefaultAuthServiceTest {
         userMapper = new UserMapper(new RoleMapper(), new CategoryMapper());
         passwordEncoder = new BCryptPasswordEncoder();
         authService = new DefaultAuthService(userMapper, userRepository, jwtProvider, passwordEncoder);
-        ReflectionTestUtils.setField(authService, "badPasswordError", "Wrong password for user with email {}");
+        ReflectionTestUtils.setField(authService, "wrongPasswordError", "Wrong password for user with email {}");
         ReflectionTestUtils.setField(authService, "userAlreadyExistsError", "User with email {} already exists");
         ReflectionTestUtils.setField(authService, "userEmailNotFoundError", "User with email {} not found");
         ReflectionTestUtils.setField(authService, "userIdNotFoundError", "User with id {} not found");
@@ -71,7 +71,7 @@ class DefaultAuthServiceTest {
     @Test
     void whenEmailNotFound_thenThrowException() {
         given(userRepository.findByEmail(Mockito.anyString())).willReturn(Optional.empty());
-        AuthRequest request = new AuthRequest("emptyemail", USER_PASSWORD);
+        AuthRequest request = new AuthRequest("empty_email", USER_PASSWORD);
         assertThrows(BadCredentialsException.class, () -> authService.login(request));
         verify(userRepository).findByEmail(request.getEmail());
         verifyNoInteractions(jwtProvider);

@@ -5,7 +5,6 @@ import java.util.List;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
@@ -82,7 +81,7 @@ public class ExpensesController {
 
     @GetMapping("/page/user/{userId}")
     @PreAuthorize("#userId == authentication.principal.id && hasAuthority('expense:read')") 
-    public ResponseEntity<Page<ExpenseModel>> findByUserIdAndCategoryIdAndDatePart(
+    public ResponseEntity<Page<ExpenseModel>> findPageByUserIdAndCategoryIdAndDatePart(
             @PathVariable(name = "userId") Integer userId, @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) @Min(value = 0) Integer year,
             @RequestParam(required = false) @Min(value = 0) @Max(value = 12) Integer month,
@@ -96,7 +95,7 @@ public class ExpensesController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('expense:write')")
-    public ResponseEntity<?> save(@Valid @RequestBody ExpenseDTO expenseDTO) {
+    public ResponseEntity<?> save(@RequestBody ExpenseDTO expenseDTO) {
         log.info(saveInfo, expenseDTO.toString());
         ExpenseDTO addedExpense = expensesService.save(expenseDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -106,9 +105,9 @@ public class ExpensesController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('expense:write')")
-    public ResponseEntity<ExpenseDTO> updateItem(@PathVariable Long id, @Valid @RequestBody ExpenseDTO expenseDTO) {
+    public ResponseEntity<ExpenseModel> updateItem(@RequestBody ExpenseDTO expenseDTO, @PathVariable Long id) {
         log.info(updateInfo, id);
-        return ResponseEntity.ok(expensesService.update(expenseDTO, id));
+        return ResponseEntity.ok(expensesAssembler.toModel(expensesService.update(expenseDTO, id)));
     }
 
     @DeleteMapping("/{id}")
