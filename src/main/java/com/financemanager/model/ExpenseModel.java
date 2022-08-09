@@ -16,7 +16,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ExpenseModel extends RepresentationModel<ExpenseModel> {
-	
 	private Long id;
 	private String name;
 	private Double price;

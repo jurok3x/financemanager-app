@@ -73,7 +73,7 @@ public class DefaultIncomeService implements IncomeService {
     
     private void checkPermission(IncomeDTO incomeDTO){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(incomeDTO.getUserId() != user.getId() && !user.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
+        if(incomeDTO.getUserDTO().getId() != user.getId() && !user.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
            throw new AccessDeniedException("You don't have permission for this action"); 
         }
     }

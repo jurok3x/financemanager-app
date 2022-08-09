@@ -14,5 +14,5 @@ public class IncomeDTO {
     private String name;
     private double amount;
     private Date date;
-    private Integer userId;
+    private UserDTO userDTO;
 }

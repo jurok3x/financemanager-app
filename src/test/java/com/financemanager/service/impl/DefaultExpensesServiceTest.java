@@ -14,6 +14,8 @@ import com.financemanager.entity.User;
 import com.financemanager.entity.utils.DatePart;
 import com.financemanager.mapper.CategoryMapper;
 import com.financemanager.mapper.ExpensesMapper;
+import com.financemanager.mapper.RoleMapper;
+import com.financemanager.mapper.UserMapper;
 import com.financemanager.repository.ExpensesRepository;
 import com.financemanager.service.ExpenseService;
 
@@ -46,13 +48,17 @@ class DefaultExpensesServiceTest {
     private ExpensesMapper expensesMapper;
     private ExpenseService expensesService;
     private CategoryMapper categoryMapper;
+    private UserMapper userMapper;
+    private RoleMapper roleMapper;
     @Mock
     private Authentication auth;
     
     @BeforeEach
     void setUp() {
         categoryMapper = new CategoryMapper();
-        expensesMapper = new ExpensesMapper(categoryMapper);
+        roleMapper = new RoleMapper();
+        userMapper = new UserMapper(roleMapper, categoryMapper);
+        expensesMapper = new ExpensesMapper(categoryMapper, userMapper);
         expensesService = new DefaultExpenseService(expensesRepository, expensesMapper);
     }
     
