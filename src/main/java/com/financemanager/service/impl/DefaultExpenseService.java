@@ -76,7 +76,7 @@ public class DefaultExpenseService implements ExpenseService {
     
     private void checkPermission(ExpenseDTO expenseDTO){
         CustomUserDetails user = (CustomUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if(expenseDTO.getUserId() != user.getId() && !user.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
+        if(expenseDTO.getUserDTO().getId() != user.getId() && !user.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
            throw new AccessDeniedException("You don't have permission for this action"); 
         }
     }

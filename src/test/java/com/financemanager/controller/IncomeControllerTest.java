@@ -11,6 +11,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.financemanager.dto.IncomeDTO;
+import com.financemanager.dto.RoleDTO;
+import com.financemanager.dto.UserDTO;
 import com.financemanager.entity.utils.DatePart;
 import com.financemanager.service.IncomeService;
 import com.financemanager.service.assembler.IncomeModelAssembler;
@@ -62,7 +64,7 @@ class IncomeControllerTest {
         List<IncomeDTO> incomes = Arrays.asList(prepareIncomeDTO());
         given(incomeService.findByUserIdAndDatePart(Mockito.anyInt(), Mockito.any(DatePart.class)))
             .willReturn(incomes);
-        mvc.perform(get(String.format("/api/incomes/user/%d", incomes.get(0).getUserId()))
+        mvc.perform(get(String.format("/api/incomes/user/%d", incomes.get(0).getUserDTO().getId()))
                 .param("month", "11")
                 .param("year", "2020"))
         .andExpect(status().isOk());
@@ -74,7 +76,7 @@ class IncomeControllerTest {
         List<IncomeDTO> incomes = Arrays.asList(prepareIncomeDTO());
         given(incomeService.findByUserIdAndDatePart(Mockito.anyInt(), Mockito.any(DatePart.class),
                 Mockito.any(Pageable.class))).willReturn(Page.empty());
-        mvc.perform(get(String.format("/api/incomes/page/user/%d", incomes.get(0).getUserId()))
+        mvc.perform(get(String.format("/api/incomes/page/user/%d", incomes.get(0).getUserDTO().getId()))
                 .param("month", "11")
                 .param("year", "2020")
                 .param("size", "5")
@@ -129,8 +131,17 @@ class IncomeControllerTest {
         LocalDate date = LocalDate.of(2022, 12, 21);
         incomeDTO.setDate(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
         incomeDTO.setName("Salary");
-        incomeDTO.setUserId(1);
+        incomeDTO.setUserDTO(prepareUserDTO());
         return incomeDTO; 
+    }
+    
+    private UserDTO prepareUserDTO() {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(1);
+        userDTO.setEmail("jurok3x@gmail.com");
+        userDTO.setName("Yurii");
+        userDTO.setRoleDTO(new RoleDTO(2, "ROLE_USER"));
+        return userDTO;
     }
 
 }

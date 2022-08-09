@@ -11,7 +11,10 @@ import com.financemanager.entity.Income;
 import com.financemanager.entity.Role;
 import com.financemanager.entity.User;
 import com.financemanager.entity.utils.DatePart;
+import com.financemanager.mapper.CategoryMapper;
 import com.financemanager.mapper.IncomeMapper;
+import com.financemanager.mapper.RoleMapper;
+import com.financemanager.mapper.UserMapper;
 import com.financemanager.repository.IncomeRepository;
 import com.financemanager.service.IncomeService;
 
@@ -43,12 +46,18 @@ class DefaultIncomeServiceTest {
     private IncomeRepository incomeRepository;
     private IncomeService incomeService;
     private IncomeMapper incomeMapper;
+    private CategoryMapper categoryMapper;
+    private UserMapper userMapper;
+    private RoleMapper roleMapper;
     @Mock
     private Authentication auth;
     
     @BeforeEach
     void setUp() {
-        incomeMapper = new IncomeMapper();
+        categoryMapper = new CategoryMapper();
+        roleMapper = new RoleMapper();
+        userMapper = new UserMapper(roleMapper, categoryMapper);
+        incomeMapper = new IncomeMapper(userMapper);
         incomeService = new DefaultIncomeService(incomeRepository, incomeMapper);
     }
     

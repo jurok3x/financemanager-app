@@ -24,7 +24,7 @@ public class IncomeModelAssembler  extends RepresentationModelAssemblerSupport<I
         incomeModel.setName(entity.getName());
         incomeModel.setAmount(entity.getAmount());
         incomeModel.setDate(entity.getDate());
-        incomeModel.setUserId(entity.getUserId());
+        incomeModel.setUserId(entity.getUserDTO().getId());
         
         incomeModel.add(linkTo(
                 methodOn(IncomeController.class)
@@ -36,7 +36,7 @@ public class IncomeModelAssembler  extends RepresentationModelAssemblerSupport<I
     @Override
     public CollectionModel<IncomeModel> toCollectionModel(Iterable<? extends IncomeDTO> entities) {
         CollectionModel<IncomeModel> incomesModel = super.toCollectionModel(entities);
-        int userId = entities.iterator().hasNext() ? entities.iterator().next().getUserId() : null;
+        int userId = entities.iterator().hasNext() ? entities.iterator().next().getUserDTO().getId() : null;
         incomesModel.add(linkTo(
                 methodOn(IncomeController.class)
                 .findByUserIdAndCategoryIdAndDatePart(userId, null, null))

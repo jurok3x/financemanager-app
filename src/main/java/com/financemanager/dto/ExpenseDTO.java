@@ -14,6 +14,6 @@ public class ExpenseDTO {
     private String name;
     private double price;
     private CategoryDTO categoryDTO;
-    private Integer userId;
+    private UserDTO userDTO;
     private Date date;
 }

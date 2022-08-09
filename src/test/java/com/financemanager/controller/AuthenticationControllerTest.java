@@ -88,9 +88,7 @@ class AuthenticationControllerTest {
         userDTO.setId(1);
         userDTO.setEmail("jurok3x@gmail.com");
         userDTO.setName("Yurii");
-        userDTO.setPassword("metro090");
         userDTO.setRoleDTO(new RoleDTO(2, "ROLE_USER"));
-        
         return userDTO;
     }
 

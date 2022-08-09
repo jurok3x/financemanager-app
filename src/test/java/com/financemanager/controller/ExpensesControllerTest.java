@@ -12,6 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.financemanager.dto.CategoryDTO;
 import com.financemanager.dto.ExpenseDTO;
+import com.financemanager.dto.RoleDTO;
+import com.financemanager.dto.UserDTO;
 import com.financemanager.entity.utils.DatePart;
 import com.financemanager.service.ExpenseService;
 import com.financemanager.service.assembler.ExpenseModelAssembler;
@@ -69,7 +71,7 @@ class ExpensesControllerTest {
         List<ExpenseDTO> expenses = Arrays.asList(prepareExpenseDTO());
         given(expenseService.findByUserIdAndCategoryIdAndDatePart(Mockito.anyInt(), Mockito.anyInt(), Mockito.any(DatePart.class)))
             .willReturn(expenses);
-        mvc.perform(get(String.format("/api/expenses/user/%d", expenses.get(0).getUserId()))
+        mvc.perform(get(String.format("/api/expenses/user/%d", expenses.get(0).getUserDTO().getId()))
                 .param("categoryId", "2")
                 .param("month", "11")
                 .param("year", "2020"))
@@ -82,7 +84,7 @@ class ExpensesControllerTest {
         List<ExpenseDTO> expenses = Arrays.asList(prepareExpenseDTO());
         given(expenseService.findByUserIdAndCategoryIdAndDatePart(Mockito.anyInt(), Mockito.anyInt(), Mockito.any(DatePart.class),
                 Mockito.any(Pageable.class))).willReturn(Page.empty());
-        mvc.perform(get(String.format("/api/expenses/page/user/%d", expenses.get(0).getUserId()))
+        mvc.perform(get(String.format("/api/expenses/page/user/%d", expenses.get(0).getUserDTO().getId()))
                 .param("categoryId", "2")
                 .param("month", "11")
                 .param("year", "2020")
@@ -138,9 +140,18 @@ class ExpensesControllerTest {
         expenseDTO.setPrice(222.0);
         LocalDate date = LocalDate.of(2022, 12, 21);
         expenseDTO.setDate(Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-        expenseDTO.setUserId(1);
+        expenseDTO.setUserDTO(prepareUserDTO());
         expenseDTO.setCategoryDTO(new CategoryDTO());
         return expenseDTO;
+    }
+    
+    private UserDTO prepareUserDTO() {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(1);
+        userDTO.setEmail("jurok3x@gmail.com");
+        userDTO.setName("Yurii");
+        userDTO.setRoleDTO(new RoleDTO(2, "ROLE_USER"));
+        return userDTO;
     }
 
 }
