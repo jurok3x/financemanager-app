@@ -5,8 +5,6 @@ import java.util.List;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.hateoas.CollectionModel;
@@ -85,8 +83,8 @@ public class CategoryController {
 	
 	@PostMapping
 	@PreAuthorize("hasAuthority('category:write')") 
-    public ResponseEntity<?> save(@Valid @RequestBody CategoryDTO categoryDTO) {
-        log.info(String.format(saveInfo, categoryDTO.toString()));
+    public ResponseEntity<?> save(@RequestBody CategoryDTO categoryDTO) {
+        log.info(saveInfo, categoryDTO.toString());
         CategoryDTO addedCategory = categoryService.save(categoryDTO);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -97,11 +95,9 @@ public class CategoryController {
 	
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAuthority('category:write')") 
-	public ResponseEntity<CategoryDTO> update(
-	        @PathVariable Integer id,
-			@Valid @RequestBody CategoryDTO categoryDTO){
-		log.info(updateInfo + id);	
-		return ResponseEntity.ok(categoryService.update(categoryDTO, id));
+	public ResponseEntity<CategoryModel> update(@RequestBody CategoryDTO categoryDTO, @PathVariable Integer id){
+		log.info(updateInfo, id);	
+		return ResponseEntity.ok(categoryAssembler.toModel(categoryService.update(categoryDTO, id)));
 	}
 	
 	@DeleteMapping("/{id}")

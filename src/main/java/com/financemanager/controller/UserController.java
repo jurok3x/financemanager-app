@@ -15,7 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -61,7 +60,7 @@ public class UserController {
 		return ResponseEntity.ok(userAssembler.toModel(userService.findById(id)));
 	}
 	
-	@GetMapping("/{email}")
+	@GetMapping("/email/{email}")
 	@PreAuthorize("hasAuthority('user:read')")
 	public ResponseEntity<UserModel> findByEmail(@PathVariable @NotBlank String email) throws ResourceNotFoundException{
 		log.info(findByEmailInfo, email);
@@ -88,14 +87,14 @@ public class UserController {
                 HttpStatus.OK);
     }
 	
-	@PostMapping("{userId}/add/category/{categoryId}")
+	@GetMapping("{userId}/add/category/{categoryId}")
 	@PreAuthorize("#userId == authentication.principal.id && hasAuthority('user:write')")
 	public ResponseEntity<UserModel> addCategory(@PathVariable Integer userId, @PathVariable Integer categoryId) {
 	    log.info(addCategoryInfo, categoryId, userId);
 	    return ResponseEntity.ok(userAssembler.toModel(userService.addCategory(userId, categoryId)));
 	}
 	
-	@PostMapping("{userId}/remove/category/{categoryId}")
+	@GetMapping("{userId}/remove/category/{categoryId}")
 	@PreAuthorize("#userId == authentication.principal.id && hasAuthority('user:write')")
     public ResponseEntity<UserModel> removeCategory(@PathVariable Integer userId, @PathVariable Integer categoryId) {
         log.info(removeCategoryInfo, categoryId, userId);

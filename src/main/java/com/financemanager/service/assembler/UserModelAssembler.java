@@ -27,7 +27,9 @@ public class UserModelAssembler extends RepresentationModelAssemblerSupport<User
 		userModel.setName(entity.getName());
 		userModel.setEmail(entity.getEmail());
 		userModel.setRoleDTO(entity.getRoleDTO());
-		userModel.setCategoriesId(entity.getCategories().stream().map(category -> category.getId()).collect(Collectors.toSet()));
+		if(entity.getCategories() != null) {
+		    userModel.setCategoriesId(entity.getCategories().stream().map(category -> category.getId()).collect(Collectors.toSet()));   
+		}
 		
 		userModel.add(linkTo(
 				methodOn(UserController.class)
