@@ -48,7 +48,7 @@ public class DefaultAuthService implements AuthService {
             throw new BadCredentialsException(
                     String.format(wrongPasswordError, request.getEmail()));
         }
-        return new AuthResponse(jwtProvider.generateToken(user.getEmail()), "Bearer");
+        return new AuthResponse(jwtProvider.generateToken(user.getEmail(), user.getId()), "Bearer");
     }
 
     @Override
