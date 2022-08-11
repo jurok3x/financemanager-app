@@ -61,11 +61,11 @@ class DefaultAuthServiceTest {
         User user = prepareUser();
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         given(userRepository.findByEmail(Mockito.anyString())).willReturn(Optional.of(user));
-        given(jwtProvider.generateToken(Mockito.anyString())).willReturn("token");
+        given(jwtProvider.generateToken(Mockito.anyString(), Mockito.anyInt())).willReturn("token");
         AuthRequest request = new AuthRequest(user.getEmail(), USER_PASSWORD);
         assertEquals("token", authService.login(request).getToken());
         verify(userRepository).findByEmail(request.getEmail());
-        verify(jwtProvider).generateToken(request.getEmail());
+        verify(jwtProvider).generateToken(request.getEmail(), user.getId());
     }
     
     @Test

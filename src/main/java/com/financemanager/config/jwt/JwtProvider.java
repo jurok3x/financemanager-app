@@ -23,13 +23,14 @@ public class JwtProvider {
 	@Value("${jwt.secret}")
     private String jwtSecret;
 	
-	public String generateToken(String login) {
+	public String generateToken(String login, Integer id) {
         Date now = new Date();
-		Date expired = Date.from(LocalDate.now().plusDays(15).atStartOfDay(ZoneId.systemDefault()).toInstant());
+		Date expired = Date.from(LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
         return Jwts.builder()
                 .setSubject(login)
                 .setIssuedAt(now)
                 .setNotBefore(now)
+                .claim("id", id)
                 .setExpiration(expired)
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
