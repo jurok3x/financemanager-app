@@ -36,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 
     private final UserService userService;
-	private final UserModelAssembler userAssembler;
 	
 	@Value("${delete.info}")
 	private String deleteInfo;
@@ -55,26 +54,23 @@ public class UserController {
     
 	@GetMapping("/{id}")
 	@PreAuthorize("hasAuthority('user:read')")
-	public ResponseEntity<UserModel> findById(@PathVariable Integer id) throws ResourceNotFoundException {
+	public ResponseEntity<UserDTO> findById(@PathVariable Integer id) throws ResourceNotFoundException {
 		log.info(findByIdInfo, id);
-		return ResponseEntity.ok(userAssembler.toModel(userService.findById(id)));
+		return ResponseEntity.ok(userService.findById(id));
 	}
 	
 	@GetMapping("/email/{email}")
 	@PreAuthorize("hasAuthority('user:read')")
-	public ResponseEntity<UserModel> findByEmail(@PathVariable @NotBlank String email) throws ResourceNotFoundException{
+	public ResponseEntity<UserDTO> findByEmail(@PathVariable @NotBlank String email) throws ResourceNotFoundException{
 		log.info(findByEmailInfo, email);
-		return ResponseEntity.ok(userAssembler.toModel(userService.findByEmail(email)));
+		return ResponseEntity.ok(userService.findByEmail(email));
 	}
 
 	@GetMapping
 	@PreAuthorize("hasAuthority('user:read')")
-	public ResponseEntity<CollectionModel<UserModel>> findAllUsers() {
+	public ResponseEntity<List<UserDTO>> findAllUsers() {
 		log.info(findAllInfo);
-		List<UserDTO> users = userService.findAll();
-		return new ResponseEntity<>(
-				userAssembler.toCollectionModel(users),
-				HttpStatus.OK);
+		return ResponseEntity.ok(userService.findAll());
 	}
 	
 	@GetMapping("/category/{categoryId}")
@@ -89,9 +85,9 @@ public class UserController {
 	
 	@GetMapping("{userId}/add/category/{categoryId}")
 	@PreAuthorize("#userId == authentication.principal.id && hasAuthority('user:write')")
-	public ResponseEntity<UserModel> addCategory(@PathVariable Integer userId, @PathVariable Integer categoryId) {
+	public ResponseEntity<UserDTO> addCategory(@PathVariable Integer userId, @PathVariable Integer categoryId) {
 	    log.info(addCategoryInfo, categoryId, userId);
-	    return ResponseEntity.ok(userAssembler.toModel(userService.addCategory(userId, categoryId)));
+	    return ResponseEntity.ok(userService.addCategory(userId, categoryId));
 	}
 	
 	@GetMapping("{userId}/remove/category/{categoryId}")
