@@ -4,6 +4,8 @@ import java.util.Date;
 
 import org.springframework.hateoas.RepresentationModel;
 
+import com.financemanager.dto.CategoryDTO;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +22,6 @@ public class ExpenseModel extends RepresentationModel<ExpenseModel> {
 	private String name;
 	private Double price;
 	private Date date;
-	private Integer categoryId;
+	private CategoryDTO category;
 	private Integer userId;
 }
