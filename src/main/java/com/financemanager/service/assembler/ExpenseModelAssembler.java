@@ -24,7 +24,7 @@ public class ExpenseModelAssembler extends RepresentationModelAssemblerSupport<E
 		expenseModel.setId(entity.getId());
 		expenseModel.setName(entity.getName());
 		expenseModel.setPrice(entity.getPrice());
-		expenseModel.setCategoryId(entity.getCategoryDTO().getId());
+		expenseModel.setCategory(entity.getCategoryDTO());
 		expenseModel.setUserId(entity.getUserDTO().getId());
 		expenseModel.setDate(entity.getDate());
 		
