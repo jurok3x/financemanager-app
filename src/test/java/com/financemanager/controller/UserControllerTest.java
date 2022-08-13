@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.financemanager.dto.RoleDTO;
 import com.financemanager.dto.UserDTO;
 import com.financemanager.service.UserService;
-import com.financemanager.service.assembler.UserModelAssembler;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
@@ -29,7 +27,6 @@ import java.util.Arrays;
 @WebMvcTest(value = UserController.class,  useDefaultFilters = false, includeFilters = {
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = UserController.class)})
 @AutoConfigureMockMvc(addFilters = false)
-@Import(UserModelAssembler.class)
 class UserControllerTest {
 
     @Autowired

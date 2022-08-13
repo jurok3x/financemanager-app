@@ -8,8 +8,6 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.financemanager.dto.UserDTO;
 import com.financemanager.exception.ResourceNotFoundException;
-import com.financemanager.model.UserModel;
 import com.financemanager.service.UserService;
-import com.financemanager.service.assembler.UserModelAssembler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -75,12 +71,9 @@ public class UserController {
 	
 	@GetMapping("/category/{categoryId}")
 	@PreAuthorize("hasAuthority('user:read')") 
-    public ResponseEntity<CollectionModel<UserModel>> findUsersByCategoryId(@PathVariable Integer categoryId) {
+    public ResponseEntity<List<UserDTO>> findUsersByCategoryId(@PathVariable Integer categoryId) {
         log.info(findByCategoryIdInfo, categoryId);
-        List<UserDTO> users = userService.findByCategoryId(categoryId);
-        return new ResponseEntity<>(
-                userAssembler.toCollectionModel(users),
-                HttpStatus.OK);
+        return ResponseEntity.ok(userService.findByCategoryId(categoryId));
     }
 	
 	@GetMapping("{userId}/add/category/{categoryId}")
@@ -92,9 +85,9 @@ public class UserController {
 	
 	@GetMapping("{userId}/remove/category/{categoryId}")
 	@PreAuthorize("#userId == authentication.principal.id && hasAuthority('user:write')")
-    public ResponseEntity<UserModel> removeCategory(@PathVariable Integer userId, @PathVariable Integer categoryId) {
+    public ResponseEntity<UserDTO> removeCategory(@PathVariable Integer userId, @PathVariable Integer categoryId) {
         log.info(removeCategoryInfo, categoryId, userId);
-        return ResponseEntity.ok(userAssembler.toModel(userService.removeCategory(userId, categoryId)));
+        return ResponseEntity.ok(userService.removeCategory(userId, categoryId));
     }
 
 	@DeleteMapping("/{id}")

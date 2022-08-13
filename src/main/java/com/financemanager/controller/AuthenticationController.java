@@ -23,9 +23,7 @@ import com.financemanager.entity.payload.AuthRequest;
 import com.financemanager.entity.payload.AuthResponse;
 import com.financemanager.entity.payload.SaveUserRequest;
 import com.financemanager.exception.UserAlreadyExistsException;
-import com.financemanager.model.UserModel;
 import com.financemanager.service.AuthService;
-import com.financemanager.service.assembler.UserModelAssembler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 @SecurityRequirement(name = "bearerAuth")
 public class AuthenticationController {
 	
-    private final UserModelAssembler userAssembler;
 	private final AuthService authService;
 	
 	@Value("${login.info}")
@@ -55,7 +52,7 @@ public class AuthenticationController {
 	}
 	
 	@PostMapping("/signup")
-    public ResponseEntity<UserModel> registration(@RequestBody @Valid SaveUserRequest request) throws UserAlreadyExistsException{
+    public ResponseEntity<UserDTO> registration(@RequestBody @Valid SaveUserRequest request) throws UserAlreadyExistsException{
 	    log.info(registrationInfo, request.toString());
 	    UserDTO addedUser = authService.registration(request);
 	    URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -67,9 +64,9 @@ public class AuthenticationController {
 	
 	@PutMapping("/update/{id}")
 	@PreAuthorize("#id == authentication.principal.id || hasRole('ROLE_ADMIN')")
-    public ResponseEntity<UserModel> updateUserName(@RequestBody String userName, @PathVariable Integer id){
+    public ResponseEntity<UserDTO> updateUserName(@RequestBody String userName, @PathVariable Integer id){
 	    log.info(updateUserInfo, id, userName);
-        return ResponseEntity.ok(userAssembler.toModel(authService.updateName(userName, id)));
+        return ResponseEntity.ok(authService.updateName(userName, id));
     }
 	
 }

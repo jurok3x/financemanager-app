@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -31,9 +29,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.financemanager.dto.ExpenseDTO;
 import com.financemanager.entity.utils.DatePart;
 import com.financemanager.exception.ResourceNotFoundException;
-import com.financemanager.model.ExpenseModel;
 import com.financemanager.service.ExpenseService;
-import com.financemanager.service.assembler.ExpenseModelAssembler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +43,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ExpensesController {
 
     private final ExpenseService expensesService;
-    private final ExpenseModelAssembler expensesAssembler;
 
     @Value("${update.info}")
     private String updateInfo;
@@ -62,35 +57,33 @@ public class ExpensesController {
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('expense:read')")
-    public ResponseEntity<ExpenseModel> findById(@PathVariable Long id) throws ResourceNotFoundException {
+    public ResponseEntity<ExpenseDTO> findById(@PathVariable Long id) throws ResourceNotFoundException {
         log.info(findByIdInfo, id);
-        return ResponseEntity.ok(expensesAssembler.toModel(expensesService.findById(id)));
+        return ResponseEntity.ok(expensesService.findById(id));
     }
 
     @GetMapping("/user/{userId}")
     @PreAuthorize("#userId == authentication.principal.id && hasAuthority('expense:read')") 
-    public ResponseEntity<CollectionModel<ExpenseModel>> findByUserIdAndCategoryIdAndDatePart(
+    public ResponseEntity<List<ExpenseDTO>> findByUserIdAndCategoryIdAndDatePart(
             @PathVariable(name = "userId") Integer userId, @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) @Min(value = 0) Integer year,
             @RequestParam(required = false) @Min(value = 0) @Max(value = 12) Integer month) {
         log.info(findByUserIdAndCategoryIdAndDatePartInfo, userId, categoryId, year, month);
-        List<ExpenseDTO> items = expensesService.findByUserIdAndCategoryIdAndDatePart(userId, categoryId,
-                new DatePart(year, month));
-        return new ResponseEntity<>(expensesAssembler.toCollectionModel(items), HttpStatus.OK);
+        return ResponseEntity.ok( expensesService.findByUserIdAndCategoryIdAndDatePart(userId, categoryId,
+                new DatePart(year, month)));
     }
 
     @GetMapping("/page/user/{userId}")
     @PreAuthorize("#userId == authentication.principal.id && hasAuthority('expense:read')") 
-    public ResponseEntity<Page<ExpenseModel>> findPageByUserIdAndCategoryIdAndDatePart(
+    public ResponseEntity<Page<ExpenseDTO>> findPageByUserIdAndCategoryIdAndDatePart(
             @PathVariable(name = "userId") Integer userId, @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) @Min(value = 0) Integer year,
             @RequestParam(required = false) @Min(value = 0) @Max(value = 12) Integer month,
             @RequestParam(required = false) @Min(value = 0) Integer size,
             @RequestParam(required = false) @Min(value = 0) Integer page) {
         log.info(findByUserIdAndCategoryIdAndDatePartInfo, userId, categoryId, year, month);
-        Page<ExpenseDTO> expensesPage = expensesService.findByUserIdAndCategoryIdAndDatePart(userId, categoryId,
-                new DatePart(year, month), PageRequest.of(page, size));
-        return ResponseEntity.ok(expensesPage.map(expensesAssembler::toModel));
+        return ResponseEntity.ok(expensesService.findByUserIdAndCategoryIdAndDatePart(userId, categoryId,
+                new DatePart(year, month), PageRequest.of(page, size)));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -105,9 +98,9 @@ public class ExpensesController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('expense:write')")
-    public ResponseEntity<ExpenseModel> updateItem(@RequestBody ExpenseDTO expenseDTO, @PathVariable Long id) {
+    public ResponseEntity<ExpenseDTO> updateItem(@RequestBody ExpenseDTO expenseDTO, @PathVariable Long id) {
         log.info(updateInfo, id);
-        return ResponseEntity.ok(expensesAssembler.toModel(expensesService.update(expenseDTO, id)));
+        return ResponseEntity.ok(expensesService.update(expenseDTO, id));
     }
 
     @DeleteMapping("/{id}")

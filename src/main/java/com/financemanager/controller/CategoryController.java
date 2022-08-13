@@ -7,8 +7,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,9 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.financemanager.dto.CategoryDTO;
 import com.financemanager.exception.ResourceNotFoundException;
-import com.financemanager.model.CategoryModel;
 import com.financemanager.service.CategoryService;
-import com.financemanager.service.assembler.CategoryModelAssembler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +35,6 @@ import lombok.extern.slf4j.Slf4j;
 public class CategoryController {
     
     private final CategoryService categoryService;
-	private final CategoryModelAssembler categoryAssembler;
 	
 	@Value("${find_by_user_id.info}")
     private String findByUserIdInfo;
@@ -56,29 +51,23 @@ public class CategoryController {
 	
 	@GetMapping("/{id}")
 	@PreAuthorize(" hasAuthority('category:read')") 
-	public ResponseEntity<CategoryModel> findCategoryById(@PathVariable Integer id) throws ResourceNotFoundException{
+	public ResponseEntity<CategoryDTO> findCategoryById(@PathVariable Integer id) throws ResourceNotFoundException{
 		log.info(findByIdInfo, id);
-		return ResponseEntity.ok(categoryAssembler.toModel(categoryService.findById(id)));
+		return ResponseEntity.ok(categoryService.findById(id));
 	}
 	
 	@GetMapping
 	@PreAuthorize("hasAuthority('category:read')") 
-	public ResponseEntity<CollectionModel<CategoryModel>> findAllCategories() {
+	public ResponseEntity<List<CategoryDTO>> findAllCategories() {
 		log.info(findAllInfo);
-		List<CategoryDTO> categories = categoryService.findAll();
-		return new ResponseEntity<>(
-				categoryAssembler.toCollectionModel(categories),
-				HttpStatus.OK);
+		return ResponseEntity.ok(categoryService.findAll());
 	}
 	
 	@GetMapping("/user/{userId}")
 	@PreAuthorize("#userId == authentication.principal.id && hasAuthority('category:read')") 
-    public ResponseEntity<CollectionModel<CategoryModel>> findByUserId(@PathVariable Integer userId) {
+    public ResponseEntity<List<CategoryDTO>> findByUserId(@PathVariable Integer userId) {
         log.info(findByUserIdInfo, userId);
-        List<CategoryDTO> categories = categoryService.findByUserId(userId);
-        return new ResponseEntity<>(
-                categoryAssembler.toCollectionModel(categories),
-                HttpStatus.OK);
+        return ResponseEntity.ok(categoryService.findByUserId(userId));
     }
 	
 	@PostMapping
@@ -95,9 +84,9 @@ public class CategoryController {
 	
 	@PutMapping("/{id}")
 	@PreAuthorize("hasAuthority('category:write')") 
-	public ResponseEntity<CategoryModel> update(@RequestBody CategoryDTO categoryDTO, @PathVariable Integer id){
+	public ResponseEntity<CategoryDTO> update(@RequestBody CategoryDTO categoryDTO, @PathVariable Integer id){
 		log.info(updateInfo, id);	
-		return ResponseEntity.ok(categoryAssembler.toModel(categoryService.update(categoryDTO, id)));
+		return ResponseEntity.ok(categoryService.update(categoryDTO, id));
 	}
 	
 	@DeleteMapping("/{id}")
