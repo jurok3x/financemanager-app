@@ -8,8 +8,6 @@ import javax.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.financemanager.dto.UserDTO;
 import com.financemanager.exception.ResourceNotFoundException;
-import com.financemanager.model.UserModel;
 import com.financemanager.service.UserService;
-import com.financemanager.service.assembler.UserModelAssembler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +32,6 @@ import lombok.extern.slf4j.Slf4j;
 public class UserController {
 
     private final UserService userService;
-	private final UserModelAssembler userAssembler;
 	
 	@Value("${delete.info}")
 	private String deleteInfo;
@@ -55,50 +50,44 @@ public class UserController {
     
 	@GetMapping("/{id}")
 	@PreAuthorize("hasAuthority('user:read')")
-	public ResponseEntity<UserModel> findById(@PathVariable Integer id) throws ResourceNotFoundException {
+	public ResponseEntity<UserDTO> findById(@PathVariable Integer id) throws ResourceNotFoundException {
 		log.info(findByIdInfo, id);
-		return ResponseEntity.ok(userAssembler.toModel(userService.findById(id)));
+		return ResponseEntity.ok(userService.findById(id));
 	}
 	
 	@GetMapping("/email/{email}")
 	@PreAuthorize("hasAuthority('user:read')")
-	public ResponseEntity<UserModel> findByEmail(@PathVariable @NotBlank String email) throws ResourceNotFoundException{
+	public ResponseEntity<UserDTO> findByEmail(@PathVariable @NotBlank String email) throws ResourceNotFoundException{
 		log.info(findByEmailInfo, email);
-		return ResponseEntity.ok(userAssembler.toModel(userService.findByEmail(email)));
+		return ResponseEntity.ok(userService.findByEmail(email));
 	}
 
 	@GetMapping
 	@PreAuthorize("hasAuthority('user:read')")
-	public ResponseEntity<CollectionModel<UserModel>> findAllUsers() {
+	public ResponseEntity<List<UserDTO>> findAllUsers() {
 		log.info(findAllInfo);
-		List<UserDTO> users = userService.findAll();
-		return new ResponseEntity<>(
-				userAssembler.toCollectionModel(users),
-				HttpStatus.OK);
+		return ResponseEntity.ok(userService.findAll());
 	}
 	
 	@GetMapping("/category/{categoryId}")
 	@PreAuthorize("hasAuthority('user:read')") 
-    public ResponseEntity<CollectionModel<UserModel>> findUsersByCategoryId(@PathVariable Integer categoryId) {
+    public ResponseEntity<List<UserDTO>> findUsersByCategoryId(@PathVariable Integer categoryId) {
         log.info(findByCategoryIdInfo, categoryId);
-        List<UserDTO> users = userService.findByCategoryId(categoryId);
-        return new ResponseEntity<>(
-                userAssembler.toCollectionModel(users),
-                HttpStatus.OK);
+        return ResponseEntity.ok(userService.findByCategoryId(categoryId));
     }
 	
 	@GetMapping("{userId}/add/category/{categoryId}")
 	@PreAuthorize("#userId == authentication.principal.id && hasAuthority('user:write')")
-	public ResponseEntity<UserModel> addCategory(@PathVariable Integer userId, @PathVariable Integer categoryId) {
+	public ResponseEntity<UserDTO> addCategory(@PathVariable Integer userId, @PathVariable Integer categoryId) {
 	    log.info(addCategoryInfo, categoryId, userId);
-	    return ResponseEntity.ok(userAssembler.toModel(userService.addCategory(userId, categoryId)));
+	    return ResponseEntity.ok(userService.addCategory(userId, categoryId));
 	}
 	
 	@GetMapping("{userId}/remove/category/{categoryId}")
 	@PreAuthorize("#userId == authentication.principal.id && hasAuthority('user:write')")
-    public ResponseEntity<UserModel> removeCategory(@PathVariable Integer userId, @PathVariable Integer categoryId) {
+    public ResponseEntity<UserDTO> removeCategory(@PathVariable Integer userId, @PathVariable Integer categoryId) {
         log.info(removeCategoryInfo, categoryId, userId);
-        return ResponseEntity.ok(userAssembler.toModel(userService.removeCategory(userId, categoryId)));
+        return ResponseEntity.ok(userService.removeCategory(userId, categoryId));
     }
 
 	@DeleteMapping("/{id}")

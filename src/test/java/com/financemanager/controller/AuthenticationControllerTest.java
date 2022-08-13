@@ -14,7 +14,6 @@ import com.financemanager.entity.payload.AuthRequest;
 import com.financemanager.entity.payload.AuthResponse;
 import com.financemanager.entity.payload.SaveUserRequest;
 import com.financemanager.service.AuthService;
-import com.financemanager.service.assembler.UserModelAssembler;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,14 +25,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(value = AuthenticationController.class,  useDefaultFilters = false, includeFilters = {
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = AuthenticationController.class)})
 @AutoConfigureMockMvc(addFilters = false)
-@Import(UserModelAssembler.class)
 class AuthenticationControllerTest {
     
     @Autowired

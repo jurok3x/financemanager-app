@@ -12,7 +12,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.financemanager.dto.CategoryDTO;
 import com.financemanager.service.CategoryService;
-import com.financemanager.service.assembler.CategoryModelAssembler;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +22,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -34,7 +32,6 @@ import java.util.stream.Collectors;
 @WebMvcTest(value = CategoryController.class, useDefaultFilters = false, includeFilters = {
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = CategoryController.class) })
 @AutoConfigureMockMvc(addFilters = false)
-@Import(CategoryModelAssembler.class)
 class CategoryControllerTest {
 
     @Autowired

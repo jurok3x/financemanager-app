@@ -2,9 +2,7 @@ package com.financemanager.controller;
 
 import com.financemanager.dto.IncomeDTO;
 import com.financemanager.entity.utils.DatePart;
-import com.financemanager.model.IncomeModel;
 import com.financemanager.service.IncomeService;
-import com.financemanager.service.assembler.IncomeModelAssembler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,7 +42,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 public class IncomeController {
     
     private final IncomeService incomeService;
-    private final IncomeModelAssembler incomeAssembler;
     
     @Value("${update.info}")
     private String updateInfo;
@@ -60,33 +56,31 @@ public class IncomeController {
     
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('income:read')")
-    public ResponseEntity<IncomeModel> findById(@PathVariable Long id) {
+    public ResponseEntity<IncomeDTO> findById(@PathVariable Long id) {
         log.info(findByIdInfo, id);
-        return ResponseEntity.ok(incomeAssembler.toModel(incomeService.findById(id)));
+        return ResponseEntity.ok(incomeService.findById(id));
     }
     
     @GetMapping("/user/{userId}")
     @PreAuthorize("#userId == authentication.principal.id && hasAuthority('income:read')") 
-    public ResponseEntity<CollectionModel<IncomeModel>> findByUserIdAndCategoryIdAndDatePart(
+    public ResponseEntity<List<IncomeDTO>> findByUserIdAndCategoryIdAndDatePart(
             @PathVariable Integer userId,
             @RequestParam(required = false) @Min(value = 0) Integer year,
             @RequestParam(required = false) @Min(value = 0) @Max(value = 12) Integer month) {
         log.info(findByUserIdInfo, userId, month, year);
-        List<IncomeDTO> incomes = incomeService.findByUserIdAndDatePart(userId, new DatePart(year, month));
-        return ResponseEntity.ok(incomeAssembler.toCollectionModel(incomes));
+        return ResponseEntity.ok(incomeService.findByUserIdAndDatePart(userId, new DatePart(year, month)));
     }
     
     @GetMapping("/page/user/{userId}")
     @PreAuthorize("#userId == authentication.principal.id && hasAuthority('income:read')") 
-    public ResponseEntity<Page<IncomeModel>> findByUserIdAndCategoryIdAndDatePart(
+    public ResponseEntity<Page<IncomeDTO>> findByUserIdAndCategoryIdAndDatePart(
             @PathVariable Integer userId,
             @RequestParam(required = false) @Min(value = 0) Integer year,
             @RequestParam(required = false) @Min(value = 0) @Max(value = 12) Integer month,
             @RequestParam(required = false) @Min(value = 0) Integer size,
             @RequestParam(required = false) @Min(value = 0) Integer page) {
         log.info(findByUserIdInfo, userId, month, year);
-        Page<IncomeDTO> incomesPage = incomeService.findByUserIdAndDatePart(userId, new DatePart(year, month), PageRequest.of(page, size));
-        return ResponseEntity.ok(incomesPage.map(incomeAssembler::toModel));
+        return ResponseEntity.ok(incomeService.findByUserIdAndDatePart(userId, new DatePart(year, month), PageRequest.of(page, size)));
     }
     
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -103,9 +97,9 @@ public class IncomeController {
     
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('income:write')")
-    public ResponseEntity<IncomeModel> update(@RequestBody IncomeDTO incomeDTO, @PathVariable Long id) {
+    public ResponseEntity<IncomeDTO> update(@RequestBody IncomeDTO incomeDTO, @PathVariable Long id) {
         log.info(updateInfo, id);
-        return ResponseEntity.ok(incomeAssembler.toModel(incomeService.update(incomeDTO, id)));
+        return ResponseEntity.ok(incomeService.update(incomeDTO, id));
     }
     
     @DeleteMapping("/{id}")

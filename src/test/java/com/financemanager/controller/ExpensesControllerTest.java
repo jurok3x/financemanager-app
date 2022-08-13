@@ -16,7 +16,6 @@ import com.financemanager.dto.RoleDTO;
 import com.financemanager.dto.UserDTO;
 import com.financemanager.entity.utils.DatePart;
 import com.financemanager.service.ExpenseService;
-import com.financemanager.service.assembler.ExpenseModelAssembler;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +27,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
@@ -43,7 +41,6 @@ import java.util.List;
 @WebMvcTest(value = ExpensesController.class,  useDefaultFilters = false, includeFilters = {
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = ExpensesController.class)})
 @AutoConfigureMockMvc(addFilters = false)
-@Import(ExpenseModelAssembler.class)
 class ExpensesControllerTest {
     
     @Autowired
