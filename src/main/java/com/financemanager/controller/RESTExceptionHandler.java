@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -30,6 +31,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RESTExceptionHandler extends ResponseEntityExceptionHandler {
 
+    private static final String COULD_NOT_LOGIN = "Could not login";
     private static final String METHOD_NOT_FOUND_INFO = "Could not find the %s method for URL %s";
     private static final String UNSUPPORTED_MEDIA_TYPE_INFO = " Media type is not supported. Supported media types are ";
     private static final String MISSING_PARAMETER_INFO = "%s parameter is missing";
@@ -66,6 +68,18 @@ public class RESTExceptionHandler extends ResponseEntityExceptionHandler {
 
 		return ResponseEntityBuilder.build(apiException);
 	}
+    
+    @ExceptionHandler(value = { BadCredentialsException.class })
+    protected ResponseEntity<Object> handleResourceNotFoundException(BadCredentialsException ex, WebRequest request) {
+
+        List<String> details = new ArrayList<String>();
+        details.add(ex.getMessage());
+
+        APIException apiException = new APIException(COULD_NOT_LOGIN, HttpStatus.UNAUTHORIZED,
+                LocalDateTime.now(), details);
+
+        return ResponseEntityBuilder.build(apiException);
+    }
 	
 	@Override
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
