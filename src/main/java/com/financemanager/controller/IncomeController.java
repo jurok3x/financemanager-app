@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,12 +24,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
-import java.net.URI;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -87,12 +86,7 @@ public class IncomeController {
     @PreAuthorize("hasAuthority('income:write')") 
     public ResponseEntity<?> save(@RequestBody IncomeDTO incomeDTO) {
         log.info(saveInfo, incomeDTO.toString());
-        IncomeDTO addedIncome = incomeService.save(incomeDTO);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(addedIncome.getId())
-                .toUri();
-        return ResponseEntity.created(location).build();
+        return new ResponseEntity<>(incomeService.save(incomeDTO), HttpStatus.CREATED);
     }
     
     @PutMapping("/{id}")

@@ -2,6 +2,7 @@ package com.financemanager.controller;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,11 +11,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-
-import java.net.URI;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
@@ -54,12 +52,7 @@ public class AuthenticationController {
 	@PostMapping("/signup")
     public ResponseEntity<UserDTO> registration(@RequestBody @Valid SaveUserRequest request) throws UserAlreadyExistsException{
 	    log.info(registrationInfo, request.toString());
-	    UserDTO addedUser = authService.registration(request);
-	    URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(addedUser.getId())
-                .toUri();
-        return ResponseEntity.created(location).build();
+        return new ResponseEntity<>(authService.registration(request), HttpStatus.CREATED);
     }
 	
 	@PutMapping("/update/{id}")
