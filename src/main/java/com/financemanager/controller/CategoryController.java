@@ -1,12 +1,12 @@
 package com.financemanager.controller;
 
-import java.net.URI;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.financemanager.dto.CategoryDTO;
 import com.financemanager.exception.ResourceNotFoundException;
@@ -74,12 +73,7 @@ public class CategoryController {
 	@PreAuthorize("hasAuthority('category:write')") 
     public ResponseEntity<?> save(@RequestBody CategoryDTO categoryDTO) {
         log.info(saveInfo, categoryDTO.toString());
-        CategoryDTO addedCategory = categoryService.save(categoryDTO);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(addedCategory.getId())
-                .toUri();
-        return ResponseEntity.created(location).build();
+        return new ResponseEntity<>(categoryService.save(categoryDTO), HttpStatus.CREATED);
     }
 	
 	@PutMapping("/{id}")

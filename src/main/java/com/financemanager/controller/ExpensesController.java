@@ -1,6 +1,5 @@
 package com.financemanager.controller;
 
-import java.net.URI;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.financemanager.dto.ExpenseDTO;
 import com.financemanager.entity.utils.DatePart;
@@ -90,10 +89,7 @@ public class ExpensesController {
     @PreAuthorize("hasAuthority('expense:write')")
     public ResponseEntity<?> save(@RequestBody ExpenseDTO expenseDTO) {
         log.info(saveInfo, expenseDTO.toString());
-        ExpenseDTO addedExpense = expensesService.save(expenseDTO);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(addedExpense.getId()).toUri();
-        return ResponseEntity.created(location).build();
+        return new ResponseEntity<>(expensesService.save(expenseDTO), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
