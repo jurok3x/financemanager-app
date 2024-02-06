@@ -1,2 +1,2 @@
 # my-new-site
-Its my site for monitoring incomes and outcomes.
+Its my app for monitoring incomes and outcomes.
